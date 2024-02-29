@@ -11,7 +11,7 @@ import (
 
 func onShardMessage(shardID int, msg irc.ChatMessage) {
 
-	if !strings.EqualFold(msg.Channel, authInfo.Username) {
+	if !strings.EqualFold(msg.Channel, userSettings.Username) {
 		//Ignore secondary channels
 		return
 	}
@@ -37,10 +37,10 @@ func onShardMessage(shardID int, msg irc.ChatMessage) {
 func connectTwitch() {
 	writer := &irc.Conn{}
 
-	readAuth()
+	readSettings()
 
 	//Connect
-	writer.SetLogin(authInfo.Username, "oauth:"+string(authInfo.AuthToken))
+	writer.SetLogin(userSettings.Username, "oauth:"+string(userSettings.AuthToken))
 	if err := writer.Connect(); err != nil {
 		panic("failed to start writer")
 	}
@@ -50,7 +50,7 @@ func connectTwitch() {
 	reader.OnShardLatencyUpdate(onShardLatencyUpdate)
 	reader.OnShardMessage(onShardMessage)
 
-	if err := reader.Join(authInfo.Username); err != nil {
+	if err := reader.Join(userSettings.Username); err != nil {
 		panic(err)
 	}
 	log.Println("Connected to IRC!")

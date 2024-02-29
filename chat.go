@@ -1,6 +1,7 @@
 package main
 
 import (
+	"goTwitchGame/sclean"
 	"image/color"
 	"sync"
 	"time"
@@ -33,10 +34,15 @@ func addToChat(msg irc.ChatMessage) {
 		msgColor = c
 	}
 
-	chatHistory = append(chatHistory, chatMessageData{sender: msg.Sender.DisplayName, message: msg.Text, color: msgColor, time: time.Now()})
-	numLines++
+	message := sclean.StripControlAndSpecial(msg.Text)
+	messageLen := len(message)
 
-	trimChatHistory()
+	if messageLen > 0 {
+		chatHistory = append(chatHistory, chatMessageData{sender: msg.Sender.DisplayName, message: msg.Text, color: msgColor, time: time.Now()})
+		numLines++
+
+		trimChatHistory()
+	}
 }
 
 func trimChatHistory() {

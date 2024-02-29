@@ -5,5 +5,5 @@ const (
 	defaultWindowHeight = 720
 
 	dbFile   = "players.json"
-	authFile = "auth.json"
+	authFile = "settings.json"
 )

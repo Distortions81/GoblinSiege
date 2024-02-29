@@ -27,8 +27,6 @@ func startEbiten() {
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetWindowTitle("goTwitchGame")
 
-	adjMaxLines()
-
 	/* Start ebiten */
 	if err := ebiten.RunGameWithOptions(newGame(), nil); err != nil {
 		return
@@ -48,7 +46,6 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 	if outsideWidth != ScreenWidth || outsideHeight != ScreenHeight {
 		ScreenWidth, ScreenHeight = outsideWidth, outsideHeight
-		adjMaxLines()
 	}
 
 	return ScreenWidth, ScreenHeight
