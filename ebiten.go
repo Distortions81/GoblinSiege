@@ -1,7 +1,14 @@
 package main
 
 import (
+	"sync"
+
 	"github.com/hajimehoshi/ebiten/v2"
+)
+
+var (
+	updateGameSizeLock        sync.Mutex
+	ScreenWidth, ScreenHeight int
 )
 
 func startEbiten() {

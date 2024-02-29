@@ -1,6 +1,29 @@
 package main
 
-import "image/color"
+import (
+	"image/color"
+	"strconv"
+	"strings"
+)
+
+func Hex2Color(input string) (color.RGBA, error) {
+	input = strings.TrimPrefix(input, "#")
+
+	var rgb color.RGBA
+	values, err := strconv.ParseUint(string(input), 16, 32)
+
+	if err != nil {
+		return color.RGBA{}, err
+	}
+
+	rgb = color.RGBA{
+		R: uint8(values >> 16),
+		G: uint8((values >> 8) & 0xFF),
+		B: uint8(values & 0xFF),
+	}
+
+	return rgb, nil
+}
 
 var (
 	ColorBlack   = color.NRGBA{0, 0, 0, 255}
@@ -57,28 +80,3 @@ var (
 	ColorDarkFuchsia = color.NRGBA{154, 45, 141, 255}
 	ColorDarkAqua    = color.NRGBA{45, 154, 154, 255}
 )
-
-var colorList map[string]color.NRGBA
-
-func init() {
-	colorList = make(map[string]color.NRGBA)
-
-	colorList["black"] = ColorBlack
-	colorList["red"] = ColorRed
-	colorList["green"] = ColorGreen
-	colorList["blue"] = ColorBlue
-	colorList["yellow"] = ColorYellow
-	colorList["gray"] = ColorGray
-	colorList["orange"] = ColorOrange
-	colorList["pink"] = ColorPink
-	colorList["purple"] = ColorPurple
-	colorList["silver"] = ColorSilver
-	colorList["teal"] = ColorTeal
-	colorList["maroon"] = ColorMaroon
-	colorList["navy"] = ColorNavy
-	colorList["olive"] = ColorOlive
-	colorList["Lime"] = ColorLime
-	colorList["fuchsia"] = ColorFuchsia
-	colorList["aqua"] = ColorAqua
-	colorList["brown"] = ColorBrown
-}
