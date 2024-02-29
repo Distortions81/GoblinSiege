@@ -54,7 +54,14 @@ func connectTwitch() {
 	if err := reader.Join(userSettings.Username); err != nil {
 		panic(err)
 	}
+
 	log.Println("Connected to IRC!")
+
+	err := writer.Say(userSettings.Username, "test")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }
 
 func onShardReconnect(shardID int) {

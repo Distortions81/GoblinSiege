@@ -8,8 +8,11 @@ func main() {
 	dbLock.Lock()
 	WriteDB() //Unlocks after serialize
 
-	connectTwitch()
+	userCommands = make(map[int64]*commandData)
+
 	go dbAutoSave()
+	go connectTwitch()
+
 	startEbiten()
 }
 
