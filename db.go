@@ -11,6 +11,12 @@ import (
 var dbLock sync.Mutex
 var dbDirty bool
 
+var Players map[int64]*playerData
+
+type playerData struct {
+	Points int
+}
+
 // This unlocks dbLock after serialize
 func WriteDB() {
 
