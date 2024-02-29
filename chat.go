@@ -10,7 +10,9 @@ import (
 var chatHistory []string
 var numLines int
 var chatHistoryLock sync.Mutex
-var maxLines int
+var maxShowLines int
+
+const maxHistory = 100
 
 func addToChat(msg irc.ChatMessage) {
 	chatHistoryLock.Lock()
@@ -20,8 +22,17 @@ func addToChat(msg irc.ChatMessage) {
 	chatHistory = append(chatHistory, out)
 	numLines++
 
-	if numLines > maxLines {
-		chatHistory = chatHistory[1:]
-		numLines--
+	trimChatHistory()
+}
+
+func trimChatHistory() {
+	//Remove old lines until we fit
+	for {
+		if numLines > maxHistory {
+			chatHistory = chatHistory[1:]
+			numLines--
+		} else {
+			break
+		}
 	}
 }

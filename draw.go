@@ -13,7 +13,15 @@ const pixelsPerLine = 36
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	chatHistoryLock.Lock()
-	buf := strings.Join(chatHistory, "")
+
+	end := len(chatHistory)
+	start := (end - maxShowLines)
+	if start < 0 {
+		start = 0
+	}
+
+	showLines := chatHistory[start:end]
+	buf := strings.Join(showLines, "")
 	chatHistoryLock.Unlock()
 
 	text.Draw(screen, buf, mplusNormalFont, 10, pixelsPerLine, color.White)
@@ -21,7 +29,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 func adjMaxLines() {
 	chatHistoryLock.Lock()
-	maxLines = ScreenHeight / pixelsPerLine
-	log.Printf("Max lines set to: %v", maxLines)
+	oldMaxLines := maxShowLines
+	maxShowLines = ScreenHeight / pixelsPerLine
+	if maxShowLines != oldMaxLines {
+		log.Printf("Max lines set to: %v", maxShowLines)
+		trimChatHistory()
+	}
 	chatHistoryLock.Unlock()
 }
