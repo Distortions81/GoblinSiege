@@ -1,17 +1,18 @@
 package main
 
 import (
-	"fmt"
 	"image/color"
 	"sync"
+	"time"
 
 	"github.com/Adeithe/go-twitch/irc"
 )
 
 type chatMessageData struct {
+	sender  string
 	message string
 	color   color.Color
-	len     int
+	time    time.Time
 }
 
 var chatHistory []chatMessageData
@@ -25,7 +26,6 @@ func addToChat(msg irc.ChatMessage) {
 	chatHistoryLock.Lock()
 	defer chatHistoryLock.Unlock()
 
-	out := fmt.Sprintf("%v: %v\n", msg.Sender.DisplayName, msg.Text)
 	c, err := Hex2Color(msg.Sender.Color)
 
 	var msgColor = color.RGBA{R: 255, G: 255, B: 255}
@@ -33,7 +33,7 @@ func addToChat(msg irc.ChatMessage) {
 		msgColor = c
 	}
 
-	chatHistory = append(chatHistory, chatMessageData{message: out, color: msgColor, len: len(out)})
+	chatHistory = append(chatHistory, chatMessageData{sender: msg.Sender.DisplayName, message: msg.Text, color: msgColor, time: time.Now()})
 	numLines++
 
 	trimChatHistory()
