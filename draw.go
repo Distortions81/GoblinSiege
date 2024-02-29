@@ -1,18 +1,26 @@
 package main
 
 import (
+	"goTwitchGame/sclean"
+	"image/color"
 	"log"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 )
 
 const pixelsPerLine = 36
-const vpad = 8
+const pad = 8
+const namePixels = 170
+const maxMsgLen = 300
+const chatLife = time.Second * 30
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	chatHistoryLock.Lock()
 	defer chatHistoryLock.Unlock()
+
+	var justify int
 
 	end := len(chatHistory)
 	start := (end - maxShowLines)
@@ -20,10 +28,18 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		start = 0
 	}
 
+	if end < maxShowLines {
+		justify = (maxShowLines - end) * pixelsPerLine
+	}
+
 	z := 0
 	for x := start; x < end; x++ {
 		z++
-		text.Draw(screen, chatHistory[x].message, mplusNormalFont, 10, (z*pixelsPerLine)-vpad, chatHistory[x].color)
+		if time.Since(chatHistory[x].time) > chatLife {
+			continue
+		}
+		text.Draw(screen, sclean.TruncateString(chatHistory[x].sender, 15), mplusNormalFont, pad, justify+(z*pixelsPerLine)-pad, chatHistory[x].color)
+		text.Draw(screen, sclean.TruncateStringEllipsis(": "+chatHistory[x].message, maxMsgLen), mplusNormalFont, pad+namePixels, justify+(z*pixelsPerLine)-pad, color.White)
 	}
 }
 
