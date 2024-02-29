@@ -69,7 +69,7 @@ func readDB() {
 			err := json.Unmarshal([]byte(file), &Players)
 			if len(Players) == 0 {
 				//Empty database, create a map
-				Players = make(map[string]*playerData)
+				Players = make(map[int64]*playerData)
 			}
 			if err != nil {
 				log.Fatal("Readcfg.RoleList: Unmarshal failure")

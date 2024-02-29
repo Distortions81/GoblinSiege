@@ -1,22 +1,30 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/Adeithe/go-twitch"
 	"github.com/Adeithe/go-twitch/irc"
 )
 
-var Players map[string]*playerData
+var Players map[int64]*playerData
 
 type playerData struct {
 	Points int
 }
 
+var chatHistory []string
+var numLines int
+var chatHistoryLock sync.Mutex
+
+const maxLines = 20
+
 func onShardMessage(shardID int, msg irc.ChatMessage) {
-	//log.Printf("#%s %s: %s\n", msg.Channel, msg.Sender.Username, msg.Text)
+	//log.Printf("#%s %s: %s\n", msg.Channel, msg.Sender.ID, msg.Text)
 
 	if !strings.EqualFold(msg.Channel, authInfo.Username) {
 		//Ignore secondary channels
@@ -24,16 +32,29 @@ func onShardMessage(shardID int, msg irc.ChatMessage) {
 		return
 	}
 
-	if len(msg.Sender.Username) > 0 && Players[msg.Sender.Username] == nil {
-		log.Printf("Adding player '%v'\n", msg.Sender.Username)
+	if Players[msg.Sender.ID] == nil {
+		log.Printf("Adding player '%v'\n", msg.Sender.ID)
 
 		dbLock.Lock()
-		Players[msg.Sender.Username] = &playerData{Points: 0}
+		Players[msg.Sender.ID] = &playerData{Points: 0}
 		dbDirty = true
 		dbLock.Unlock()
 	}
 
-	log.Printf("%s: %s\n", msg.Sender.Username, msg.Text)
+	adminCommands(msg)
+
+	//Add to chat history
+	chatHistoryLock.Lock()
+	defer chatHistoryLock.Unlock()
+	out := fmt.Sprintf("%v: %v\n", msg.Sender.DisplayName, msg.Text)
+	chatHistory = append(chatHistory, out)
+	numLines++
+
+	if numLines > maxLines {
+		chatHistory = chatHistory[1:]
+		numLines--
+	}
+
 }
 
 func connectTwitch() {
