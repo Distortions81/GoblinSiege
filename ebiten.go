@@ -11,6 +11,9 @@ var (
 	ScreenWidth, ScreenHeight int
 )
 
+type Game struct {
+}
+
 func startEbiten() {
 	// Set up ebiten
 	ebiten.SetVsyncEnabled(true)
