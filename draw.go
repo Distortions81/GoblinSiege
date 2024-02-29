@@ -22,15 +22,21 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	showLines := chatHistory[start:end]
 	buf := strings.Join(showLines, "")
+
+	vertPad := 0
+	if numLines < maxShowLines {
+		vertPad = ((maxShowLines - numLines) * pixelsPerLine)
+	}
+
 	chatHistoryLock.Unlock()
 
-	text.Draw(screen, buf, mplusNormalFont, 10, pixelsPerLine, color.White)
+	text.Draw(screen, buf, mplusNormalFont, 10, vertPad, color.White)
 }
 
 func adjMaxLines() {
 	chatHistoryLock.Lock()
 	oldMaxLines := maxShowLines
-	maxShowLines = ScreenHeight / pixelsPerLine
+	maxShowLines = (ScreenHeight / pixelsPerLine)
 	if maxShowLines != oldMaxLines {
 		log.Printf("Max lines set to: %v", maxShowLines)
 		trimChatHistory()
