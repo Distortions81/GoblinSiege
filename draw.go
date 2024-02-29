@@ -23,7 +23,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	showLines := chatHistory[start:end]
 	buf := strings.Join(showLines, "")
 
-	vertPad := 0
+	vertPad := pixelsPerLine
 	if numLines < maxShowLines {
 		vertPad = ((maxShowLines - numLines) * pixelsPerLine)
 	}
@@ -35,6 +35,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 func adjMaxLines() {
 	chatHistoryLock.Lock()
+
 	oldMaxLines := maxShowLines
 	maxShowLines = (ScreenHeight / pixelsPerLine)
 	if maxShowLines != oldMaxLines {
