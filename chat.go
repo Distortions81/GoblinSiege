@@ -2,55 +2,57 @@ package main
 
 import (
 	"goTwitchGame/sclean"
-	"image/color"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/Adeithe/go-twitch/irc"
 )
 
-type chatMessageData struct {
+type commandData struct {
 	sender  string
-	message string
-	color   color.Color
+	command string
 	time    time.Time
 }
 
-var chatHistory []chatMessageData
-var numLines int
-var chatHistoryLock sync.Mutex
-var maxShowLines int
+var userCommands []commandData
+var userCommandsLock sync.Mutex
+var commandCount = 0
 
-const maxHistory = 100
+const maxCommandHistory = 10000
+const maxCommandLen = 100
 
-func addToChat(msg irc.ChatMessage) {
-	chatHistoryLock.Lock()
-	defer chatHistoryLock.Unlock()
-
-	c, err := Hex2Color(msg.Sender.Color)
-
-	var msgColor = color.RGBA{R: 255, G: 255, B: 255}
-	if err == nil {
-		msgColor = c
-	}
+func handleChat(msg irc.ChatMessage) {
 
 	message := sclean.StripControlAndSpecial(msg.Text)
-	messageLen := len(message)
+	command, isCommand := strings.CutPrefix(message, "!")
 
-	if messageLen > 0 {
-		chatHistory = append(chatHistory, chatMessageData{sender: msg.Sender.DisplayName, message: msg.Text, color: msgColor, time: time.Now()})
-		numLines++
-
-		trimChatHistory()
+	if isCommand {
+		handleUserCommand(msg, command)
 	}
+
 }
 
-func trimChatHistory() {
+func handleUserCommand(msg irc.ChatMessage, command string) {
+	cmdLen := len(command)
+
+	if cmdLen == 0 || cmdLen > maxCommandLen {
+		return
+	}
+
+	userCommandsLock.Lock()
+	userCommands = append(userCommands, commandData{sender: msg.Sender.DisplayName, command: command, time: time.Now()})
+	commandCount++
+	trimUserCommands()
+	userCommandsLock.Unlock()
+}
+
+func trimUserCommands() {
 	//Remove old lines until we fit
 	for {
-		if numLines > maxHistory {
-			chatHistory = chatHistory[1:]
-			numLines--
+		if commandCount > maxCommandHistory {
+			userCommands = userCommands[1:]
+			commandCount--
 		} else {
 			break
 		}

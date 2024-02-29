@@ -30,7 +30,8 @@ func onShardMessage(shardID int, msg irc.ChatMessage) {
 	if adminCommands(msg) {
 		return
 	}
-	addToChat(msg)
+
+	handleChat(msg)
 
 }
 

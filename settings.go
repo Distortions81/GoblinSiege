@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"log"
 	"os"
@@ -48,22 +47,22 @@ func readSettings() {
 
 func writeSettings() {
 
-	outbuf := new(bytes.Buffer)
-	enc := json.NewEncoder(outbuf)
+	var err error
+	outbuf, err := json.MarshalIndent(userSettings, "", "    ")
 
-	if err := enc.Encode(userSettings); err != nil {
-		log.Fatal("WriteGCfg: enc.Encode failure")
+	if err != nil {
+		log.Fatal("WriteGCfg: json marshal error.")
 		return
 	}
 
-	_, err := os.Create(authFile)
+	_, err = os.Create(authFile)
 
 	if err != nil {
 		log.Fatal("WriteGCfg: os.Create failure")
 		return
 	}
 
-	err = os.WriteFile(authFile, outbuf.Bytes(), 0644)
+	err = os.WriteFile(authFile, outbuf, 0644)
 
 	if err != nil {
 		log.Fatal("WriteGCfg: WriteFile failure")
