@@ -48,7 +48,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		for count := 0; count < maxMsgLen; count++ {
 			msgPix := text.BoundString(mplusNormalFont, sclean.TruncateStringEllipsis(": "+chatHistory[x].message, lineLen))
 			if msgPix.Max.X > (ScreenWidth - namePixels - namePad) {
-				lineLen--
+				if lineLen > 1 {
+					lineLen--
+				} else {
+					break
+				}
 			} else {
 				break
 			}
