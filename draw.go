@@ -11,10 +11,10 @@ import (
 )
 
 const pixelsPerLine = 36
-const pad = 8
+const vpad = 8
+const namePad = 8
 const namePixels = 170
 const maxMsgLen = 300
-
 const maxNameLen = 15
 const chatLife = time.Second * 30
 
@@ -43,29 +43,21 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		name := sclean.TruncateString(chatHistory[x].sender, maxNameLen)
 		namePix := text.BoundString(mplusNormalFont, name)
 
-		maxAttempt := 1000
-		count := 0
+		//Automatically truncate message and add (...)
 		lineLen := maxMsgLen
-		for {
-			count++
-
+		for count := 0; count < maxMsgLen; count++ {
 			msgPix := text.BoundString(mplusNormalFont, sclean.TruncateStringEllipsis(": "+chatHistory[x].message, lineLen))
-			if msgPix.Max.X > (ScreenWidth - namePixels - pad) {
+			if msgPix.Max.X > (ScreenWidth - namePixels - namePad) {
 				lineLen--
 			} else {
 				break
 			}
-
-			if count > maxAttempt {
-				lineLen = maxMsgLen
-				break
-			}
 		}
 
-		msg := sclean.TruncateStringEllipsis(": "+chatHistory[x].message, lineLen)
+		msg := sclean.TruncateStringEllipsis(": "+chatHistory[x].message, lineLen-1)
 
-		text.Draw(screen, name, mplusNormalFont, (namePixels - namePix.Dx()), justify+(z*pixelsPerLine)-pad, chatHistory[x].color)
-		text.Draw(screen, msg, mplusNormalFont, pad+namePixels, justify+(z*pixelsPerLine)-pad, color.White)
+		text.Draw(screen, name, mplusNormalFont, (namePixels - namePix.Dx()), justify+(z*pixelsPerLine)-vpad, chatHistory[x].color)
+		text.Draw(screen, msg, mplusNormalFont, namePad+namePixels, justify+(z*pixelsPerLine)-vpad, color.White)
 	}
 }
 
