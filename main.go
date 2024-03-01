@@ -12,6 +12,8 @@ var ServerRunning bool = true
 var ServerIsStopped bool
 
 func main() {
+	go startEbiten()
+
 	readDB()
 
 	dbLock.Lock()
@@ -22,7 +24,10 @@ func main() {
 	go dbAutoSave()
 	go connectTwitch()
 
-	go startEbiten()
+	UserMsgDict.Enabled = true
+	startVote()
+
+	go autoEndRound()
 
 	//After starting loops, wait here for process signals
 	signalHandle := make(chan os.Signal, 1)
@@ -50,5 +55,14 @@ func dbAutoSave() {
 		}
 
 		time.Sleep(time.Second * 30)
+	}
+}
+
+func autoEndRound() {
+	for ServerRunning {
+		if UserMsgDict.Enabled && time.Since(UserMsgDict.StartTime) > time.Second*10 {
+			endVote()
+		}
+		time.Sleep(time.Second)
 	}
 }
