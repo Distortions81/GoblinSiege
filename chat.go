@@ -35,8 +35,13 @@ func handleChat(msg irc.ChatMessage) {
 	message := sclean.StripControlAndSpecial(msg.Text)
 	command, isCommand := strings.CutPrefix(message, "!")
 
-	if isCommand && UserMsgDict.Enabled {
-		handleUserDictMsg(msg, command)
+	if isCommand {
+		if handleModCommands(msg, command) {
+			return
+		}
+		if UserMsgDict.Enabled {
+			handleUserDictMsg(msg, command)
+		}
 	}
 }
 

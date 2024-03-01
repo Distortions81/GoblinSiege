@@ -27,12 +27,7 @@ func onShardMessage(shardID int, msg irc.ChatMessage) {
 		dbLock.Unlock()
 	}
 
-	if adminCommands(msg) {
-		return
-	}
-
 	handleChat(msg)
-
 }
 
 func connectTwitch() {
@@ -56,12 +51,6 @@ func connectTwitch() {
 	}
 
 	log.Println("Connected to IRC!")
-
-	err := writer.Say(userSettings.Username, "test")
-	if err != nil {
-		log.Fatal(err)
-	}
-
 }
 
 func onShardReconnect(shardID int) {
