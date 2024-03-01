@@ -33,7 +33,9 @@ type userMsgDictData struct {
 	Result    xyi
 }
 
-var UserMsgDict userMsgDictData
+var (
+	UserMsgDict userMsgDictData
+)
 
 func handleUserDictMsg(msg irc.ChatMessage, command string) {
 	msgLen := len(command)

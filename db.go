@@ -6,6 +6,9 @@ import (
 	"log"
 	"os"
 	"sync"
+	"time"
+
+	"github.com/hako/durafmt"
 )
 
 var dbLock sync.Mutex
@@ -20,6 +23,8 @@ type playerData struct {
 // This unlocks dbLock after serialize
 func WriteDB() {
 
+	startTime := time.Now()
+
 	tempPath := dbFile + ".tmp"
 	finalPath := dbFile
 
@@ -32,6 +37,7 @@ func WriteDB() {
 	}
 
 	dbLock.Unlock()
+	log.Printf("serialize db took: %v\n", durafmt.Parse(time.Since(startTime)).LimitFirstN(2))
 
 	_, err := os.Create(tempPath)
 
@@ -54,7 +60,7 @@ func WriteDB() {
 		return
 	}
 
-	log.Println("Wrote db.")
+	log.Printf("Wrote db took: %v\n", durafmt.Parse(time.Since(startTime)).LimitFirstN(2))
 }
 
 /* Read in cached list of Discord players with specific roles */

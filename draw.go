@@ -31,4 +31,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			text.Draw(screen, "Not enough votes, stopped.", monoFont, 10, 30, color.White)
 		}
 	}
+
+	drawGameBoard(screen)
 }
