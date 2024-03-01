@@ -30,11 +30,7 @@ func drawGameBoard(screen *ebiten.Image) {
 	gameMapLock.Lock()
 	defer gameMapLock.Unlock()
 
-	if gameMapCount == 0 {
-		return
-	}
-
-	vector.DrawFilledRect(screen, size*itemOffset, size*itemOffset, boardPixels, boardPixels, ColorDarkGreen, true)
+	vector.DrawFilledRect(screen, size*itemOffset, size*itemOffset, boardPixels, boardPixels, ColorVeryDarkGreen, true)
 	for _, item := range gameMap {
 		vector.DrawFilledCircle(screen, float32((item.Pos.X+itemOffset)*mag), float32((item.Pos.Y+itemOffset)*mag), size, color.White, true)
 	}

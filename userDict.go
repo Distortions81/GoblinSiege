@@ -63,10 +63,10 @@ func processUserDict() {
 
 			//Convert from text to value
 			xb := []byte(args[0])
-			x := int(xb[0]) - 65
+			x := int(xb[0]) - 64
 			y, err := strconv.ParseInt(args[1], 10, 64)
 
-			if err != nil || x < 0 || x > 90 {
+			if err != nil || x < 1 || x > boardSize {
 				continue
 			}
 

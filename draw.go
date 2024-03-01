@@ -7,10 +7,13 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
+	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/hako/durafmt"
 )
 
 func (g *Game) Draw(screen *ebiten.Image) {
+
+	drawGameBoard(screen)
 
 	UserMsgDict.Lock.Lock()
 	defer UserMsgDict.Lock.Unlock()
@@ -20,9 +23,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 
 	if UserMsgDict.Voting {
-		buf := fmt.Sprintf("Vote now: !letter number\nVotes: %v (%v left)", UserMsgDict.Count, durafmt.Parse(time.Until(UserMsgDict.StartTime.Add(roundTime))).LimitFirstN(1))
+		vector.DrawFilledRect(screen, 0, 0, 400, 100, ColorSmoke, true)
+		buf := fmt.Sprintf("Vote now: !letter number\nVotes: %v\n%v remaining...", UserMsgDict.Count, durafmt.Parse(time.Until(UserMsgDict.StartTime.Add(roundTime)).Round(time.Second)).LimitFirstN(1))
 		text.Draw(screen, buf, monoFont, 10, 30, color.White)
-		return
 	} else {
 		if UserMsgDict.Count > 0 {
 			buf := fmt.Sprintf("Result: %v,%v", UserMsgDict.Result.X, UserMsgDict.Result.Y)
@@ -31,6 +34,4 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			text.Draw(screen, "Not enough votes, stopped.", monoFont, 10, 30, color.White)
 		}
 	}
-
-	drawGameBoard(screen)
 }

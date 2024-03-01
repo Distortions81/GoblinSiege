@@ -26,8 +26,10 @@ func main() {
 	go dbAutoSave()
 	go connectTwitch()
 
-	time.Sleep(time.Second * 5)
+	time.Sleep(time.Second * 2)
+	UserMsgDict.Lock.Lock()
 	startVote()
+	UserMsgDict.Lock.Unlock()
 
 	//After starting loops, wait here for process signals
 	signalHandle := make(chan os.Signal, 1)
