@@ -1,6 +1,15 @@
 package main
 
-import "time"
+import (
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+)
+
+var ServerRunning bool = true
+var ServerIsStopped bool
 
 func main() {
 	readDB()
@@ -13,11 +22,23 @@ func main() {
 	go dbAutoSave()
 	go connectTwitch()
 
-	startEbiten()
+	go startEbiten()
+
+	//After starting loops, wait here for process signals
+	signalHandle := make(chan os.Signal, 1)
+
+	signal.Notify(signalHandle, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
+	<-signalHandle
+
+	ServerRunning = false
+
+	log.Println("Saving DB...")
+	dbLock.Lock()
+	WriteDB()
 }
 
 func dbAutoSave() {
-	for {
+	for ServerRunning {
 
 		dbLock.Lock()
 		if dbDirty {
