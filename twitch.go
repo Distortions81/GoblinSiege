@@ -18,15 +18,6 @@ func onShardMessage(shardID int, msg irc.ChatMessage) {
 
 	log.Printf("%s: %s\n", msg.Sender.DisplayName, msg.Text)
 
-	if Players[msg.Sender.ID] == nil {
-		log.Printf("Adding player '%v' to db.\n", msg.Sender.ID)
-
-		dbLock.Lock()
-		Players[msg.Sender.ID] = &playerData{Points: 0}
-		dbDirty = true
-		dbLock.Unlock()
-	}
-
 	handleChat(msg)
 }
 
