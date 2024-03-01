@@ -9,7 +9,7 @@ import (
 	"github.com/Adeithe/go-twitch/irc"
 )
 
-const maxUserDictLen = 100
+const maxCommandLen = 100
 
 type userMsgData struct {
 	sender  string
@@ -41,7 +41,7 @@ func handleChat(msg irc.ChatMessage) {
 func handleUserDictMsg(msg irc.ChatMessage, command string) {
 	msgLen := len(command)
 
-	if msgLen == 0 || msgLen > maxUserDictLen {
+	if msgLen == 0 || msgLen > maxCommandLen {
 		return
 	}
 
