@@ -44,40 +44,6 @@ func handleUserDictMsg(msg irc.ChatMessage, command string) {
 	UserMsgDict.Lock.Unlock()
 }
 
-func clearVotes() {
-
-	UserMsgDict.Lock.Lock()
-	if UserMsgDict.Count > 0 {
-		log.Println("Clearing votes...")
-		UserMsgDict.Count = 0
-		UserMsgDict.Users = make(map[int64]*userMsgData)
-	}
-	UserMsgDict.Lock.Unlock()
-}
-
-func startVote() {
-	log.Println("Starting new vote...")
-
-	UserMsgDict.Lock.Lock()
-	UserMsgDict.StartTime = time.Now()
-	UserMsgDict.Enabled = true
-	UserMsgDict.Count = 0
-	UserMsgDict.Users = make(map[int64]*userMsgData)
-	UserMsgDict.Lock.Unlock()
-}
-
-func endVote() {
-
-	UserMsgDict.Lock.Lock()
-	if UserMsgDict.Enabled {
-		log.Println("Ending vote...")
-		UserMsgDict.Enabled = false
-	}
-	UserMsgDict.Lock.Unlock()
-
-	processUserDict()
-}
-
 func processUserDict() {
 	UserMsgDict.Lock.Lock()
 	defer UserMsgDict.Lock.Unlock()

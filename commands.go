@@ -1,7 +1,9 @@
 package main
 
 import (
+	"log"
 	"strings"
+	"time"
 
 	"github.com/Adeithe/go-twitch/irc"
 )
@@ -37,4 +39,36 @@ func handleModCommands(msg irc.ChatMessage, command string) bool {
 	}
 
 	return false
+}
+
+func clearVotes() {
+	UserMsgDict.Lock.Lock()
+	if UserMsgDict.Count > 0 {
+		log.Println("Clearing votes...")
+		UserMsgDict.Count = 0
+		UserMsgDict.Users = make(map[int64]*userMsgData)
+	}
+	UserMsgDict.Lock.Unlock()
+}
+
+func startVote() {
+	UserMsgDict.Lock.Lock()
+	log.Println("Starting new vote...")
+	UserMsgDict.StartTime = time.Now()
+	UserMsgDict.Enabled = true
+	UserMsgDict.Count = 0
+	UserMsgDict.Users = make(map[int64]*userMsgData)
+	UserMsgDict.Lock.Unlock()
+}
+
+func endVote() {
+
+	UserMsgDict.Lock.Lock()
+	if UserMsgDict.Enabled {
+		log.Println("Ending vote...")
+		UserMsgDict.Enabled = false
+	}
+	UserMsgDict.Lock.Unlock()
+
+	processUserDict()
 }
