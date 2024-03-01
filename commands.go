@@ -48,7 +48,7 @@ func clearVotes() {
 	if UserMsgDict.Count > 0 {
 		log.Println("Clearing votes...")
 		UserMsgDict.Count = 0
-		UserMsgDict.Enabled = false
+		UserMsgDict.Voting = false
 		UserMsgDict.Result = xyi{}
 		UserMsgDict.Users = make(map[int64]*userMsgData)
 	}
@@ -57,7 +57,7 @@ func clearVotes() {
 func startVote() {
 	log.Println("Starting new vote...")
 	UserMsgDict.StartTime = time.Now()
-	UserMsgDict.Enabled = true
+	UserMsgDict.Voting = true
 	UserMsgDict.Count = 0
 	UserMsgDict.Result = xyi{}
 	UserMsgDict.Users = make(map[int64]*userMsgData)
@@ -65,11 +65,16 @@ func startVote() {
 
 func endVote() {
 
-	if UserMsgDict.Enabled {
+	processUserDict()
+	if UserMsgDict.Voting {
 		log.Println("Ending vote...")
-		UserMsgDict.Enabled = false
+		UserMsgDict.Voting = false
 		UserMsgDict.StartTime = time.Now()
+
+		gameMapLock.Lock()
+		gameMap[UserMsgDict.Result] = &objectData{Pos: UserMsgDict.Result}
+		gameMapCount++
+		gameMapLock.Unlock()
 	}
 
-	processUserDict()
 }

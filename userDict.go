@@ -25,12 +25,13 @@ type userMsgData struct {
 type userMsgDictData struct {
 	Users map[int64]*userMsgData
 
-	Count     int
-	Enabled   bool
-	StartTime time.Time
-	Lock      sync.Mutex
-	RoundTime time.Time
-	Result    xyi
+	Count       int
+	Voting      bool
+	GameStarted bool
+	StartTime   time.Time
+	Lock        sync.Mutex
+	RoundTime   time.Time
+	Result      xyi
 }
 
 var (

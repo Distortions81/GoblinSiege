@@ -10,7 +10,7 @@ import (
 
 var ServerRunning bool = true
 var ServerIsStopped bool
-var roundTime time.Duration = time.Second * 30
+var roundTime time.Duration = time.Second * 10
 
 func main() {
 	go startEbiten()
@@ -21,9 +21,13 @@ func main() {
 	WriteDB() //Unlocks after serialize
 
 	UserMsgDict.Users = make(map[int64]*userMsgData)
+	gameMap = make(map[xyi]*objectData)
 
 	go dbAutoSave()
 	go connectTwitch()
+
+	time.Sleep(time.Second * 5)
+	startVote()
 
 	//After starting loops, wait here for process signals
 	signalHandle := make(chan os.Signal, 1)

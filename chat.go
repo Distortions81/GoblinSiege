@@ -15,7 +15,7 @@ func handleChat(msg irc.ChatMessage) {
 	if isCommand {
 		if handleModCommands(msg, command) {
 			return
-		} else if UserMsgDict.Enabled {
+		} else if UserMsgDict.Voting {
 			handleUserDictMsg(msg, command)
 		}
 	}

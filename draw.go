@@ -15,11 +15,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	UserMsgDict.Lock.Lock()
 	defer UserMsgDict.Lock.Unlock()
 
-	if UserMsgDict.Enabled && time.Since(UserMsgDict.StartTime) > roundTime {
+	if UserMsgDict.Voting && time.Since(UserMsgDict.StartTime) > roundTime {
 		endVote()
 	}
 
-	if UserMsgDict.Enabled {
+	if UserMsgDict.Voting {
 		buf := fmt.Sprintf("Vote now: !letter number\nVotes: %v (%v left)", UserMsgDict.Count, durafmt.Parse(time.Until(UserMsgDict.StartTime.Add(roundTime))).LimitFirstN(1))
 		text.Draw(screen, buf, monoFont, 10, 30, color.White)
 		return
