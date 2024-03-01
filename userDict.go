@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -10,6 +11,10 @@ import (
 )
 
 const maxCommandLen = 100
+
+type xyi struct {
+	X, Y int
+}
 
 type userMsgData struct {
 	sender  string
@@ -25,6 +30,7 @@ type userMsgDictData struct {
 	StartTime time.Time
 	Lock      sync.Mutex
 	RoundTime time.Time
+	Result    xyi
 }
 
 var UserMsgDict userMsgDictData
@@ -56,11 +62,10 @@ func processUserDict() {
 
 			//Convert from text to value
 			xb := []byte(args[0])
-			yb := []byte(args[1])
 			x := int(xb[0]) - 65
-			y := int(yb[0]) - 65
+			y, err := strconv.ParseInt(args[1], 10, 64)
 
-			if x < 0 || x > 90 || y < 0 || y > 90 {
+			if err != nil || x < 0 || x > 90 {
 				continue
 			}
 
@@ -70,9 +75,9 @@ func processUserDict() {
 		}
 	}
 	if count > 0 {
-		avrX := tX / count
-		avrY := tY / count
-		log.Printf("Average from %v users: %v,%v\n", count, avrX, avrY)
+		UserMsgDict.Count = int(count)
+		UserMsgDict.Result = xyi{X: int(tX / count), Y: int(tY / count)}
+		log.Printf("Average from %v users: %v,%v\n", count, UserMsgDict.Result.X, UserMsgDict.Result.Y)
 	} else {
 		log.Println("Not enough votes.")
 	}

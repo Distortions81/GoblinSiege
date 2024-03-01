@@ -34,6 +34,7 @@ func handleModCommands(msg irc.ChatMessage, command string) bool {
 		for _, item := range modCommands {
 			if strings.EqualFold(item.Name, command) {
 				item.Handle()
+				return true
 			}
 		}
 	}
@@ -46,6 +47,7 @@ func clearVotes() {
 	if UserMsgDict.Count > 0 {
 		log.Println("Clearing votes...")
 		UserMsgDict.Count = 0
+		UserMsgDict.Result = xyi{}
 		UserMsgDict.Users = make(map[int64]*userMsgData)
 	}
 	UserMsgDict.Lock.Unlock()
@@ -57,6 +59,7 @@ func startVote() {
 	UserMsgDict.StartTime = time.Now()
 	UserMsgDict.Enabled = true
 	UserMsgDict.Count = 0
+	UserMsgDict.Result = xyi{}
 	UserMsgDict.Users = make(map[int64]*userMsgData)
 	UserMsgDict.Lock.Unlock()
 }
