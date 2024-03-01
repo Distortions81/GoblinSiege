@@ -51,8 +51,6 @@ func handleUserDictMsg(msg irc.ChatMessage, command string) {
 }
 
 func processUserDict() {
-	UserMsgDict.Lock.Lock()
-	defer UserMsgDict.Lock.Unlock()
 
 	var tX, tY, count uint64
 

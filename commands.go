@@ -24,7 +24,7 @@ var modCommands []commandData = []commandData{
 	},
 	{
 		Name:   "clear",
-		Handle: endVote,
+		Handle: clearVotes,
 	},
 }
 
@@ -33,7 +33,9 @@ func handleModCommands(msg irc.ChatMessage, command string) bool {
 	if msg.Sender.IsBroadcaster || msg.Sender.IsModerator {
 		for _, item := range modCommands {
 			if strings.EqualFold(item.Name, command) {
+				UserMsgDict.Lock.Lock()
 				item.Handle()
+				UserMsgDict.Lock.Unlock()
 				return true
 			}
 		}
@@ -43,35 +45,31 @@ func handleModCommands(msg irc.ChatMessage, command string) bool {
 }
 
 func clearVotes() {
-	UserMsgDict.Lock.Lock()
 	if UserMsgDict.Count > 0 {
 		log.Println("Clearing votes...")
 		UserMsgDict.Count = 0
+		UserMsgDict.Enabled = false
 		UserMsgDict.Result = xyi{}
 		UserMsgDict.Users = make(map[int64]*userMsgData)
 	}
-	UserMsgDict.Lock.Unlock()
 }
 
 func startVote() {
-	UserMsgDict.Lock.Lock()
 	log.Println("Starting new vote...")
 	UserMsgDict.StartTime = time.Now()
 	UserMsgDict.Enabled = true
 	UserMsgDict.Count = 0
 	UserMsgDict.Result = xyi{}
 	UserMsgDict.Users = make(map[int64]*userMsgData)
-	UserMsgDict.Lock.Unlock()
 }
 
 func endVote() {
 
-	UserMsgDict.Lock.Lock()
 	if UserMsgDict.Enabled {
 		log.Println("Ending vote...")
 		UserMsgDict.Enabled = false
+		UserMsgDict.StartTime = time.Now()
 	}
-	UserMsgDict.Lock.Unlock()
 
 	processUserDict()
 }
