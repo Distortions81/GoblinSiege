@@ -8,7 +8,7 @@ func main() {
 	dbLock.Lock()
 	WriteDB() //Unlocks after serialize
 
-	UserMsgDict.Users = make(map[int64]*commandData)
+	UserMsgDict.Users = make(map[int64]*userMsgData)
 
 	go dbAutoSave()
 	go connectTwitch()

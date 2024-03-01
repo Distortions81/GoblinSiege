@@ -9,16 +9,16 @@ import (
 	"github.com/Adeithe/go-twitch/irc"
 )
 
-const maxCommandLen = 100
+const maxUserDictLen = 100
 
-type commandData struct {
+type userMsgData struct {
 	sender  string
 	command string
 	time    time.Time
 }
 
 type userMsgDictData struct {
-	Users map[int64]*commandData
+	Users map[int64]*userMsgData
 
 	Count     int
 	Enabled   bool
@@ -34,14 +34,14 @@ func handleChat(msg irc.ChatMessage) {
 	command, isCommand := strings.CutPrefix(message, "!")
 
 	if isCommand && UserMsgDict.Enabled {
-		handleUserCommand(msg, command)
+		handleUserDictMsg(msg, command)
 	}
 }
 
-func handleUserCommand(msg irc.ChatMessage, command string) {
-	cmdLen := len(command)
+func handleUserDictMsg(msg irc.ChatMessage, command string) {
+	msgLen := len(command)
 
-	if cmdLen == 0 || cmdLen > maxCommandLen {
+	if msgLen == 0 || msgLen > maxUserDictLen {
 		return
 	}
 
@@ -49,14 +49,14 @@ func handleUserCommand(msg irc.ChatMessage, command string) {
 	if UserMsgDict.Users[msg.Sender.ID] == nil {
 		UserMsgDict.Count++
 	}
-	UserMsgDict.Users[msg.Sender.ID] = &commandData{sender: msg.Sender.DisplayName, command: command, time: time.Now()}
+	UserMsgDict.Users[msg.Sender.ID] = &userMsgData{sender: msg.Sender.DisplayName, command: command, time: time.Now()}
 	UserMsgDict.Lock.Unlock()
 }
 
 func clearVotes() {
 	UserMsgDict.Lock.Lock()
 	UserMsgDict.Count = 0
-	UserMsgDict.Users = make(map[int64]*commandData)
+	UserMsgDict.Users = make(map[int64]*userMsgData)
 	UserMsgDict.Lock.Unlock()
 }
 
