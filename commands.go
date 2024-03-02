@@ -14,7 +14,7 @@ type commandData struct {
 	Handle func()
 }
 
-/* Lame workaround for initialization cycle warning */
+/* Lame workaround for initialization cycle error */
 var modCmdHelp []commandData
 
 func init() {
@@ -30,18 +30,23 @@ var modCommands []commandData = []commandData{
 		Handle: helpCommand,
 	},
 	{
+		Name:   "startGame",
+		Desc:   "Start game, voting will start and end automatically.",
+		Handle: nil,
+	},
+	{
 		Name:   "startVote",
-		Desc:   "Start a voting round.",
+		Desc:   "Manually start a voting round.",
 		Handle: startVote,
 	},
 	{
 		Name:   "endVote",
-		Desc:   "End a voting round early.",
+		Desc:   "Manually end a voting round.",
 		Handle: endVote,
 	},
 	{
 		Name:   "clearVotes",
-		Desc:   "Stop voting and clear votes.",
+		Desc:   "Stop and clear all votes.",
 		Handle: clearVotes,
 	},
 }
