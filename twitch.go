@@ -24,14 +24,23 @@ func connectTwitch() {
 
 	log.Println("Connecting to twitch...")
 	go func() {
-		err := client.Connect()
-		if err != nil {
-			panic(err)
+		for x := 0; x < 10; x++ {
+			startTime := time.Now()
+
+			err := client.Connect()
+			if err != nil {
+				panic(err)
+			}
+
+			if time.Since(startTime) < time.Minute*10 {
+				val := x * x * 2
+				time.Sleep(time.Second * time.Duration(val))
+			}
 		}
 	}()
 
-	for x := 0; x < 10; x++ {
-		msg := fmt.Sprintf("testing %v\n", x)
+	for x := 0; x < 3; x++ {
+		msg := fmt.Sprintf("testing %v...\n", x)
 		log.Println("Say: " + msg)
 		client.Say(userSettings.Channel, msg)
 		time.Sleep(time.Second * 5)
