@@ -9,35 +9,36 @@ import (
 	"github.com/Adeithe/go-twitch/irc"
 )
 
+var twitchWriter = &irc.Conn{}
+var twitchReader = &irc.Client{}
+
 func onShardMessage(shardID int, msg irc.ChatMessage) {
 
-	if !strings.EqualFold(msg.Channel, userSettings.Username) {
+	if !strings.EqualFold(msg.Channel, userSettings.UserName) {
 		//Ignore secondary channels
 		return
 	}
 
-	log.Printf("%s: %s\n", msg.Sender.DisplayName, msg.Text)
+	log.Printf("#%v: %v: %v\n", msg.Channel, msg.Sender.DisplayName, msg.Text)
 
 	handleChat(msg)
 }
 
 func connectTwitch() {
-	writer := &irc.Conn{}
-
 	readSettings()
 
 	//Connect
-	writer.SetLogin(userSettings.Username, "oauth:"+string(userSettings.AuthToken))
-	if err := writer.Connect(); err != nil {
+	twitchWriter.SetLogin(userSettings.UserName, "oauth:"+string(userSettings.AuthToken))
+	if err := twitchWriter.Connect(); err != nil {
 		panic("failed to start writer")
 	}
 
-	reader := twitch.IRC()
-	reader.OnShardReconnect(onShardReconnect)
-	reader.OnShardLatencyUpdate(onShardLatencyUpdate)
-	reader.OnShardMessage(onShardMessage)
+	twitchReader = twitch.IRC()
+	twitchReader.OnShardReconnect(onShardReconnect)
+	twitchReader.OnShardLatencyUpdate(onShardLatencyUpdate)
+	twitchReader.OnShardMessage(onShardMessage)
 
-	if err := reader.Join(userSettings.Username); err != nil {
+	if err := twitchReader.Join(userSettings.UserName); err != nil {
 		panic(err)
 	}
 

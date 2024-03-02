@@ -9,7 +9,7 @@ import (
 var userSettings settingsData
 
 type settingsData struct {
-	Username  string
+	UserName  string
 	AuthToken string
 }
 
@@ -30,8 +30,8 @@ func readSettings() {
 				return
 			}
 
-			if userSettings.AuthToken == "" || userSettings.Username == "" {
-				log.Fatal("readSettings: Missing username or token in settings.")
+			if userSettings.AuthToken == "" || userSettings.UserName == "" {
+				log.Fatal("readSettings: Missing UserName, BotName or AuthToken in settings.")
 				return
 			}
 
@@ -42,7 +42,7 @@ func readSettings() {
 
 	log.Println("No settings found, attempting to create.")
 	writeSettings()
-	log.Fatal("Please add your username and token to the settings file.")
+	log.Fatal("Please add your UserName, BotName and AuthToken to the settings file.")
 }
 
 func writeSettings() {

@@ -23,13 +23,22 @@ func main() {
 	UserMsgDict.Users = make(map[int64]*userMsgData)
 	gameMap = make(map[xyi]*objectData)
 
-	go dbAutoSave()
-	go connectTwitch()
+	connectTwitch()
 
-	time.Sleep(time.Second * 2)
-	UserMsgDict.Lock.Lock()
-	startVote()
-	UserMsgDict.Lock.Unlock()
+	err := twitchWriter.Say("xboxtv81", "testing.\n")
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Sent 'testing.' to channel xboxtv81.")
+
+	go func() {
+		time.Sleep(time.Second * 2)
+		UserMsgDict.Lock.Lock()
+		startVote()
+		UserMsgDict.Lock.Unlock()
+	}()
+
+	go dbAutoSave()
 
 	//After starting loops, wait here for process signals
 	signalHandle := make(chan os.Signal, 1)
