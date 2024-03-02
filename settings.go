@@ -9,6 +9,7 @@ import (
 var userSettings settingsData
 
 type settingsData struct {
+	Channel   string
 	UserName  string
 	AuthToken string
 }

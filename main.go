@@ -25,12 +25,6 @@ func main() {
 
 	connectTwitch()
 
-	err := twitchWriter.Say("xboxtv81", "testing.\n")
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println("Sent 'testing.' to channel xboxtv81.")
-
 	go func() {
 		time.Sleep(time.Second * 2)
 		UserMsgDict.Lock.Lock()

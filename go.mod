@@ -4,6 +4,7 @@ go 1.22.0
 
 require (
 	github.com/Adeithe/go-twitch v0.2.3
+	github.com/gempir/go-twitch-irc/v4 v4.0.0
 	github.com/hajimehoshi/ebiten/v2 v2.6.6
 	github.com/hako/durafmt v0.0.0-20210608085754-5c1018a4e16b
 	golang.org/x/image v0.12.0

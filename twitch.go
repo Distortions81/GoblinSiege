@@ -2,53 +2,29 @@ package main
 
 import (
 	"log"
-	"strings"
 	"time"
 
-	"github.com/Adeithe/go-twitch"
-	"github.com/Adeithe/go-twitch/irc"
+	"github.com/gempir/go-twitch-irc/v4"
 )
-
-var twitchWriter = &irc.Conn{}
-var twitchReader = &irc.Client{}
-
-func onShardMessage(shardID int, msg irc.ChatMessage) {
-
-	if !strings.EqualFold(msg.Channel, userSettings.UserName) {
-		//Ignore secondary channels
-		return
-	}
-
-	log.Printf("#%v: %v: %v\n", msg.Channel, msg.Sender.DisplayName, msg.Text)
-
-	handleChat(msg)
-}
 
 func connectTwitch() {
 	readSettings()
 
-	//Connect
-	twitchWriter.SetLogin(userSettings.UserName, "oauth:"+string(userSettings.AuthToken))
-	if err := twitchWriter.Connect(); err != nil {
-		panic("failed to start writer")
-	}
+	log.Println("Connecting to twitch...")
 
-	twitchReader = twitch.IRC()
-	twitchReader.OnShardReconnect(onShardReconnect)
-	twitchReader.OnShardLatencyUpdate(onShardLatencyUpdate)
-	twitchReader.OnShardMessage(onShardMessage)
+	client := twitch.NewClient(userSettings.UserName, "oauth:"+userSettings.AuthToken)
 
-	if err := twitchReader.Join(userSettings.UserName); err != nil {
+	err := client.Connect()
+	if err != nil {
 		panic(err)
 	}
 
-	log.Println("Connected to IRC!")
-}
+	client.Join(userSettings.Channel)
 
-func onShardReconnect(shardID int) {
-	log.Printf("Shard #%d reconnected\n", shardID)
-}
-
-func onShardLatencyUpdate(shardID int, latency time.Duration) {
-	log.Printf("Shard #%d has %dms ping\n", shardID, latency.Milliseconds())
+	for x := 0; x < 10; x++ {
+		msg := "testing 123..."
+		log.Printf("Say: %v\n", msg)
+		client.Say(userSettings.Channel, msg)
+		time.Sleep(time.Second * 5)
+	}
 }
