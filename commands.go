@@ -10,20 +10,38 @@ import (
 
 type commandData struct {
 	Name   string
+	Desc   string
 	Handle func()
+}
+
+/* Lame workaround for initialization cycle warning */
+var modCmdHelp []commandData
+
+func init() {
+	for _, cmd := range modCommands {
+		modCmdHelp = append(modCmdHelp, commandData{Name: cmd.Name, Desc: cmd.Desc})
+	}
 }
 
 var modCommands []commandData = []commandData{
 	{
-		Name:   "start",
+		Name:   "help",
+		Desc:   "(You are here)",
+		Handle: helpCommand,
+	},
+	{
+		Name:   "startVote",
+		Desc:   "Start a voting round.",
 		Handle: startVote,
 	},
 	{
-		Name:   "end",
+		Name:   "endVote",
+		Desc:   "End a voting round early.",
 		Handle: endVote,
 	},
 	{
-		Name:   "clear",
+		Name:   "clearVotes",
+		Desc:   "Stop voting and clear votes.",
 		Handle: clearVotes,
 	},
 }
@@ -78,4 +96,10 @@ func endVote() {
 		gameMapLock.Unlock()
 	}
 
+}
+
+func helpCommand() {
+	for _, cmd := range modCmdHelp {
+		log.Printf("!%v -- %v\n", cmd.Name, cmd.Desc)
+	}
 }
