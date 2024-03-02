@@ -31,8 +31,8 @@ func connectTwitch() {
 	}()
 
 	for x := 0; x < 10; x++ {
-		msg := "testing 123..."
-		log.Printf("Say: %v\n", msg)
+		msg := fmt.Sprintf("testing %v\n", x)
+		log.Println("Say: " + msg)
 		client.Say(userSettings.Channel, msg)
 		time.Sleep(time.Second * 5)
 	}
