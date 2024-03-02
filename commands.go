@@ -74,7 +74,6 @@ func endVote() {
 		gameMapLock.Lock()
 		if UserMsgDict.Count > 0 {
 			gameMap[UserMsgDict.Result] = &objectData{Pos: UserMsgDict.Result}
-			gameMapCount++
 		}
 		gameMapLock.Unlock()
 	}

@@ -20,9 +20,8 @@ const itemOffset = 2
 const boardPixels = boardSize * mag
 
 var (
-	gameMap      map[xyi]*objectData
-	gameMapLock  sync.Mutex
-	gameMapCount int
+	gameMap     map[xyi]*objectData
+	gameMapLock sync.Mutex
 )
 
 func drawGameBoard(screen *ebiten.Image) {
