@@ -13,12 +13,12 @@ func connectTwitch() {
 	log.Println("Connecting to twitch...")
 
 	client := twitch.NewClient(userSettings.UserName, "oauth:"+userSettings.AuthToken)
-
 	err := client.Connect()
 	if err != nil {
 		panic(err)
 	}
 
+	log.Printf("Joining channel: %v\n", userSettings.Channel)
 	client.Join(userSettings.Channel)
 
 	for x := 0; x < 10; x++ {
