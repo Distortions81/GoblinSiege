@@ -55,11 +55,11 @@ var modCommands []commandData = []commandData{
 
 func handleModCommands(msg twitch.PrivateMessage, command string) bool {
 
-	if msg.User.Name == "xboxtv81" {
+	if strings.EqualFold(msg.User.Name, userSettings.UserName) {
 		for _, item := range modCommands {
 			if strings.EqualFold(item.Name, command) {
 				if item.Handle == nil {
-					sayLog("Command %v has nil func.", item.Name)
+					sayLog("Command %v%v has nil func.", userSettings.CmdPrefix, item.Name)
 					continue
 				}
 				UserMsgDict.Lock.Lock()
@@ -112,7 +112,7 @@ func endVote() {
 func helpCommand() {
 	var buf string
 	for _, cmd := range modCmdHelp {
-		buf = buf + fmt.Sprintf("!%v -- %v, ", cmd.Name, cmd.Desc)
+		buf = buf + fmt.Sprintf("%v%v -- %v, ", userSettings.CmdPrefix, cmd.Name, cmd.Desc)
 	}
 	fSay(buf)
 }

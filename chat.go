@@ -1,7 +1,6 @@
 package main
 
 import (
-	"goTwitchGame/sclean"
 	"strings"
 
 	"github.com/gempir/go-twitch-irc/v4"
@@ -9,10 +8,8 @@ import (
 
 func handleChat(msg twitch.PrivateMessage) {
 
-	qlog("%v: %v", msg.User.DisplayName, msg.Message)
-
-	message := sclean.StripControlAndSpecial(msg.Message)
-	command, isCommand := strings.CutPrefix(message, "!")
+	qlog("Chat: %v: %v", msg.User.DisplayName, msg.Message)
+	command, isCommand := strings.CutPrefix(msg.Message, userSettings.CmdPrefix)
 
 	if isCommand {
 		if handleModCommands(msg, command) {

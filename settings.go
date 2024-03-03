@@ -9,9 +9,9 @@ import (
 var userSettings settingsData
 
 type settingsData struct {
-	Channel   string
 	UserName  string
 	AuthToken string
+	CmdPrefix string
 }
 
 func readSettings() {
@@ -34,6 +34,10 @@ func readSettings() {
 			if userSettings.AuthToken == "" || userSettings.UserName == "" {
 				log.Fatal("readSettings: Missing UserName, BotName or AuthToken in settings.")
 				return
+			}
+
+			if userSettings.CmdPrefix == "" {
+				userSettings.CmdPrefix = "!"
 			}
 
 			writeSettings()

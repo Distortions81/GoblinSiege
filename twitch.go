@@ -15,7 +15,7 @@ var client *twitch.Client
 
 func fSay(format string, args ...interface{}) {
 	buf := fmt.Sprintf(format, args...)
-	client.Say(userSettings.Channel, buf)
+	client.Say(userSettings.UserName, buf)
 }
 
 func connectTwitch() {
@@ -25,8 +25,8 @@ func connectTwitch() {
 
 	client.OnPrivateMessage(handleChat)
 
-	qlog("Joining channel: %v", userSettings.Channel)
-	client.Join(userSettings.Channel)
+	qlog("Joining channel: %v", userSettings.UserName)
+	client.Join(userSettings.UserName)
 
 	qlog("Connecting to twitch...")
 	go func() {

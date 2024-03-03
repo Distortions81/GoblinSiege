@@ -13,5 +13,5 @@ func qlog(format string, args ...interface{}) {
 func sayLog(format string, args ...interface{}) {
 	buf := fmt.Sprintf(format, args...)
 	log.Print(buf)
-	client.Say(userSettings.Channel, buf)
+	client.Say(userSettings.UserName, buf)
 }
