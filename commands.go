@@ -59,7 +59,8 @@ func handleModCommands(msg twitch.PrivateMessage, command string) bool {
 		for _, item := range modCommands {
 			if strings.EqualFold(item.Name, command) {
 				if item.Handle == nil {
-					qlog("Command %v has nil func.", item.Name)
+					sayLog("Command %v has nil func.", item.Name)
+					continue
 				}
 				UserMsgDict.Lock.Lock()
 				item.Handle()
