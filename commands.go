@@ -34,7 +34,12 @@ var modCommands []commandData = []commandData{
 	{
 		Name:   "startGame",
 		Desc:   "Start game, voting will start and end automatically",
-		Handle: nil,
+		Handle: startGame,
+	},
+	{
+		Name:   "endGame",
+		Desc:   "End game and clear votes.",
+		Handle: endGame,
 	},
 	{
 		Name:   "startVote",
@@ -71,6 +76,35 @@ func handleModCommands(msg twitch.PrivateMessage, command string) bool {
 	}
 
 	return false
+}
+
+func startGame() {
+	qlog("Starting game...")
+
+	//Clear game board
+	gameMapLock.Lock()
+	gameMap = make(map[xyi]*objectData)
+	gameMapLock.Unlock()
+
+	//Reset votes
+	UserMsgDict.Count = 0
+	UserMsgDict.Voting = false
+	UserMsgDict.Result = xyi{}
+	UserMsgDict.Users = make(map[int64]*userMsgData)
+
+	UserMsgDict.GameRunning = true
+
+}
+
+func endGame() {
+	qlog("Stopping game...")
+
+	UserMsgDict.Count = 0
+	UserMsgDict.Voting = false
+	UserMsgDict.Result = xyi{}
+	UserMsgDict.Users = make(map[int64]*userMsgData)
+	UserMsgDict.GameRunning = false
+
 }
 
 func clearVotes() {

@@ -24,6 +24,7 @@ type userMsgData struct {
 type userMsgDictData struct {
 	Users map[int64]*userMsgData
 
+	GameRunning bool
 	Count       int
 	Voting      bool
 	GameStarted bool
