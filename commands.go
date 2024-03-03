@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Adeithe/go-twitch/irc"
+	"github.com/gempir/go-twitch-irc/v4"
 )
 
 type commandData struct {
@@ -29,36 +29,38 @@ func init() {
 var modCommands []commandData = []commandData{
 	{
 		Name:   "modHelp",
-		Desc:   "(You are here)",
 		Handle: helpCommand,
 	},
 	{
 		Name:   "startGame",
-		Desc:   "Start game, voting will start and end automatically.",
+		Desc:   "Start game, voting will start and end automatically",
 		Handle: nil,
 	},
 	{
 		Name:   "startVote",
-		Desc:   "Manually start a voting round.",
+		Desc:   "Manually start a voting round",
 		Handle: startVote,
 	},
 	{
 		Name:   "endVote",
-		Desc:   "Manually end a voting round.",
+		Desc:   "Manually end a voting round",
 		Handle: endVote,
 	},
 	{
 		Name:   "clearVotes",
-		Desc:   "Stop and clear all votes.",
+		Desc:   "Stop and clear all votes",
 		Handle: clearVotes,
 	},
 }
 
-func handleModCommands(msg irc.ChatMessage, command string) bool {
+func handleModCommands(msg twitch.PrivateMessage, command string) bool {
 
-	if msg.Sender.IsBroadcaster || msg.Sender.IsModerator {
+	if msg.User.Name == "xboxtv81" {
 		for _, item := range modCommands {
 			if strings.EqualFold(item.Name, command) {
+				if item.Handle == nil {
+					qlog("Command %v has nil func.", item.Name)
+				}
 				UserMsgDict.Lock.Lock()
 				item.Handle()
 				UserMsgDict.Lock.Unlock()

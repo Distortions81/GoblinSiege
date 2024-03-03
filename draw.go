@@ -32,6 +32,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			text.Draw(screen, buf, monoFont, 10, 30, color.White)
 		} else if time.Since(UserMsgDict.StartTime) < time.Second*10 {
 			text.Draw(screen, "Not enough votes, stopped.", monoFont, 10, 30, color.White)
+		} else {
+			text.Draw(screen, "No game active.", monoFont, 10, 30, color.White)
 		}
 	}
 }

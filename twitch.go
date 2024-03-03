@@ -2,10 +2,14 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/gempir/go-twitch-irc/v4"
 )
+
+const maxConsecutiveReconnects = 10
+const reconnectLimiterTimeout = time.Minute * 10
 
 var client *twitch.Client
 
@@ -19,16 +23,14 @@ func connectTwitch() {
 
 	client = twitch.NewClient(userSettings.UserName, "oauth:"+userSettings.AuthToken)
 
-	client.OnPrivateMessage(func(message twitch.PrivateMessage) {
-		qlog("%v: %v\n", message.User.DisplayName, message.Message)
-	})
+	client.OnPrivateMessage(handleChat)
 
 	qlog("Joining channel: %v", userSettings.Channel)
 	client.Join(userSettings.Channel)
 
 	qlog("Connecting to twitch...")
 	go func() {
-		for x := 0; x < 10; x++ {
+		for x := 0; x < maxConsecutiveReconnects; x++ {
 			startTime := time.Now()
 
 			err := client.Connect()
@@ -36,10 +38,18 @@ func connectTwitch() {
 				panic(err)
 			}
 
-			if time.Since(startTime) < time.Minute*10 {
-				val := x * x * 2
+			if time.Since(startTime) < reconnectLimiterTimeout {
+				val := x * x * 2 //Increasing delay
 				time.Sleep(time.Second * time.Duration(val))
+			} else {
+				//We were connected long enough that we can reset the reconnect limiter
+				x = 0
 			}
 		}
 	}()
+}
+
+func strToID(input string) int64 {
+	userid, _ := strconv.ParseInt(input, 10, 64)
+	return userid
 }

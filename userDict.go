@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Adeithe/go-twitch/irc"
+	"github.com/gempir/go-twitch-irc/v4"
 )
 
 const maxCommandLen = 100
@@ -37,18 +37,20 @@ var (
 	UserMsgDict userMsgDictData
 )
 
-func handleUserDictMsg(msg irc.ChatMessage, command string) {
+func handleUserDictMsg(msg twitch.PrivateMessage, command string) {
 	msgLen := len(command)
 
 	if msgLen == 0 || msgLen > maxCommandLen {
 		return
 	}
 
+	userid := strToID(msg.User.ID)
+
 	UserMsgDict.Lock.Lock()
-	if UserMsgDict.Users[msg.Sender.ID] == nil {
+	if UserMsgDict.Users[userid] == nil {
 		UserMsgDict.Count++
 	}
-	UserMsgDict.Users[msg.Sender.ID] = &userMsgData{sender: msg.Sender.DisplayName, command: command, time: time.Now()}
+	UserMsgDict.Users[userid] = &userMsgData{sender: msg.User.DisplayName, command: command, time: time.Now()}
 	UserMsgDict.Lock.Unlock()
 }
 
