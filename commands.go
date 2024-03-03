@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"strings"
 	"time"
 
@@ -19,13 +19,16 @@ var modCmdHelp []commandData
 
 func init() {
 	for _, cmd := range modCommands {
+		if cmd.Name == "modHelp" {
+			continue
+		}
 		modCmdHelp = append(modCmdHelp, commandData{Name: cmd.Name, Desc: cmd.Desc})
 	}
 }
 
 var modCommands []commandData = []commandData{
 	{
-		Name:   "help",
+		Name:   "modHelp",
 		Desc:   "(You are here)",
 		Handle: helpCommand,
 	},
@@ -69,7 +72,7 @@ func handleModCommands(msg irc.ChatMessage, command string) bool {
 
 func clearVotes() {
 	if UserMsgDict.Count > 0 {
-		log.Println("Clearing votes...")
+		qlog("Clearing votes...")
 		UserMsgDict.Count = 0
 		UserMsgDict.Voting = false
 		UserMsgDict.Result = xyi{}
@@ -78,7 +81,7 @@ func clearVotes() {
 }
 
 func startVote() {
-	log.Println("Starting new vote...")
+	qlog("Starting new vote...")
 	UserMsgDict.StartTime = time.Now()
 	UserMsgDict.Voting = true
 	UserMsgDict.Count = 0
@@ -90,7 +93,7 @@ func endVote() {
 
 	processUserDict()
 	if UserMsgDict.Voting {
-		log.Println("Ending vote...")
+		qlog("Ending vote...")
 		UserMsgDict.Voting = false
 		UserMsgDict.StartTime = time.Now()
 
@@ -104,7 +107,9 @@ func endVote() {
 }
 
 func helpCommand() {
+	var buf string
 	for _, cmd := range modCmdHelp {
-		log.Printf("!%v -- %v\n", cmd.Name, cmd.Desc)
+		buf = buf + fmt.Sprintf("!%v -- %v, ", cmd.Name, cmd.Desc)
 	}
+	fSay(buf)
 }

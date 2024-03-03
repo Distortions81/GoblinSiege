@@ -37,7 +37,7 @@ func WriteDB() {
 	}
 
 	dbLock.Unlock()
-	log.Printf("serialize db took: %v\n", durafmt.Parse(time.Since(startTime)).LimitFirstN(2))
+	qlog("serialize db took: %v", durafmt.Parse(time.Since(startTime)).LimitFirstN(2))
 
 	_, err := os.Create(tempPath)
 
@@ -60,7 +60,7 @@ func WriteDB() {
 		return
 	}
 
-	log.Printf("Wrote db took: %v\n", durafmt.Parse(time.Since(startTime)).LimitFirstN(2))
+	qlog("Wrote db took: %v", durafmt.Parse(time.Since(startTime)).LimitFirstN(2))
 }
 
 /* Read in cached list of Discord players with specific roles */
@@ -76,7 +76,7 @@ func readDB() {
 
 		if file != nil && err == nil {
 
-			log.Println("Reading db.")
+			qlog("Reading db.")
 
 			err := json.Unmarshal([]byte(file), &Players)
 			if len(Players) == 0 {
@@ -87,7 +87,7 @@ func readDB() {
 				log.Fatal("Readcfg.RoleList: Unmarshal failure")
 			}
 		} else {
-			log.Println("No database file.")
+			qlog("No database file.")
 		}
 	}
 }

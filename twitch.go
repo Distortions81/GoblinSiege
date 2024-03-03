@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/gempir/go-twitch-irc/v4"
@@ -10,19 +9,24 @@ import (
 
 var client *twitch.Client
 
+func fSay(format string, args ...interface{}) {
+	buf := fmt.Sprintf(format, args...)
+	client.Say(userSettings.Channel, buf)
+}
+
 func connectTwitch() {
 	readSettings()
 
 	client = twitch.NewClient(userSettings.UserName, "oauth:"+userSettings.AuthToken)
 
 	client.OnPrivateMessage(func(message twitch.PrivateMessage) {
-		fmt.Printf("%v: %v\n", message.User.DisplayName, message.Message)
+		qlog("%v: %v\n", message.User.DisplayName, message.Message)
 	})
 
-	log.Printf("Joining channel: %v\n", userSettings.Channel)
+	qlog("Joining channel: %v", userSettings.Channel)
 	client.Join(userSettings.Channel)
 
-	log.Println("Connecting to twitch...")
+	qlog("Connecting to twitch...")
 	go func() {
 		for x := 0; x < 10; x++ {
 			startTime := time.Now()
@@ -38,12 +42,4 @@ func connectTwitch() {
 			}
 		}
 	}()
-
-	for x := 1; x <= 3; x++ {
-		msg := fmt.Sprintf("testing %v...", x)
-		log.Println("Say: " + msg)
-		client.Say(userSettings.Channel, msg)
-		time.Sleep(time.Second * 5)
-	}
-
 }

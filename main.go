@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -24,14 +23,6 @@ func main() {
 	gameMap = make(map[xyi]*objectData)
 
 	connectTwitch()
-
-	go func() {
-		time.Sleep(time.Second * 2)
-		UserMsgDict.Lock.Lock()
-		startVote()
-		UserMsgDict.Lock.Unlock()
-	}()
-
 	go dbAutoSave()
 
 	//After starting loops, wait here for process signals
@@ -42,7 +33,7 @@ func main() {
 
 	ServerRunning = false
 
-	log.Println("Saving DB...")
+	qlog("Saving DB...")
 	dbLock.Lock()
 	WriteDB()
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"strconv"
 	"strings"
 	"sync"
@@ -78,9 +77,8 @@ func processUserDict() {
 	if count > 0 {
 		UserMsgDict.Count = int(count)
 		UserMsgDict.Result = xyi{X: int(tX / count), Y: int(tY / count)}
-		log.Printf("Average from %v users: %v,%v\n", count, UserMsgDict.Result.X, UserMsgDict.Result.Y)
 	} else {
-		log.Println("Not enough votes.")
+		qlog("Not enough votes.")
 	}
 }
 

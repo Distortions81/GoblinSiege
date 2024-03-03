@@ -23,7 +23,7 @@ func readSettings() {
 		file, err := os.ReadFile(authFile)
 
 		if file != nil && err == nil {
-			log.Println("Reading settings.")
+			qlog("Reading settings.")
 
 			err := json.Unmarshal([]byte(file), &userSettings)
 			if err != nil {
@@ -41,7 +41,7 @@ func readSettings() {
 		}
 	}
 
-	log.Println("No settings found, attempting to create.")
+	qlog("No settings found, attempting to create.")
 	writeSettings()
 	log.Fatal("Please add your UserName, BotName and AuthToken to the settings file.")
 }
