@@ -20,6 +20,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	if UserMsgDict.Voting && time.Since(UserMsgDict.StartTime) > roundTime {
 		endVote()
+		if UserMsgDict.GameRunning {
+			startVote()
+		}
 	}
 
 	if UserMsgDict.Voting {
