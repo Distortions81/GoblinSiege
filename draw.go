@@ -18,11 +18,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	UserMsgDict.Lock.Lock()
 	defer UserMsgDict.Lock.Unlock()
 
-	if UserMsgDict.Voting && time.Since(UserMsgDict.StartTime) > roundTime {
+	if UserMsgDict.Voting &&
+		time.Since(UserMsgDict.StartTime) > roundTime {
 		endVote()
-		if UserMsgDict.GameRunning {
-			startVote()
-		}
+	}
+	if UserMsgDict.GameRunning &&
+		time.Since(UserMsgDict.StartTime) > restTime+roundTime {
+		startVote()
 	}
 
 	if UserMsgDict.Voting {
@@ -33,9 +35,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		if UserMsgDict.Count > 0 {
 			buf := fmt.Sprintf("Result: %v,%v", UserMsgDict.Result.X, UserMsgDict.Result.Y)
 			text.Draw(screen, buf, monoFont, 10, 30, color.White)
-		} else if time.Since(UserMsgDict.StartTime) < time.Second*10 {
-			text.Draw(screen, "Not enough votes, stopped.", monoFont, 10, 30, color.White)
-		} else {
+		} else if !UserMsgDict.GameRunning {
 			text.Draw(screen, "No game active.", monoFont, 10, 30, color.White)
 		}
 	}
