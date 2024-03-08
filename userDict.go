@@ -68,11 +68,11 @@ func processUserDict() {
 			if len(xb) == 0 {
 				break
 			}
-			x := int(xb[0]) - 64
-			y, err := strconv.ParseInt(args[1], 10, 64)
+			x, erra := strconv.ParseInt(args[0], 10, 64)
+			y, errb := strconv.ParseInt(args[1], 10, 64)
 
 			qlog("user: %v, x: %v, y: %v", user.sender, x, y)
-			if err != nil ||
+			if erra != nil || errb != nil ||
 				x < 1 || x > boardSize ||
 				y < 1 || y > boardSize {
 				continue
