@@ -65,6 +65,9 @@ func processUserDict() {
 
 			//Convert from text to value
 			xb := []byte(args[0])
+			if len(xb) == 0 {
+				break
+			}
 			x := int(xb[0]) - 64
 			y, err := strconv.ParseInt(args[1], 10, 64)
 
