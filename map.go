@@ -13,9 +13,9 @@ type objectData struct {
 	Type int
 }
 
-const size = 22
+const size = 23
 const mag = size + 1
-const boardSize = 26
+const boardSize = 25
 const itemOffset = 2
 const boardPixels = ((boardSize + 1) * mag) + 2
 
