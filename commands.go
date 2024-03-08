@@ -94,6 +94,7 @@ func startGame() {
 
 	UserMsgDict.GameRunning = true
 
+	startVote()
 }
 
 func endGame() {
