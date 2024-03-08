@@ -13,7 +13,7 @@ type objectData struct {
 	Type int
 }
 
-const size = 23
+const size = 22
 const mag = size + 1
 const boardSize = 25
 const itemOffset = 2
@@ -29,7 +29,12 @@ func drawGameBoard(screen *ebiten.Image) {
 	gameMapLock.Lock()
 	defer gameMapLock.Unlock()
 
-	vector.DrawFilledRect(screen, size*itemOffset, size*itemOffset, boardPixels, boardPixels, ColorVeryDarkGreen, true)
+	//Bg rect
+	vector.DrawFilledRect(screen, size*itemOffset, size*itemOffset, boardPixels*2, boardPixels, ColorVeryDarkGreen, true)
+
+	//Divider
+	vector.DrawFilledRect(screen, size*itemOffset+boardPixels, size*itemOffset, 1, boardPixels, ColorGreen, true)
+
 	for _, item := range gameMap {
 		vector.DrawFilledCircle(screen, float32((item.Pos.X+itemOffset)*mag), float32((item.Pos.Y+itemOffset)*mag), size, color.White, true)
 	}
