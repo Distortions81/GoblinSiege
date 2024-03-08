@@ -13,11 +13,11 @@ type objectData struct {
 	Type int
 }
 
-const mag = 24
-const size = 23
-const boardSize = 25
+const size = 22
+const mag = size + 1
+const boardSize = 26
 const itemOffset = 2
-const boardPixels = boardSize * mag
+const boardPixels = ((boardSize + 1) * mag) + 2
 
 var (
 	gameMap     map[xyi]*objectData
