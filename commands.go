@@ -136,8 +136,15 @@ func endVote() {
 		UserMsgDict.StartTime = time.Now()
 
 		gameMapLock.Lock()
-		if UserMsgDict.Count > 0 {
+		if UserMsgDict.Count > 0 &&
+			gameMap[UserMsgDict.Result] == nil &&
+			UserMsgDict.Result.X > 0 &&
+			UserMsgDict.Result.X <= boardSize &&
+			UserMsgDict.Result.Y > 0 &&
+			UserMsgDict.Result.Y <= boardSize {
+
 			gameMap[UserMsgDict.Result] = &objectData{Pos: UserMsgDict.Result}
+
 		}
 		gameMapLock.Unlock()
 	}
