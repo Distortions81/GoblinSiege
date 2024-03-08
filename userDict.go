@@ -71,14 +71,19 @@ func processUserDict() {
 			x := int(xb[0]) - 64
 			y, err := strconv.ParseInt(args[1], 10, 64)
 
-			if err != nil || x < 1 || x > boardSize {
+			qlog("user: %v, x: %v, y: %v", user.sender, x, y)
+			if err != nil ||
+				x < 1 || x > boardSize ||
+				y < 1 || y > boardSize {
 				continue
 			}
 
 			tX += uint64(x)
 			tY += uint64(y)
+
 			count++
 		}
+
 	}
 	if count > 0 {
 		UserMsgDict.Count = int(count)
