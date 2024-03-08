@@ -9,7 +9,8 @@ import (
 
 var ServerRunning bool = true
 var ServerIsStopped bool
-var roundTime time.Duration = time.Second * 10
+var roundTime time.Duration = time.Second * 15
+var restTime time.Duration = time.Second * 5
 
 func main() {
 	go startEbiten()
@@ -24,6 +25,8 @@ func main() {
 
 	connectTwitch()
 	go dbAutoSave()
+
+	startGame()
 
 	//After starting loops, wait here for process signals
 	signalHandle := make(chan os.Signal, 1)
