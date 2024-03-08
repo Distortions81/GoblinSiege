@@ -29,7 +29,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	if UserMsgDict.Voting {
 		vector.DrawFilledRect(screen, 0, 0, 400, 100, ColorSmoke, true)
-		buf := fmt.Sprintf("Vote now: %vletter number\nVotes: %v\n%v remaining...", userSettings.CmdPrefix, UserMsgDict.Count, durafmt.Parse(time.Until(UserMsgDict.StartTime.Add(roundTime)).Round(time.Second)).LimitFirstN(1))
+		buf := fmt.Sprintf("Vote now: %v1 1 -- (x,y 1-25)\nVotes: %v\n%v remaining...", userSettings.CmdPrefix, UserMsgDict.Count, durafmt.Parse(time.Until(UserMsgDict.StartTime.Add(roundTime)).Round(time.Second)).LimitFirstN(1))
 		text.Draw(screen, buf, monoFont, 10, 30, color.White)
 	} else {
 		if UserMsgDict.Count > 0 {
@@ -38,5 +38,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		} else if !UserMsgDict.GameRunning {
 			text.Draw(screen, "No game active.", monoFont, 10, 30, color.White)
 		}
+
 	}
 }
