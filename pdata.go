@@ -11,32 +11,35 @@ import (
 	"github.com/hako/durafmt"
 )
 
-var dbLock sync.Mutex
-var dbDirty bool
+var players playersListData
 
-var Players map[int64]*playerData
+type playersListData struct {
+	lock  sync.Mutex
+	dirty bool
+	idmap map[int64]*playerData
+}
 
 type playerData struct {
 	Points int
 }
 
 // This unlocks dbLock after serialize
-func WriteDB() {
+func writePlayers() {
 
 	startTime := time.Now()
 
-	tempPath := dbFile + ".tmp"
-	finalPath := dbFile
+	tempPath := playersFile + ".tmp"
+	finalPath := playersFile
 
 	outbuf := new(bytes.Buffer)
 	enc := json.NewEncoder(outbuf)
 
-	if err := enc.Encode(Players); err != nil {
-		log.Fatal("WriteGCfg: enc.Encode failure")
+	if err := enc.Encode(players.idmap); err != nil {
+		log.Fatal("writePlayers: enc.Encode failure")
 		return
 	}
 
-	dbLock.Unlock()
+	players.lock.Unlock()
 	qlog("serialize db took: %v", durafmt.Parse(time.Since(startTime)).LimitFirstN(2))
 
 	_, err := os.Create(tempPath)
@@ -64,27 +67,27 @@ func WriteDB() {
 }
 
 /* Read in cached list of Discord players with specific roles */
-func readDB() {
-	dbLock.Lock()
-	defer dbLock.Unlock()
+func readPlayers() {
+	players.lock.Lock()
+	defer players.lock.Unlock()
 
-	_, err := os.Stat(dbFile)
+	_, err := os.Stat(playersFile)
 	notfound := os.IsNotExist(err)
 
 	if !notfound { /* Otherwise just read in the config */
-		file, err := os.ReadFile(dbFile)
+		file, err := os.ReadFile(playersFile)
 
 		if file != nil && err == nil {
 
 			qlog("Reading db.")
 
-			err := json.Unmarshal([]byte(file), &Players)
-			if len(Players) == 0 {
+			err := json.Unmarshal([]byte(file), &players.idmap)
+			if len(players.idmap) == 0 {
 				//Empty database, create a map
-				Players = make(map[int64]*playerData)
+				players.idmap = make(map[int64]*playerData)
 			}
 			if err != nil {
-				log.Fatal("Readcfg.RoleList: Unmarshal failure")
+				log.Fatal("readPlayers.RoleList: Unmarshal failure")
 			}
 		} else {
 			qlog("No database file.")

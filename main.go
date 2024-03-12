@@ -1,29 +1,39 @@
 package main
 
 import (
+	"flag"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 )
 
-var ServerRunning bool = true
-var ServerIsStopped bool
-var roundTime time.Duration = time.Second * 15
-var restTime time.Duration = time.Second * 5
+var (
+	ServerRunning   bool = true
+	ServerIsStopped bool
+	roundTime       time.Duration = time.Second * 15
+	restTime        time.Duration = time.Second * 5
+
+	skipTwitch *bool
+)
 
 func main() {
+	skipTwitch = flag.Bool("skip", false, "don't connect to twitch")
+	flag.Parse()
+
 	go startEbiten()
 
-	readDB()
+	readPlayers()
 
-	dbLock.Lock()
-	WriteDB() //Unlocks after serialize
+	players.lock.Lock()
+	writePlayers() //Unlocks after serialize
 
 	UserMsgDict.Users = make(map[int64]*userMsgData)
 	gameMap = make(map[xyi]*objectData)
 
-	connectTwitch()
+	if !*skipTwitch {
+		connectTwitch()
+	}
 	go dbAutoSave()
 
 	startGame()
@@ -37,20 +47,20 @@ func main() {
 	ServerRunning = false
 
 	qlog("Saving DB...")
-	dbLock.Lock()
-	WriteDB()
+	players.lock.Lock()
+	writePlayers()
 }
 
 func dbAutoSave() {
 	for ServerRunning {
 
-		dbLock.Lock()
-		if dbDirty {
-			dbDirty = false
-			WriteDB() //This unlocks after serialize
+		players.lock.Lock()
+		if players.dirty {
+			players.dirty = false
+			writePlayers() //This unlocks after serialize
 		} else {
 			//No write to do, unlock
-			dbLock.Unlock()
+			players.lock.Unlock()
 		}
 
 		time.Sleep(time.Second * 30)

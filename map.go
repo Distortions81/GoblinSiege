@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
@@ -38,4 +39,6 @@ func drawGameBoard(screen *ebiten.Image) {
 	for _, item := range gameMap {
 		vector.DrawFilledCircle(screen, float32((item.Pos.X+itemOffset)*mag), float32((item.Pos.Y+itemOffset)*mag), size/2, color.White, true)
 	}
+
+	text.Draw(screen, "Audience", monoFont, boardPixels/2, boardPixels+80, color.White)
 }

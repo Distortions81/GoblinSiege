@@ -95,20 +95,20 @@ func processUserDict() {
 
 func setUserScore(id int64, score int) {
 
-	dbLock.Lock()
-	defer dbLock.Unlock()
+	players.lock.Lock()
+	defer players.lock.Unlock()
 
-	Players[id] = &playerData{Points: score}
-	dbDirty = true
+	players.idmap[id] = &playerData{Points: score}
+	players.dirty = true
 }
 
 func getUserScore(id int64) (score int, found bool) {
 
-	dbLock.Lock()
-	defer dbLock.Unlock()
+	players.lock.Lock()
+	defer players.lock.Unlock()
 
-	if Players[id] != nil {
-		return Players[id].Points, true
+	if players.idmap[id] != nil {
+		return players.idmap[id].Points, true
 	}
 	return 0, false
 }
