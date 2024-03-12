@@ -28,8 +28,12 @@ func init() {
 
 var modCommands []commandData = []commandData{
 	{
-		Name:   "modHelp",
+		Name:   "help",
 		Handle: helpCommand,
+	},
+	{
+		Name:   "modHelp",
+		Handle: modHelpCommand,
 	},
 	{
 		Name:   "startGame",
@@ -151,10 +155,15 @@ func endVote() {
 
 }
 
-func helpCommand() {
+func modHelpCommand() {
 	var buf string
 	for _, cmd := range modCmdHelp {
 		buf = buf + fmt.Sprintf("%v%v -- %v, ", userSettings.CmdPrefix, cmd.Name, cmd.Desc)
 	}
+	fSay(buf)
+}
+
+func helpCommand() {
+	buf := fmt.Sprintf("%vx y", userSettings.CmdPrefix)
 	fSay(buf)
 }
