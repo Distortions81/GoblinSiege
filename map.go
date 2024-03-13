@@ -27,6 +27,8 @@ type objectData struct {
 var (
 	gameMap     map[xyi]*objectData
 	gameMapLock sync.Mutex
+	boardCache  *ebiten.Image
+	boardCached bool
 )
 
 func drawGameBoard(screen *ebiten.Image) {
@@ -34,42 +36,52 @@ func drawGameBoard(screen *ebiten.Image) {
 	gameMapLock.Lock()
 	defer gameMapLock.Unlock()
 
-	//Draw left side bg red
-	for x := 0; x < boardSize; x++ {
-		for y := 0; y < boardSize; y++ {
-			color := ColorDarkRed
-			if (x+y)%2 == 0 {
-				color = ColorRed
-			}
-			vector.DrawFilledRect(screen, float32(mag*x)+offsetPixels, float32(mag*y)+offsetPixels, size, size, color, true)
-		}
-	}
+	if !boardCached {
+		boardCache.Clear()
 
-	//Draw right side bg blue
-	for x := 0; x < boardSize; x++ {
-		for y := 0; y < boardSize; y++ {
-			color := ColorBlue
-			if (x+y)%2 == 0 {
-				color = ColorDarkBlue
+		//Draw left side bg red
+		for x := 0; x < boardSize; x++ {
+			for y := 0; y < boardSize; y++ {
+				tColor := ColorDarkRed
+				if (x+y)%2 == 0 {
+					tColor = ColorRed
+				}
+				vector.DrawFilledRect(boardCache, float32(mag*x)+offsetPixels, float32(mag*y)+offsetPixels, size, size, tColor, true)
+
+				//Draw coords
+				if y == 0 {
+					buf := fmt.Sprintf("%v", x+1)
+					text.Draw(boardCache, buf, monoFontSmall, (mag*x)+offsetPixels+5, (mag*y)+offsetPixels-3, color.White)
+				}
+				if x == 0 {
+					buf := fmt.Sprintf("%2v", y+1)
+					text.Draw(boardCache, buf, monoFontSmall, (mag*x)+(offsetPixels/2)+5, (mag*y)+offsetPixels+15, color.White)
+				}
+
+				//XY Labels
+				text.Draw(boardCache, "X", monoFont, boardPixels/2, 25, color.White)
+				text.Draw(boardCache, "Y", monoFont, 5, (boardPixels/2)+65, color.White)
 			}
-			vector.DrawFilledRect(screen, float32(mag*x)+(offsetPixels)+boardPixels, float32(mag*y)+offsetPixels, size, size, color, true)
 		}
+
+		//Draw right side bg blue
+		for x := 0; x < boardSize; x++ {
+			for y := 0; y < boardSize; y++ {
+				color := ColorBlue
+				if (x+y)%2 == 0 {
+					color = ColorDarkBlue
+				}
+				vector.DrawFilledRect(boardCache, float32(mag*x)+(offsetPixels)+boardPixels, float32(mag*y)+offsetPixels, size, size, color, true)
+			}
+		}
+		boardCached = true
 	}
+	screen.DrawImage(boardCache, nil)
 
 	//Draw towers
 	for _, item := range gameMap {
 		vector.DrawFilledCircle(screen, float32((item.Pos.X+itemOffset)*mag)-(size/1.5), float32((item.Pos.Y+itemOffset)*mag)-(size/1.5), size/2, color.White, true)
 	}
-
-	//Draw x/y info
-	buf := fmt.Sprintf("%v", boardSize)
-	text.Draw(screen, "Y", monoFont, 25, (boardPixels/2)+60, color.White)
-	text.Draw(screen, "0", monoFont, 25, 60, color.White)
-	text.Draw(screen, buf, monoFont, 12, boardPixels+40, color.White)
-
-	text.Draw(screen, "X", monoFont, 45+(boardPixels/2), 40, color.White)
-	text.Draw(screen, "0", monoFont, 45, 40, color.White)
-	text.Draw(screen, buf, monoFont, boardPixels+20, 40, color.White)
 
 	//Draw board lables
 	text.Draw(screen, "Audience", monoFont, boardPixels/2, boardPixels+65, color.White)

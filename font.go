@@ -8,7 +8,8 @@ import (
 )
 
 var (
-	monoFont font.Face
+	monoFont      font.Face
+	monoFontSmall font.Face
 )
 
 func init() {
@@ -28,6 +29,16 @@ func init() {
 	/* Mono font */
 	monoFont, err = opentype.NewFace(mono, &opentype.FaceOptions{
 		Size:    24,
+		DPI:     72,
+		Hinting: font.HintingFull,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	/* Mono font small */
+	monoFontSmall, err = opentype.NewFace(mono, &opentype.FaceOptions{
+		Size:    12,
 		DPI:     72,
 		Hinting: font.HintingFull,
 	})

@@ -13,6 +13,9 @@ import (
 
 func (g *Game) Draw(screen *ebiten.Image) {
 
+	updateGameSizeLock.Lock()
+	defer updateGameSizeLock.Unlock()
+
 	UserMsgDict.Lock.Lock()
 	defer UserMsgDict.Lock.Unlock()
 

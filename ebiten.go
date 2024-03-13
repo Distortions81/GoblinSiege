@@ -26,6 +26,7 @@ func startEbiten() {
 	ebiten.SetWindowSize(ScreenWidth, ScreenHeight)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetWindowTitle("goTwitchGame")
+	boardCache = ebiten.NewImage(ScreenWidth, ScreenHeight)
 
 	/* Start ebiten */
 	if err := ebiten.RunGameWithOptions(newGame(), nil); err != nil {
@@ -46,6 +47,9 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 	if outsideWidth != ScreenWidth || outsideHeight != ScreenHeight {
 		ScreenWidth, ScreenHeight = outsideWidth, outsideHeight
+
+		boardCache = ebiten.NewImage(ScreenWidth, ScreenHeight)
+		boardCached = false
 	}
 
 	return ScreenWidth, ScreenHeight
