@@ -30,13 +30,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		buf := fmt.Sprintf("Vote now: %vx,y\nVotes: %v\n%v remaining...", userSettings.CmdPrefix, UserMsgDict.Count, durafmt.Parse(time.Until(UserMsgDict.StartTime.Add(roundTime)).Round(time.Second)).LimitFirstN(1))
 		text.Draw(screen, buf, monoFont, 10, ScreenHeight-100+30, color.White)
 	} else {
-		if UserMsgDict.Count > 0 {
-			buf := fmt.Sprintf("Result: %v,%v", UserMsgDict.Result.X, UserMsgDict.Result.Y)
-			text.Draw(screen, buf, monoFont, 10, 30, color.White)
-		} else if !UserMsgDict.GameRunning {
+		if !UserMsgDict.GameRunning {
 			text.Draw(screen, "No game active.", monoFont, 10, ScreenHeight-7, color.White)
 		}
-
 	}
 
 	drawGameBoard(screen)
