@@ -23,7 +23,7 @@ type playerData struct {
 	Points int
 }
 
-// This unlocks dbLock after serialize
+// This unlocks playersLock after serialize
 func writePlayers() {
 
 	startTime := time.Now()
@@ -40,7 +40,7 @@ func writePlayers() {
 	}
 
 	players.lock.Unlock()
-	qlog("serialize db took: %v", durafmt.Parse(time.Since(startTime)).LimitFirstN(2))
+	qlog("serialize players took: %v", durafmt.Parse(time.Since(startTime)).LimitFirstN(2))
 
 	_, err := os.Create(tempPath)
 
@@ -79,7 +79,7 @@ func readPlayers() {
 
 		if file != nil && err == nil {
 
-			qlog("Reading db.")
+			qlog("Reading players.")
 
 			err := json.Unmarshal([]byte(file), &players.idmap)
 			if len(players.idmap) == 0 {

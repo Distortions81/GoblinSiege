@@ -48,7 +48,7 @@ func main() {
 
 	ServerRunning = false
 
-	qlog("Saving DB...")
+	qlog("Saving players...")
 	players.lock.Lock()
 	writePlayers()
 }
