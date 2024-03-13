@@ -76,6 +76,10 @@ func drawGameBoard(screen *ebiten.Image) {
 				vector.DrawFilledRect(boardCache, float32(mag*x)+(offsetPixels)+boardPixels, float32(mag*y)+offsetPixels, size, size, color, true)
 			}
 		}
+
+		//Draw board lables
+		text.Draw(boardCache, "Audience", monoFont, boardPixels/2, boardPixels+65, color.White)
+		text.Draw(boardCache, "Computer", monoFont, boardPixels+boardPixels/2, boardPixels+65, color.White)
 		boardCached = true
 	}
 	screen.DrawImage(boardCache, nil)
@@ -85,7 +89,4 @@ func drawGameBoard(screen *ebiten.Image) {
 		vector.DrawFilledCircle(screen, float32((item.Pos.X+itemOffset)*mag)-(size/1.5), float32((item.Pos.Y+itemOffset)*mag)-(size/1.5), size/2, color.White, true)
 	}
 
-	//Draw board lables
-	text.Draw(screen, "Audience", monoFont, boardPixels/2, boardPixels+65, color.White)
-	text.Draw(screen, "Computer", monoFont, boardPixels+boardPixels/2, boardPixels+65, color.White)
 }
