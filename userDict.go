@@ -9,7 +9,7 @@ import (
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
-const maxCommandLen = 100
+const maxDictMsg = 7
 
 type xyi struct {
 	X, Y int
@@ -41,7 +41,7 @@ var (
 func handleUserDictMsg(msg twitch.PrivateMessage, command string) {
 	msgLen := len(command)
 
-	if msgLen == 0 || msgLen > maxCommandLen {
+	if msgLen == 0 || msgLen > maxDictMsg {
 		return
 	}
 

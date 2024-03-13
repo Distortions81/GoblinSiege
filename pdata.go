@@ -45,25 +45,25 @@ func writePlayers() {
 	_, err := os.Create(tempPath)
 
 	if err != nil {
-		log.Fatal("WriteGCfg: os.Create failure")
+		log.Fatal("writePlayers: os.Create failure")
 		return
 	}
 
 	err = os.WriteFile(tempPath, outbuf.Bytes(), 0644)
 
 	if err != nil {
-		log.Fatal("WriteGCfg: WriteFile failure")
+		log.Fatal("writePlayers: WriteFile failure")
 		return
 	}
 
 	err = os.Rename(tempPath, finalPath)
 
 	if err != nil {
-		log.Fatal("Couldn't rename Gcfg file.")
+		log.Fatal("Couldn't rename players file.")
 		return
 	}
 
-	qlog("Wrote db took: %v", durafmt.Parse(time.Since(startTime)).LimitFirstN(2))
+	qlog("Write player file took: %v", durafmt.Parse(time.Since(startTime)).LimitFirstN(2))
 }
 
 /* Read in cached list of Discord players with specific roles */
@@ -90,7 +90,7 @@ func readPlayers() {
 				log.Fatal("readPlayers.RoleList: Unmarshal failure")
 			}
 		} else {
-			qlog("No database file.")
+			qlog("No players file.")
 		}
 	}
 }

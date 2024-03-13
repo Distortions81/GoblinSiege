@@ -19,7 +19,6 @@ func fSay(format string, args ...interface{}) {
 }
 
 func connectTwitch() {
-	readSettings()
 
 	client = twitch.NewClient(userSettings.UserName, "oauth:"+userSettings.AuthToken)
 

@@ -30,6 +30,7 @@ var (
 	ColorReallyDarkGray = color.NRGBA{32, 32, 32, 255}
 	ColorSmoke          = color.NRGBA{32, 32, 32, 192}
 	ColorVeryDarkGreen  = color.NRGBA{11, 73, 12, 255}
+	ColorVeryDarkRed    = color.NRGBA{73, 11, 11, 255}
 
 	ColorBlack   = color.NRGBA{0, 0, 0, 255}
 	ColorRed     = color.NRGBA{203, 67, 53, 255}

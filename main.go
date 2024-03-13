@@ -9,10 +9,9 @@ import (
 )
 
 var (
-	ServerRunning   bool = true
-	ServerIsStopped bool
-	roundTime       time.Duration = time.Second * 15
-	restTime        time.Duration = time.Second * 5
+	ServerRunning bool          = true
+	roundTime     time.Duration = time.Second * 15
+	restTime      time.Duration = time.Second * 5
 
 	skipTwitch *bool
 )
@@ -31,11 +30,14 @@ func main() {
 	UserMsgDict.Users = make(map[int64]*userMsgData)
 	gameMap = make(map[xyi]*objectData)
 
+	readSettings()
 	if !*skipTwitch {
 		connectTwitch()
 	}
-	go dbAutoSave()
+	go playersAutosave()
 
+	gameMap = make(map[xyi]*objectData)
+	gameMap[UserMsgDict.Result] = &objectData{Pos: xyi{X: 1, Y: 1}}
 	startGame()
 
 	//After starting loops, wait here for process signals
@@ -51,7 +53,7 @@ func main() {
 	writePlayers()
 }
 
-func dbAutoSave() {
+func playersAutosave() {
 	for ServerRunning {
 
 		players.lock.Lock()
