@@ -60,7 +60,7 @@ func processUserDict() {
 	var tX, tY, count uint64
 
 	for _, user := range UserMsgDict.Users {
-		args := strings.Split(strings.ToUpper(user.command), " ")
+		args := strings.Split(strings.ToUpper(user.command), ",")
 		if len(args) > 1 {
 
 			//Convert from text to value

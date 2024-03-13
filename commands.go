@@ -19,7 +19,7 @@ var modCmdHelp []commandData
 
 func init() {
 	for _, cmd := range modCommands {
-		if cmd.Name == "modHelp" {
+		if cmd.Name == "help" || cmd.Name == "modHelp" {
 			continue
 		}
 		modCmdHelp = append(modCmdHelp, commandData{Name: cmd.Name, Desc: cmd.Desc})
@@ -164,6 +164,6 @@ func modHelpCommand() {
 }
 
 func helpCommand() {
-	buf := fmt.Sprintf("%vx y", userSettings.CmdPrefix)
+	buf := fmt.Sprintf("%vx,y", userSettings.CmdPrefix)
 	fSay(buf)
 }
