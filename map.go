@@ -61,13 +61,17 @@ func drawGameBoard(screen *ebiten.Image) {
 		vector.DrawFilledCircle(screen, float32((item.Pos.X+itemOffset)*mag)-(size/1.5), float32((item.Pos.Y+itemOffset)*mag)-(size/1.5), size/2, color.White, true)
 	}
 
+	//Draw x/y info
 	buf := fmt.Sprintf("%v", boardSize)
-	text.Draw(screen, "X:0", monoFont, 0, 60, color.White)
-	text.Draw(screen, buf, monoFont, 0, boardPixels+40, color.White)
+	text.Draw(screen, "Y", monoFont, 25, (boardPixels/2)+60, color.White)
+	text.Draw(screen, "0", monoFont, 25, 60, color.White)
+	text.Draw(screen, buf, monoFont, 12, boardPixels+40, color.White)
 
-	text.Draw(screen, "Y:0", monoFont, 40, 40, color.White)
+	text.Draw(screen, "X", monoFont, 45+(boardPixels/2), 40, color.White)
+	text.Draw(screen, "0", monoFont, 45, 40, color.White)
 	text.Draw(screen, buf, monoFont, boardPixels+20, 40, color.White)
 
+	//Draw board lables
 	text.Draw(screen, "Audience", monoFont, boardPixels/2, boardPixels+65, color.White)
 	text.Draw(screen, "Computer", monoFont, boardPixels+boardPixels/2, boardPixels+65, color.White)
 }
