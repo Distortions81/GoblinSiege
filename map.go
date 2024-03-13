@@ -32,6 +32,8 @@ var (
 )
 
 func drawGameBoard(screen *ebiten.Image) {
+	updateGameSizeLock.Lock()
+	defer updateGameSizeLock.Unlock()
 
 	gameMapLock.Lock()
 	defer gameMapLock.Unlock()
