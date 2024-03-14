@@ -24,9 +24,6 @@ func main() {
 
 	readPlayers()
 
-	players.lock.Lock()
-	writePlayers() //Unlocks after serialize
-
 	UserMsgDict.Users = make(map[int64]*userMsgData)
 	gameMap = make(map[xyi]*objectData)
 
