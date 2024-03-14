@@ -86,9 +86,9 @@ func startGame() {
 	qlog("Starting game...")
 
 	//Clear game board
-	gameMapLock.Lock()
-	gameMap = make(map[xyi]*objectData)
-	gameMapLock.Unlock()
+	board.lock.Lock()
+	board.bmap = make(map[xyi]*objectData)
+	board.lock.Unlock()
 
 	//Reset votes
 	UserMsgDict.Count = 0
@@ -139,18 +139,18 @@ func endVote() {
 		UserMsgDict.Voting = false
 		UserMsgDict.StartTime = time.Now()
 
-		gameMapLock.Lock()
+		board.lock.Lock()
 		if UserMsgDict.Count > 0 &&
-			gameMap[UserMsgDict.Result] == nil &&
+			board.bmap[UserMsgDict.Result] == nil &&
 			UserMsgDict.Result.X > 0 &&
 			UserMsgDict.Result.X <= boardSize &&
 			UserMsgDict.Result.Y > 0 &&
 			UserMsgDict.Result.Y <= boardSize {
 
-			gameMap[UserMsgDict.Result] = &objectData{Pos: UserMsgDict.Result}
+			board.bmap[UserMsgDict.Result] = &objectData{Pos: UserMsgDict.Result}
 
 		}
-		gameMapLock.Unlock()
+		board.lock.Unlock()
 	}
 
 }

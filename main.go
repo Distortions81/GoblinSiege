@@ -25,7 +25,6 @@ func main() {
 	readPlayers()
 
 	UserMsgDict.Users = make(map[int64]*userMsgData)
-	gameMap = make(map[xyi]*objectData)
 
 	readSettings()
 	if !*skipTwitch {
@@ -33,8 +32,8 @@ func main() {
 	}
 	go playersAutosave()
 
-	gameMap = make(map[xyi]*objectData)
-	gameMap[UserMsgDict.Result] = &objectData{Pos: xyi{X: 1, Y: 1}}
+	board.bmap = make(map[xyi]*objectData)
+	board.bmap[UserMsgDict.Result] = &objectData{Pos: xyi{X: 1, Y: 1}}
 	startGame()
 
 	//After starting loops, wait here for process signals
