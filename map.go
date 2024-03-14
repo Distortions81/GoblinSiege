@@ -34,8 +34,6 @@ type gameBoardData struct {
 	bgDirty bool
 }
 
-var ()
-
 func drawGameBoard(screen *ebiten.Image) {
 	updateGameSizeLock.Lock()
 	defer updateGameSizeLock.Unlock()
