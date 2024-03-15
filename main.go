@@ -42,7 +42,7 @@ func main() {
 		connectTwitch()
 	}
 
-	//Start autosave loop (replace later)
+	//Start autosave loop
 	go playersAutosave()
 
 	//Start the game mode
