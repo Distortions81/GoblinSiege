@@ -32,6 +32,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	} else {
 		if !UserMsgDict.GameRunning {
 			text.Draw(screen, "No game active.", monoFont, 10, ScreenHeight-7, color.White)
+		} else {
+			text.Draw(screen, "Computer's turn.", monoFont, 10, ScreenHeight-7, color.White)
 		}
 	}
 
