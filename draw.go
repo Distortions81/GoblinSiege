@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"image/color"
+	"strings"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -11,7 +12,10 @@ import (
 	"github.com/hako/durafmt"
 )
 
+var frameCount uint64
+
 func (g *Game) Draw(screen *ebiten.Image) {
+	frameCount++
 
 	UserMsgDict.Lock.Lock()
 	defer UserMsgDict.Lock.Unlock()
@@ -27,15 +31,24 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	if UserMsgDict.Voting {
 		vector.DrawFilledRect(screen, 0, float32(ScreenHeight)-100, 600, 100, ColorSmoke, true)
-		buf := fmt.Sprintf("Vote now: %vx,y\nVotes: %v\n%v remaining...", userSettings.CmdPrefix, UserMsgDict.Count, durafmt.Parse(time.Until(UserMsgDict.StartTime.Add(playerRoundTime)).Round(time.Second)).LimitFirstN(1))
+		buf := fmt.Sprintf("Vote now: %vx,y\nVotes: %v\n%v remaining%v",
+			userSettings.CmdPrefix, UserMsgDict.Count,
+			durafmt.Parse(time.Until(UserMsgDict.StartTime.Add(playerRoundTime)).Round(time.Second)).LimitFirstN(1),
+			makeEllipsis())
+
 		text.Draw(screen, buf, monoFont, 10, ScreenHeight-100+30, color.White)
 	} else {
 		if !UserMsgDict.GameRunning {
 			text.Draw(screen, "No game active.", monoFont, 10, ScreenHeight-7, color.White)
 		} else {
-			text.Draw(screen, "Computer's turn.", monoFont, 10, ScreenHeight-7, color.White)
+			buf := fmt.Sprintf("Comptuers turn%v", makeEllipsis())
+			text.Draw(screen, buf, monoFont, 10, ScreenHeight-7, color.White)
 		}
 	}
 
 	drawGameBoard(screen)
+}
+
+func makeEllipsis() string {
+	return strings.Repeat(".", (int(frameCount%120) / 30))
 }
