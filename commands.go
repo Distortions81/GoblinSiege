@@ -100,7 +100,6 @@ func startGame() {
 	qlog("Starting game...")
 
 	clearGameBoard()
-	clearVotes()
 
 	UserMsgDict.GameRunning = true
 
@@ -119,8 +118,8 @@ func endGame() {
 }
 
 func startVote() {
-	qlog("Starting new vote...")
 	clearVotes()
+	qlog("Starting new vote...")
 	UserMsgDict.StartTime = time.Now()
 	UserMsgDict.Voting = true
 }
