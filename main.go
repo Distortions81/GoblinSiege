@@ -37,12 +37,6 @@ func main() {
 	//Start autosave loop (replace later)
 	go playersAutosave()
 
-	//Make game board
-	board.bmap = make(map[xyi]*objectData)
-
-	//Insert a 'test' piece
-	board.bmap[UserMsgDict.Result] = &objectData{Pos: xyi{X: 1, Y: 1}}
-
 	//Start the game mode
 	startGame()
 
