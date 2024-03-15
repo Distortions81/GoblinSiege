@@ -20,8 +20,16 @@ func main() {
 	skipTwitch = flag.Bool("skip", false, "don't connect to twitch")
 	flag.Parse()
 
+	//Wait here for process signals
+	signalHandle := make(chan os.Signal, 1)
+
 	//Start ebiten game lib
-	go startEbiten()
+	go func() {
+		startEbiten()
+
+		//Exit if window closed
+		signalHandle <- os.Interrupt
+	}()
 
 	//Read player scores
 	readPlayers()
@@ -39,9 +47,6 @@ func main() {
 
 	//Start the game mode
 	startGame()
-
-	//Wait here for process signals
-	signalHandle := make(chan os.Signal, 1)
 
 	signal.Notify(signalHandle, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-signalHandle
