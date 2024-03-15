@@ -9,9 +9,9 @@ import (
 )
 
 var (
-	ServerRunning bool          = true
-	roundTime     time.Duration = time.Second * 15
-	restTime      time.Duration = time.Second * 5
+	ServerRunning   bool          = true
+	playerRoundTime time.Duration = time.Second * 15
+	cpuRoundTime    time.Duration = time.Second * 5
 
 	skipTwitch *bool
 )
@@ -20,30 +20,40 @@ func main() {
 	skipTwitch = flag.Bool("skip", false, "don't connect to twitch")
 	flag.Parse()
 
+	//Start ebiten game lib
 	go startEbiten()
 
+	//Read player scores
 	readPlayers()
 
-	UserMsgDict.Users = make(map[int64]*userMsgData)
-
+	//Load settings
 	readSettings()
+
+	//Connect to twitch
 	if !*skipTwitch {
 		connectTwitch()
 	}
+
+	//Start autosave loop (replace later)
 	go playersAutosave()
 
+	//Make game board
 	board.bmap = make(map[xyi]*objectData)
+
+	//Insert a 'test' piece
 	board.bmap[UserMsgDict.Result] = &objectData{Pos: xyi{X: 1, Y: 1}}
+
+	//Start the game mode
 	startGame()
 
-	//After starting loops, wait here for process signals
+	//Wait here for process signals
 	signalHandle := make(chan os.Signal, 1)
 
 	signal.Notify(signalHandle, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-signalHandle
 
+	//Shutdown server and save
 	ServerRunning = false
-
 	qlog("Saving players...")
 	players.lock.Lock()
 	writePlayers()

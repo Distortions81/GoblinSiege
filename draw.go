@@ -17,17 +17,17 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	defer UserMsgDict.Lock.Unlock()
 
 	if UserMsgDict.Voting &&
-		time.Since(UserMsgDict.StartTime) > roundTime {
+		time.Since(UserMsgDict.StartTime) > playerRoundTime {
 		endVote()
 	}
 	if UserMsgDict.GameRunning &&
-		time.Since(UserMsgDict.StartTime) > restTime+roundTime {
+		time.Since(UserMsgDict.StartTime) > cpuRoundTime+playerRoundTime {
 		startVote()
 	}
 
 	if UserMsgDict.Voting {
 		vector.DrawFilledRect(screen, 0, float32(ScreenHeight)-100, 600, 100, ColorSmoke, true)
-		buf := fmt.Sprintf("Vote now: %vx,y\nVotes: %v\n%v remaining...", userSettings.CmdPrefix, UserMsgDict.Count, durafmt.Parse(time.Until(UserMsgDict.StartTime.Add(roundTime)).Round(time.Second)).LimitFirstN(1))
+		buf := fmt.Sprintf("Vote now: %vx,y\nVotes: %v\n%v remaining...", userSettings.CmdPrefix, UserMsgDict.Count, durafmt.Parse(time.Until(UserMsgDict.StartTime.Add(playerRoundTime)).Round(time.Second)).LimitFirstN(1))
 		text.Draw(screen, buf, monoFont, 10, ScreenHeight-100+30, color.White)
 	} else {
 		if !UserMsgDict.GameRunning {

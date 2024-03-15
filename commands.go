@@ -82,19 +82,25 @@ func handleModCommands(msg twitch.PrivateMessage, command string) bool {
 	return false
 }
 
-func startGame() {
-	qlog("Starting game...")
-
-	//Clear game board
+func clearGameBoard() {
+	qlog("Clearing game board...")
 	board.lock.Lock()
 	board.bmap = make(map[xyi]*objectData)
 	board.lock.Unlock()
+}
 
-	//Reset votes
+func clearVotes() {
+	qlog("Resetting votes...")
 	UserMsgDict.Count = 0
-	UserMsgDict.Voting = false
 	UserMsgDict.Result = xyi{}
 	UserMsgDict.Users = make(map[int64]*userMsgData)
+}
+
+func startGame() {
+	qlog("Starting game...")
+
+	clearGameBoard()
+	clearVotes()
 
 	UserMsgDict.GameRunning = true
 
@@ -104,33 +110,22 @@ func startGame() {
 func endGame() {
 	qlog("Stopping game...")
 
-	UserMsgDict.Count = 0
+	clearGameBoard()
+	clearVotes()
+
 	UserMsgDict.Voting = false
-	UserMsgDict.Result = xyi{}
-	UserMsgDict.Users = make(map[int64]*userMsgData)
 	UserMsgDict.GameRunning = false
 
 }
 
-func clearVotes() {
-	if UserMsgDict.Count > 0 {
-		qlog("Clearing votes...")
-		UserMsgDict.Count = 0
-		UserMsgDict.Voting = false
-		UserMsgDict.Result = xyi{}
-		UserMsgDict.Users = make(map[int64]*userMsgData)
-	}
-}
-
 func startVote() {
 	qlog("Starting new vote...")
+	clearVotes()
 	UserMsgDict.StartTime = time.Now()
 	UserMsgDict.Voting = true
-	UserMsgDict.Count = 0
-	UserMsgDict.Result = xyi{}
-	UserMsgDict.Users = make(map[int64]*userMsgData)
 }
 
+// Locks and unlocks board
 func endVote() {
 
 	processUserDict()
@@ -152,7 +147,6 @@ func endVote() {
 		}
 		board.lock.Unlock()
 	}
-
 }
 
 func modHelpCommand() {

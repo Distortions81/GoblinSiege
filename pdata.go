@@ -66,10 +66,8 @@ func writePlayers() {
 	qlog("Write player file took: %v", durafmt.Parse(time.Since(startTime)).LimitFirstN(2))
 }
 
-/* Read in cached list of Discord players with specific roles */
+// Load player scores
 func readPlayers() {
-	players.lock.Lock()
-	defer players.lock.Unlock()
 
 	_, err := os.Stat(playersFile)
 	notfound := os.IsNotExist(err)
@@ -81,13 +79,17 @@ func readPlayers() {
 
 			qlog("Reading players.")
 
+			//Only lock after file is read
+			players.lock.Lock()
+			defer players.lock.Unlock()
+
 			err := json.Unmarshal([]byte(file), &players.idmap)
 			if len(players.idmap) == 0 {
 				//Empty database, create a map
 				players.idmap = make(map[int64]*playerData)
 			}
 			if err != nil {
-				log.Fatal("readPlayers.RoleList: Unmarshal failure")
+				log.Fatal("readPlayers: Unmarshal failure")
 			}
 		} else {
 			qlog("No players file.")
