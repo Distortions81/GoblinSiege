@@ -19,16 +19,16 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	drawGameBoard(screen)
 
 	if UserMsgDict.VoteState == VOTE_PLAYERS {
-		vector.DrawFilledRect(screen, 0, float32(ScreenHeight)-50, 1280, 100, ColorSmoke, true)
+		vector.DrawFilledRect(screen, 0, float32(ScreenHeight)-40, float32(ScreenWidth), 100, ColorSmoke, true)
 		buf := fmt.Sprintf("Vote now: %vx,y -- Votes: %v -- %v remaining%v",
 			userSettings.CmdPrefix, UserMsgDict.VoteCount,
 			durafmt.Parse(time.Until(UserMsgDict.StartTime.Add(playerRoundTime)).Round(time.Second)).LimitFirstN(1),
 			makeEllipsis())
 
-		text.Draw(screen, buf, monoFont, 10, ScreenHeight-50+35, color.White)
+		text.Draw(screen, buf, monoFont, 10, ScreenHeight-15, color.White)
 
 	} else if UserMsgDict.VoteState == VOTE_COMPUTER {
-		vector.DrawFilledRect(screen, 0, float32(ScreenHeight)-50, 1280, 100, ColorSmoke, true)
+		vector.DrawFilledRect(screen, 0, float32(ScreenHeight)-40, float32(ScreenWidth), 100, ColorSmoke, true)
 		buf := fmt.Sprintf("Computer's turn: %v remaining%v",
 			durafmt.Parse(time.Until(UserMsgDict.StartTime.Add(cpuRoundTime)).Round(time.Second)).LimitFirstN(1),
 			makeEllipsis())

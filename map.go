@@ -14,7 +14,7 @@ const (
 	size         = 32
 	mag          = size
 	boardSizeX   = 28
-	boardSizeY   = 17
+	boardSizeY   = 19
 	offX         = 5
 	offY         = 1
 	offPixX      = size * offX
@@ -41,12 +41,13 @@ type gameBoardData struct {
 
 func drawGameBoard(screen *ebiten.Image) {
 
+	screen.DrawImage(bgimg, nil)
+
 	if board.bgDirty {
 		board.bgCache.Clear()
 
-		board.bgCache.DrawImage(bgimg, nil)
-
 		//Draw left side bg red
+
 		for x := 0; x < boardSizeX; x++ {
 			for y := 0; y < boardSizeY; y++ {
 
@@ -73,7 +74,9 @@ func drawGameBoard(screen *ebiten.Image) {
 
 		board.bgDirty = false
 	}
-	screen.DrawImage(board.bgCache, nil)
+	if UserMsgDict.VoteState == VOTE_PLAYERS {
+		screen.DrawImage(board.bgCache, nil)
+	}
 
 	//Draw towers
 	board.lock.Lock()
