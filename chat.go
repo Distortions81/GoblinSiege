@@ -8,6 +8,11 @@ import (
 
 func handleChat(msg twitch.PrivateMessage) {
 
+	//Ignore messages that are not for us
+	if msg.Channel != userSettings.UserName {
+		return
+	}
+
 	qlog("Chat: %v: %v", msg.User.DisplayName, msg.Message)
 	command, isCommand := strings.CutPrefix(msg.Message, userSettings.CmdPrefix)
 
