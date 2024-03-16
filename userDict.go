@@ -55,7 +55,6 @@ func handleUserDictMsg(msg twitch.PrivateMessage, command string) {
 		return
 	}
 
-	//Move this later, we only need to do on score
 	userid := strToID(msg.User.ID)
 	UserMsgDict.Lock.Lock()
 	if UserMsgDict.Users[userid] == nil {
