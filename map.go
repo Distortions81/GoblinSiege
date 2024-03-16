@@ -43,9 +43,17 @@ func drawGameBoard(screen *ebiten.Image) {
 		//Draw left side bg red
 		for x := 0; x < boardSize; x++ {
 			for y := 0; y < boardSize; y++ {
-				tColor := ColorDarkRed
-				if (x+y)%2 == 0 {
-					tColor = ColorRed
+				var tColor color.Color
+				if x == 0 {
+					tColor = ColorLightGray
+					if (x+y)%2 == 0 {
+						tColor = ColorGray
+					}
+				} else {
+					tColor = ColorDarkGreen
+					if (x+y)%2 == 0 {
+						tColor = ColorGreen
+					}
 				}
 				vector.DrawFilledRect(board.bgCache, float32(mag*x)+offsetPixels, float32(mag*y)+offsetPixels, size, size, tColor, true)
 
@@ -68,11 +76,21 @@ func drawGameBoard(screen *ebiten.Image) {
 		//Draw right side bg blue
 		for x := 0; x < boardSize; x++ {
 			for y := 0; y < boardSize; y++ {
-				color := ColorBlue
-				if (x+y)%2 == 0 {
-					color = ColorDarkBlue
+				var tColor color.Color
+
+				//Sand, water
+				if x < 20 {
+					tColor = ColorLightBrown
+					if (x+y)%2 == 0 {
+						tColor = ColorBrown
+					}
+				} else {
+					tColor = ColorAqua
+					if (x+y)%2 == 0 {
+						tColor = ColorDarkAqua
+					}
 				}
-				vector.DrawFilledRect(board.bgCache, float32(mag*x)+(offsetPixels)+boardPixels, float32(mag*y)+offsetPixels, size, size, color, true)
+				vector.DrawFilledRect(board.bgCache, float32(mag*x)+(offsetPixels)+boardPixels, float32(mag*y)+offsetPixels, size, size, tColor, true)
 			}
 		}
 

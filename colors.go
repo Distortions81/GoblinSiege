@@ -67,6 +67,7 @@ var (
 	ColorLightLime    = color.NRGBA{219, 243, 153, 255}
 	ColorLightFuchsia = color.NRGBA{239, 196, 253, 255}
 	ColorLightAqua    = color.NRGBA{196, 246, 253, 255}
+	ColorLightBrown   = color.NRGBA{211, 140, 94, 255}
 
 	ColorDarkRed     = color.NRGBA{146, 22, 22, 255}
 	ColorDarkGreen   = color.NRGBA{22, 146, 24, 255}
