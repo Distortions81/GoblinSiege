@@ -17,18 +17,6 @@ var frameCount uint64
 func (g *Game) Draw(screen *ebiten.Image) {
 	frameCount++
 
-	UserMsgDict.Lock.Lock()
-	defer UserMsgDict.Lock.Unlock()
-
-	if UserMsgDict.Voting &&
-		time.Since(UserMsgDict.StartTime) > playerRoundTime {
-		endVote()
-	}
-	if UserMsgDict.GameRunning &&
-		time.Since(UserMsgDict.StartTime) > cpuRoundTime+playerRoundTime {
-		startVote()
-	}
-
 	if UserMsgDict.Voting {
 		vector.DrawFilledRect(screen, 0, float32(ScreenHeight)-100, 600, 100, ColorSmoke, true)
 		buf := fmt.Sprintf("Vote now: %vx,y\nVotes: %v\n%v remaining%v",

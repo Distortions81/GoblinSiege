@@ -26,6 +26,23 @@ func init() {
 	}
 }
 
+func handleVotes() {
+	for ServerRunning {
+		UserMsgDict.Lock.Lock()
+
+		if UserMsgDict.Voting &&
+			time.Since(UserMsgDict.StartTime) > playerRoundTime {
+			endVote()
+		} else if UserMsgDict.GameRunning &&
+			time.Since(UserMsgDict.StartTime) > cpuRoundTime+playerRoundTime {
+			startVote()
+		}
+
+		UserMsgDict.Lock.Unlock()
+		time.Sleep(time.Millisecond * 100)
+	}
+}
+
 var modCommands []commandData = []commandData{
 	{
 		Name:   "help",
