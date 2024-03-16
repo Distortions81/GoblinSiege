@@ -11,14 +11,16 @@ import (
 )
 
 const (
-	size        = 32
-	mag         = size
-	boardSize   = 18
-	offX        = 5
-	offY        = 1
-	offPixX     = size * offX
-	offPixY     = size * offY
-	boardPixels = ((boardSize) * mag)
+	size         = 32
+	mag          = size
+	boardSizeX   = 27
+	boardSizeY   = 17
+	offX         = 5
+	offY         = 1
+	offPixX      = size * offX
+	offPixY      = size * offY
+	boardPixelsX = ((boardSizeX) * mag)
+	boardPixelsY = ((boardSizeY) * mag)
 )
 
 type objectData struct {
@@ -45,8 +47,8 @@ func drawGameBoard(screen *ebiten.Image) {
 		board.bgCache.DrawImage(bgimg, nil)
 
 		//Draw left side bg red
-		for x := 0; x < boardSize; x++ {
-			for y := 0; y < boardSize; y++ {
+		for x := 0; x < boardSizeX; x++ {
+			for y := 0; y < boardSizeY; y++ {
 				var tColor color.Color
 
 				tColor = ColorDarkGreen
@@ -67,8 +69,8 @@ func drawGameBoard(screen *ebiten.Image) {
 				}
 
 				//XY Labels
-				text.Draw(board.bgCache, "X", monoFont, boardPixels/2, 25, color.White)
-				text.Draw(board.bgCache, "Y", monoFont, 5, (boardPixels/2)+65, color.White)
+				text.Draw(board.bgCache, "X", monoFont, boardPixelsX/2, 25, color.White)
+				text.Draw(board.bgCache, "Y", monoFont, 5, (boardPixelsY/2)+65, color.White)
 			}
 		}
 

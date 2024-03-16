@@ -83,8 +83,8 @@ func processUserDict() {
 
 			qlog("user: %v, x: %v, y: %v", user.sender, x, y)
 			if erra != nil || errb != nil ||
-				x < 1 || x > boardSize ||
-				y < 1 || y > boardSize {
+				x < 1 || x > boardSizeX ||
+				y < 1 || y > boardSizeY {
 				continue
 			}
 

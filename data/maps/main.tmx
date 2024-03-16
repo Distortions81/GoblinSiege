@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="left-down" width="40" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="1">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="left-down" width="40" height="19" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="1">
  <tileset firstgid="1" source="../tiles/pixeltopia1.tsx"/>
- <layer id="1" name="Tile Layer 1" width="40" height="20">
+ <layer id="1" name="Tile Layer 1" width="40" height="19">
   <data encoding="base64" compression="zlib">
-   eJzt1qEVACAMxNBjr+7BvAyFR3Kir7YVEfFfJiTFgLZ1rW5X5jvr1+3Ch29C+PDhw4cPHz58lc///gFeLOJv
+   eJztzqEBADAIBLFnL/bovAxVXwminhcn4pOS0sAZ7rD9+v0q2vaLHz8H/Pjx48ePHz+f3wMh2daT
   </data>
  </layer>
- <layer id="2" name="Tile Layer 2" width="40" height="20">
+ <layer id="2" name="Tile Layer 2" width="40" height="19">
   <data encoding="base64" compression="zlib">
-   eJzNlrGKAjEQhsesPsQdHAgWvoqNzYHFNQenb2Hj1VfJir1PICy4W8t5D7LNoZ1YaG2GTdw4JjHRDfpDyGqm+DLJn5m8AZCL0eFD1S+DC600/9m0doj/Z7DMRNxnDb7VtZ+omJMGLOeEL5Reo/PfyIfzgpV8Azhxzbp8jDz5Dp55tEnyoWj+UFu+n+4d+YsNrJnjHijflKzv2TnfuMLcuMiUvwOU9/2e/N2qF3EPKd+XEvNWL2YfPtN53iL0t+TbKP7okzgb31/g877mjxV7zPlKSb6UXfK1+R1o1sPwubzNKh+K8n1ExRvo+/5VKRtf/ED/Sun4JiSG8l2rs7512CbJh3VP5w9UVfmjNSN17A/kN+XDWvHu4Y8QtcX2PqNC+YP2KTplzNxfxXzsSn/AM/lDqiX2qOMLUTd0byLypYb+tBcVXkyeMH9Yg3Olvx8KPp/ec09iXWuGjS9W1o5Yu4Bm
+   eJx7wMrA8ACKPYAYGRxiYsAAh7GI4QPPiVD/lInhwDaoujhGhgZkuS5mCL2RleHAOjT30QpIMaPyQe4D0VuYEO5LZoC7a4EvENeT6L5vJIYjPgBzHwighx8IvAf6x5eC8JuEw63biPQDuvumosl/ZUJ13wQqhg0xAFf4fWNApHdKwo9cIAlNh+juS0RSI8sCoUlxH674JAeA8jfMfS+Q8kcSmjp87jtC4/gmlD8OMw1M/MIAzH1bmTDdpw5MAwostHEfMWUzsvtAAN19kcyQMpDU8o+aAJ/7Jg1g/oUBbO6bjKYG3X2E6llS62F8AOY+UL2HLX+AALXCD73O2Epk+wDGRncfqK4IIiF/0KJuwVc+gwCt8gd6OwUb2MaEu301CYg/IvIHw2DKHzAQimj/YbiPFvUGtjIR5L6tONqnD5Daz1WDLPxAdTAAkLx4hg==
   </data>
  </layer>
 </map>

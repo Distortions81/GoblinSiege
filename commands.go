@@ -139,9 +139,9 @@ func endVote() {
 		if UserMsgDict.VoteCount > 0 &&
 			board.bmap[UserMsgDict.Result] == nil &&
 			UserMsgDict.Result.X > 0 &&
-			UserMsgDict.Result.X <= boardSize &&
+			UserMsgDict.Result.X <= boardSizeX &&
 			UserMsgDict.Result.Y > 0 &&
-			UserMsgDict.Result.Y <= boardSize {
+			UserMsgDict.Result.Y <= boardSizeY {
 
 			board.lock.Lock()
 			board.bmap[UserMsgDict.Result] = &objectData{Pos: UserMsgDict.Result}
