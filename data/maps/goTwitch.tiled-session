@@ -1,0 +1,35 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "FREE/untitled.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 797.5,
+                "y": 330
+            }
+        },
+        "FREE/untitled.tmx#pixeltopia": {
+            "scaleInDock": 1
+        }
+    },
+    "last.imagePath": "/home/carl/Desktop/FREE",
+    "map.lastUsedFormat": "tmx",
+    "map.layerDataFormat": "3",
+    "map.renderOrder": "2",
+    "map.width": 40,
+    "openFiles": [
+    ],
+    "project": "untitled.tiled-project",
+    "recentFiles": [
+        "FREE/untitled.tmx"
+    ],
+    "tileset.embedInMap": true
+}
