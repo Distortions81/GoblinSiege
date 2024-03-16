@@ -49,8 +49,10 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	if outsideWidth != ScreenWidth || outsideHeight != ScreenHeight {
 		ScreenWidth, ScreenHeight = outsideWidth, outsideHeight
 
+		board.lock.Lock()
 		board.bgCache = ebiten.NewImage(ScreenWidth, ScreenHeight)
 		board.bgDirty = true
+		board.lock.Unlock()
 	}
 
 	return ScreenWidth, ScreenHeight

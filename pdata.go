@@ -20,6 +20,7 @@ type playersListData struct {
 }
 
 type playerData struct {
+	Name   string
 	Points int
 }
 

@@ -9,7 +9,17 @@ import (
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
-const maxDictMsg = 7
+const maxDictMsgLen = 10
+
+type VOTE_STATE int
+
+const (
+	VOTE_NONE VOTE_STATE = iota
+	VOTE_PLAYERS
+	VOTE_PLAYERS_DONE
+	VOTE_COMPUTER
+	VOTE_COMPUTER_DONE
+)
 
 type xyi struct {
 	X, Y int
@@ -25,13 +35,13 @@ type userMsgDictData struct {
 	Users map[int64]*userMsgData
 
 	GameRunning bool
-	Count       int
-	Voting      bool
-	GameStarted bool
-	StartTime   time.Time
-	Lock        sync.Mutex
-	RoundTime   time.Time
-	Result      xyi
+
+	VoteCount int
+	VoteState VOTE_STATE
+	StartTime time.Time
+	Lock      sync.Mutex
+	RoundTime time.Time
+	Result    xyi
 }
 
 var (
@@ -41,7 +51,7 @@ var (
 func handleUserDictMsg(msg twitch.PrivateMessage, command string) {
 	msgLen := len(command)
 
-	if msgLen == 0 || msgLen > maxDictMsg {
+	if msgLen == 0 || msgLen > maxDictMsgLen {
 		return
 	}
 
@@ -49,7 +59,7 @@ func handleUserDictMsg(msg twitch.PrivateMessage, command string) {
 	userid := strToID(msg.User.ID)
 	UserMsgDict.Lock.Lock()
 	if UserMsgDict.Users[userid] == nil {
-		UserMsgDict.Count++
+		UserMsgDict.VoteCount++
 	}
 	UserMsgDict.Users[userid] = &userMsgData{sender: msg.User.DisplayName, command: command, time: time.Now()}
 	UserMsgDict.Lock.Unlock()
@@ -86,7 +96,7 @@ func processUserDict() {
 
 	}
 	if count > 0 {
-		UserMsgDict.Count = int(count)
+		UserMsgDict.VoteCount = int(count)
 		UserMsgDict.Result = xyi{X: int(tX / count), Y: int(tY / count)}
 	} else {
 		qlog("Not enough votes.")

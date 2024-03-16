@@ -45,8 +45,8 @@ func main() {
 	//Start autosave loop
 	go playersAutosave()
 
-	//Voting handle loop
-	go handleVotes()
+	//Voting loop
+	go handleRounds()
 
 	//Start the game mode
 	startGame()

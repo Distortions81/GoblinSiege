@@ -17,20 +17,26 @@ var frameCount uint64
 func (g *Game) Draw(screen *ebiten.Image) {
 	frameCount++
 
-	if UserMsgDict.Voting {
+	if UserMsgDict.VoteState == VOTE_PLAYERS {
 		vector.DrawFilledRect(screen, 0, float32(ScreenHeight)-100, 600, 100, ColorSmoke, true)
 		buf := fmt.Sprintf("Vote now: %vx,y\nVotes: %v\n%v remaining%v",
-			userSettings.CmdPrefix, UserMsgDict.Count,
+			userSettings.CmdPrefix, UserMsgDict.VoteCount,
 			durafmt.Parse(time.Until(UserMsgDict.StartTime.Add(playerRoundTime)).Round(time.Second)).LimitFirstN(1),
 			makeEllipsis())
 
 		text.Draw(screen, buf, monoFont, 10, ScreenHeight-100+30, color.White)
+
+	} else if UserMsgDict.VoteState == VOTE_COMPUTER {
+		vector.DrawFilledRect(screen, 0, float32(ScreenHeight)-100, 600, 100, ColorSmoke, true)
+		buf := fmt.Sprintf("Computer's turn: %v remaining%v",
+			durafmt.Parse(time.Until(UserMsgDict.StartTime.Add(cpuRoundTime)).Round(time.Second)).LimitFirstN(1),
+			makeEllipsis())
+
+		text.Draw(screen, buf, monoFont, 10, ScreenHeight-15, color.White)
+
 	} else {
 		if !UserMsgDict.GameRunning {
 			text.Draw(screen, "No game active.", monoFont, 10, ScreenHeight-7, color.White)
-		} else {
-			buf := fmt.Sprintf("Comptuers turn%v", makeEllipsis())
-			text.Draw(screen, buf, monoFont, 10, ScreenHeight-7, color.White)
 		}
 	}
 

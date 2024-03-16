@@ -27,19 +27,15 @@ type objectData struct {
 var board gameBoardData
 
 type gameBoardData struct {
-	bmap map[xyi]*objectData
-	lock sync.Mutex
+	roundNum int
+	bmap     map[xyi]*objectData
+	lock     sync.Mutex
 
 	bgCache *ebiten.Image
 	bgDirty bool
 }
 
 func drawGameBoard(screen *ebiten.Image) {
-	updateGameSizeLock.Lock()
-	defer updateGameSizeLock.Unlock()
-
-	board.lock.Lock()
-	defer board.lock.Unlock()
 
 	if board.bgDirty {
 		board.bgCache.Clear()
@@ -88,8 +84,10 @@ func drawGameBoard(screen *ebiten.Image) {
 	screen.DrawImage(board.bgCache, nil)
 
 	//Draw towers
+	board.lock.Lock()
 	for _, item := range board.bmap {
 		vector.DrawFilledCircle(screen, float32((item.Pos.X+itemOffset)*mag)-(size/1.5), float32((item.Pos.Y+itemOffset)*mag)-(size/1.5), size/2, color.White, true)
 	}
+	board.lock.Unlock()
 
 }

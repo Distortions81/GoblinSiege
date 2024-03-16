@@ -26,30 +26,15 @@ func init() {
 	}
 }
 
-func handleVotes() {
-	for ServerRunning {
-		UserMsgDict.Lock.Lock()
-
-		if UserMsgDict.Voting &&
-			time.Since(UserMsgDict.StartTime) > playerRoundTime {
-			endVote()
-		} else if UserMsgDict.GameRunning &&
-			time.Since(UserMsgDict.StartTime) > cpuRoundTime+playerRoundTime {
-			startVote()
-		}
-
-		UserMsgDict.Lock.Unlock()
-		time.Sleep(time.Millisecond * 100)
-	}
-}
-
 var modCommands []commandData = []commandData{
 	{
 		Name:   "help",
+		Desc:   "Show player commands.",
 		Handle: helpCommand,
 	},
 	{
 		Name:   "modHelp",
+		Desc:   "Show moderator commands.",
 		Handle: modHelpCommand,
 	},
 	{
@@ -64,17 +49,17 @@ var modCommands []commandData = []commandData{
 	},
 	{
 		Name:   "startVote",
-		Desc:   "Manually start a voting round",
+		Desc:   "Manually start a new voting round.",
 		Handle: startVote,
 	},
 	{
 		Name:   "endVote",
-		Desc:   "Manually end a voting round",
+		Desc:   "Manually end a voting round.",
 		Handle: endVote,
 	},
 	{
 		Name:   "clearVotes",
-		Desc:   "Stop and clear all votes",
+		Desc:   "clear all votes.",
 		Handle: clearVotes,
 	},
 }
@@ -102,13 +87,14 @@ func handleModCommands(msg twitch.PrivateMessage, command string) bool {
 func clearGameBoard() {
 	qlog("Clearing game board...")
 	board.lock.Lock()
+
 	board.bmap = make(map[xyi]*objectData)
 	board.lock.Unlock()
 }
 
 func clearVotes() {
 	qlog("Resetting votes...")
-	UserMsgDict.Count = 0
+	UserMsgDict.VoteCount = 0
 	UserMsgDict.Result = xyi{}
 	UserMsgDict.Users = make(map[int64]*userMsgData)
 }
@@ -129,7 +115,7 @@ func endGame() {
 	clearGameBoard()
 	clearVotes()
 
-	UserMsgDict.Voting = false
+	UserMsgDict.VoteState = VOTE_NONE
 	UserMsgDict.GameRunning = false
 
 }
@@ -138,30 +124,29 @@ func startVote() {
 	clearVotes()
 	qlog("Starting new vote...")
 	UserMsgDict.StartTime = time.Now()
-	UserMsgDict.Voting = true
+	UserMsgDict.VoteState = VOTE_PLAYERS
 }
 
 // Locks and unlocks board
 func endVote() {
 
 	processUserDict()
-	if UserMsgDict.Voting {
+	if UserMsgDict.VoteState == VOTE_PLAYERS {
 		qlog("Ending vote...")
-		UserMsgDict.Voting = false
+		UserMsgDict.VoteState = VOTE_PLAYERS_DONE
 		UserMsgDict.StartTime = time.Now()
 
-		board.lock.Lock()
-		if UserMsgDict.Count > 0 &&
+		if UserMsgDict.VoteCount > 0 &&
 			board.bmap[UserMsgDict.Result] == nil &&
 			UserMsgDict.Result.X > 0 &&
 			UserMsgDict.Result.X <= boardSize &&
 			UserMsgDict.Result.Y > 0 &&
 			UserMsgDict.Result.Y <= boardSize {
 
+			board.lock.Lock()
 			board.bmap[UserMsgDict.Result] = &objectData{Pos: UserMsgDict.Result}
-
+			board.lock.Unlock()
 		}
-		board.lock.Unlock()
 	}
 }
 
