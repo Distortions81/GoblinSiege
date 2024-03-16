@@ -13,8 +13,8 @@ import (
 const (
 	size         = 32
 	mag          = size
-	boardSizeX   = 28
-	boardSizeY   = 19
+	boardSizeX   = 20
+	boardSizeY   = 20
 	offX         = 5
 	offY         = 1
 	offPixX      = size * offX

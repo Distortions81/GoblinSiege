@@ -3,12 +3,12 @@
  <tileset firstgid="1" source="../tiles/pixeltopia1.tsx"/>
  <layer id="1" name="Tile Layer 1" width="40" height="23">
   <data encoding="base64" compression="zlib">
-   eJzt1qERACAMBMGnr/RBvRSFRyaCQTGTFyfOr7yQFAbN0i51u26+NbJuFz58DuHDhw8fPnz48L187n+P75/vAI7IBhI=
+   eJzt1qENACAMAMGyF3swL0PhkaBImhCCOPH+5NeIqA9qicbWC1vW18uKj4+Pj4+Pj4+Pj+/c73/Pd883ATDfGXo=
   </data>
  </layer>
  <layer id="2" name="Tile Layer 2" width="40" height="23">
   <data encoding="base64" compression="zlib">
-   eJx7wMrA8ACKPYB4IMBTJoYD25gg7DhGhgZkuS5mCL2RleHAOjq5T4oZlQ9yH4jewoRwXzID3F0LfIG4nkT3fWOigkPR3AcC6OEHAu+B/vGlIPwm4XDrNiL9gO6+qWjyX5lQ3TeBimFDDMAVft+A+DDULZSEH7lAEpoO0d2XiKRGlgVCk+I+XPFJDnjOhHDfC6T8kYSmDp/7jtA4vgnlj8NMAxO/MABz31YmTPepA9OAAgtt3PeczPyLLBfJDCkDSS3/qAnwuW/SAOZfGMDmvsloatDdd5hA3BCSJwXA3Aeq97DlDxCgVvih1xlbifAHvvgF1RVBJOQPWtQt+MpnEKBV/kBvp2AD25hwt68mAfFHRP5gGEz5AwZCEe0/DPfRot7AViaC3LcVR/sUGQy28EOvgweJ+w4gyz1A6n9UDUL3DQYwlN0HAJTegpI=
+   eJzNl79OwzAQxg+7eRckGHgRBhYWRGWRF6nEghi7NVn6ENBKnbLTPgZqOiOhghDljG04uXHt/IH4kyzXFzf99bPv4mwSgI1uF9iodgxG4FDuuPbJ9mPPDArZzyquPVix4RGMxvrzFts9B1jinEUCxTyxv92NDF+IJJ/shR4j1/QS210LvmWFL235jCZ47y16iIzQt38l2+eTknvGx5d5PDqkJv6NSSwnfL61ClFm5Y7kK8l91wd+g/onSDyG9ZUyfKker/R/iY3PVqx8Z5i7J4P++cz+lHwpid9wVQPb1L8u+Ixs//AZBmmN+rcjuRea623y45Wrvu/1NbL9Ox4oH847XN/c8lXXv2konyDjF+S7cuTHqoNabfh8c7BmC8NH4xmLOz/eI63PJj9Oudovi3/ie/TsQ9u/D2R7Y8rHpny+s43tX+mYv644X11z1Ybcz2efS0JVc32/55rzlXn3kO02jv33M1f8AUuVmvJJ0fetSeD6PdWsi5TPtfdmv+eDQpD4Fw/vkpI=
   </data>
  </layer>
 </map>
