@@ -20,16 +20,17 @@
             "scaleInDock": 1
         }
     },
-    "last.imagePath": "/home/carl/Desktop/FREE",
+    "last.imagePath": "/home/carl/Documents/github/goTwitchGame/data/tiles",
     "map.lastUsedFormat": "tmx",
     "map.layerDataFormat": "3",
     "map.renderOrder": "2",
     "map.width": 40,
     "openFiles": [
     ],
-    "project": "untitled.tiled-project",
+    "project": "goTwitch.tiled-project",
     "recentFiles": [
         "FREE/untitled.tmx"
     ],
-    "tileset.embedInMap": true
+    "tileset.embedInMap": true,
+    "tileset.lastUsedFormat": "tsx"
 }
