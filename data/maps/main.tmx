@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="left-down" width="40" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="2" nextobjectid="1">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="left-down" width="40" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="1">
  <tileset firstgid="1" source="../tiles/pixeltopia1.tsx"/>
  <layer id="1" name="Tile Layer 1" width="40" height="20">
   <data encoding="base64" compression="zlib">
-   eJztw0ENAAAMA6HzVP/e5mIvSFg1VVXVhwedq59h
+   eJzt1qEVACAMxNBjr+7BvAyFR3Kir7YVEfFfJiTFgLZ1rW5X5jvr1+3Ch29C+PDhw4cPHz58lc///gFeLOJv
+  </data>
+ </layer>
+ <layer id="2" name="Tile Layer 2" width="40" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzNlrGKAjEQhsesPsQdHAgWvoqNzYHFNQenb2Hj1VfJir1PICy4W8t5D7LNoZ1YaG2GTdw4JjHRDfpDyGqm+DLJn5m8AZCL0eFD1S+DC600/9m0doj/Z7DMRNxnDb7VtZ+omJMGLOeEL5Reo/PfyIfzgpV8Azhxzbp8jDz5Dp55tEnyoWj+UFu+n+4d+YsNrJnjHijflKzv2TnfuMLcuMiUvwOU9/2e/N2qF3EPKd+XEvNWL2YfPtN53iL0t+TbKP7okzgb31/g877mjxV7zPlKSb6UXfK1+R1o1sPwubzNKh+K8n1ExRvo+/5VKRtf/ED/Sun4JiSG8l2rs7512CbJh3VP5w9UVfmjNSN17A/kN+XDWvHu4Y8QtcX2PqNC+YP2KTplzNxfxXzsSn/AM/lDqiX2qOMLUTd0byLypYb+tBcVXkyeMH9Yg3Olvx8KPp/ec09iXWuGjS9W1o5Yu4Bm
   </data>
  </layer>
 </map>
