@@ -71,13 +71,9 @@ func processUserDict() {
 
 	for _, user := range UserMsgDict.Users {
 		args := strings.Split(strings.ToUpper(user.command), ",")
-		if len(args) > 1 {
+		numArgs := len(args)
+		if numArgs == 2 {
 
-			//Convert from text to value
-			xb := []byte(args[0])
-			if len(xb) == 0 {
-				break
-			}
 			x, erra := strconv.ParseInt(args[0], 10, 64)
 			y, errb := strconv.ParseInt(args[1], 10, 64)
 
