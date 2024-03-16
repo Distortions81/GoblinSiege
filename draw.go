@@ -16,18 +16,19 @@ var frameCount uint64
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	frameCount++
+	drawGameBoard(screen)
 
 	if UserMsgDict.VoteState == VOTE_PLAYERS {
-		vector.DrawFilledRect(screen, 0, float32(ScreenHeight)-100, 600, 100, ColorSmoke, true)
-		buf := fmt.Sprintf("Vote now: %vx,y\nVotes: %v\n%v remaining%v",
+		vector.DrawFilledRect(screen, 0, float32(ScreenHeight)-50, 1280, 100, ColorSmoke, true)
+		buf := fmt.Sprintf("Vote now: %vx,y -- Votes: %v -- %v remaining%v",
 			userSettings.CmdPrefix, UserMsgDict.VoteCount,
 			durafmt.Parse(time.Until(UserMsgDict.StartTime.Add(playerRoundTime)).Round(time.Second)).LimitFirstN(1),
 			makeEllipsis())
 
-		text.Draw(screen, buf, monoFont, 10, ScreenHeight-100+30, color.White)
+		text.Draw(screen, buf, monoFont, 10, ScreenHeight-50+35, color.White)
 
 	} else if UserMsgDict.VoteState == VOTE_COMPUTER {
-		vector.DrawFilledRect(screen, 0, float32(ScreenHeight)-100, 600, 100, ColorSmoke, true)
+		vector.DrawFilledRect(screen, 0, float32(ScreenHeight)-50, 1280, 100, ColorSmoke, true)
 		buf := fmt.Sprintf("Computer's turn: %v remaining%v",
 			durafmt.Parse(time.Until(UserMsgDict.StartTime.Add(cpuRoundTime)).Round(time.Second)).LimitFirstN(1),
 			makeEllipsis())
@@ -40,7 +41,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		}
 	}
 
-	drawGameBoard(screen)
 }
 
 func makeEllipsis() string {

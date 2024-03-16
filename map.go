@@ -13,7 +13,7 @@ import (
 const (
 	size         = 32
 	mag          = size
-	boardSizeX   = 27
+	boardSizeX   = 28
 	boardSizeY   = 17
 	offX         = 5
 	offY         = 1
@@ -49,28 +49,25 @@ func drawGameBoard(screen *ebiten.Image) {
 		//Draw left side bg red
 		for x := 0; x < boardSizeX; x++ {
 			for y := 0; y < boardSizeY; y++ {
-				var tColor color.Color
 
-				tColor = ColorDarkGreen
 				if (x+y)%2 == 0 {
-					tColor = ColorGreen
+					vector.DrawFilledRect(board.bgCache, float32(mag*x)+offPixX, float32(mag*y)+offPixY, size, size, ColorGreenC, true)
 				}
-
-				vector.DrawFilledRect(board.bgCache, float32(mag*x)+offPixX, float32(mag*y)+offPixY, size, size, tColor, true)
 
 				//Draw coords
-				if y == 0 {
-					buf := fmt.Sprintf("%v", x+1)
-					text.Draw(board.bgCache, buf, monoFontSmall, (mag*x)+offPixX+5, (mag*y)+offPixY-3, color.White)
-				}
+
 				if x == 0 {
 					buf := fmt.Sprintf("%2v", y+1)
-					text.Draw(board.bgCache, buf, monoFontSmall, (mag*x)+(offPixX/2)+5, (mag*y)+offPixY+15, color.White)
+					text.Draw(board.bgCache, buf, monoFontSmall, offPixX-(mag/2), (mag*y)+offPixY+20, color.Black)
+				}
+				if y == 0 {
+					buf := fmt.Sprintf("%v", x+1)
+					text.Draw(board.bgCache, buf, monoFontSmall, (mag*x)+offPixX+8, (mag*y)+offPixY-2, color.Black)
 				}
 
 				//XY Labels
-				text.Draw(board.bgCache, "X", monoFont, boardPixelsX/2, 25, color.White)
-				text.Draw(board.bgCache, "Y", monoFont, 5, (boardPixelsY/2)+65, color.White)
+				text.Draw(board.bgCache, "X", monoFont, offPixX+(boardPixelsX/2), 20, color.Black)
+				text.Draw(board.bgCache, "Y", monoFont, offPixX-(mag), offPixY+(boardPixelsY/2), color.Black)
 			}
 		}
 

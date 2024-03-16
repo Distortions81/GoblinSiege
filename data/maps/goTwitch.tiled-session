@@ -13,6 +13,9 @@
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
+        "/home/dist/Documents/github/goTwitchGame/data/tiles/pixeltopia1.tsx": {
+            "scaleInDock": 1
+        },
         "FREE/untitled.tmx": {
             "scale": 1,
             "selectedLayer": 0,
@@ -25,11 +28,11 @@
             "scaleInDock": 1
         },
         "main.tmx": {
-            "scale": 1,
+            "scale": 1.9774,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 573,
-                "y": 415
+                "x": 654.3946596540912,
+                "y": 343.380196217255
             }
         }
     },
@@ -39,13 +42,12 @@
     "map.renderOrder": "2",
     "map.width": 40,
     "openFiles": [
-        "/home/carl/Documents/github/goTwitchGame/data/tiles/pixeltopia1.tsx",
         "main.tmx"
     ],
     "project": "goTwitch.tiled-project",
     "recentFiles": [
-        "/home/carl/Documents/github/goTwitchGame/data/tiles/pixeltopia1.tsx",
         "main.tmx",
+        "/home/carl/Documents/github/goTwitchGame/data/tiles/pixeltopia1.tsx",
         "FREE/untitled.tmx"
     ],
     "tileset.embedInMap": true,
