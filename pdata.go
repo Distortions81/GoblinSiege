@@ -23,9 +23,26 @@ type playerData struct {
 	Points int
 }
 
+func playersAutosave() {
+	for ServerRunning {
+
+		players.lock.Lock()
+		if players.dirty {
+			players.dirty = false
+			writePlayers() //This unlocks after serialize
+		} else {
+			//No write to do, unlock
+			players.lock.Unlock()
+		}
+
+		time.Sleep(time.Second * 30)
+	}
+}
+
 // This unlocks playersLock after serialize
 func writePlayers() {
 
+	qlog("Saving players...")
 	startTime := time.Now()
 
 	tempPath := playersFile + ".tmp"
@@ -69,6 +86,8 @@ func writePlayers() {
 // Load player scores
 func readPlayers() {
 
+	qlog("Reading players.")
+
 	_, err := os.Stat(playersFile)
 	notfound := os.IsNotExist(err)
 
@@ -76,8 +95,6 @@ func readPlayers() {
 		file, err := os.ReadFile(playersFile)
 
 		if file != nil && err == nil {
-
-			qlog("Reading players.")
 
 			//Only lock after file is read
 			players.lock.Lock()

@@ -45,6 +45,9 @@ func main() {
 	//Start autosave loop
 	go playersAutosave()
 
+	//Voting handle loop
+	go handleVotes()
+
 	//Start the game mode
 	startGame()
 
@@ -53,23 +56,7 @@ func main() {
 
 	//Shutdown server and save
 	ServerRunning = false
-	qlog("Saving players...")
+
 	players.lock.Lock()
 	writePlayers()
-}
-
-func playersAutosave() {
-	for ServerRunning {
-
-		players.lock.Lock()
-		if players.dirty {
-			players.dirty = false
-			writePlayers() //This unlocks after serialize
-		} else {
-			//No write to do, unlock
-			players.lock.Unlock()
-		}
-
-		time.Sleep(time.Second * 30)
-	}
 }
