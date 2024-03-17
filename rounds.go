@@ -44,7 +44,7 @@ func cpuTurn() {
 
 	for _, item := range board.emap {
 		oldItem := item
-		if oldItem.Pos.X == 1 {
+		if oldItem.Pos.X < 1 {
 			board.gameover = GAME_DEFEAT
 			endGame()
 			return
