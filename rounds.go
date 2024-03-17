@@ -58,7 +58,7 @@ func cpuTurn() {
 			continue
 		}
 		if tower != nil {
-			tower.Health -= 2 + rand.Intn(5)
+			tower.Health -= 5 + rand.Intn(15)
 			if tower.Health <= 0 {
 				delete(board.pmap, tower.Pos)
 			}
@@ -68,7 +68,7 @@ func cpuTurn() {
 		oldItem.Pos = nextPos
 		board.emap[oldItem.Pos] = oldItem
 	}
-	for x := 0; x < 4; x++ {
+	for x := 0; x < 3; x++ {
 		if rand.Intn(3) == 0 {
 
 			goblin := getOtype("Goblin")
