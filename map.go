@@ -16,6 +16,7 @@ const (
 	mag          = size
 	boardSizeX   = 20
 	boardSizeY   = 20
+	enemyBoardX  = 15
 	offX         = 5
 	offY         = 1
 	offPixX      = size * offX
@@ -54,10 +55,20 @@ type objectData struct {
 
 var board gameBoardData
 
+const (
+	GAME_RUNNING = iota
+	GAME_VICTORY
+	GAME_DEFEAT
+	GAME_DRAW
+)
+
 type gameBoardData struct {
 	roundNum int
-	bmap     map[xyi]*objectData
+	pmap     map[xyi]*objectData
+	emap     map[xyi]*objectData
 	lock     sync.Mutex
+
+	gameover int
 
 	bgCache *ebiten.Image
 	bgDirty bool
@@ -70,10 +81,15 @@ func drawGameBoard(screen *ebiten.Image) {
 	if board.bgDirty {
 		board.bgCache.Clear()
 
-		//Draw left side bg red
-
-		for x := 0; x < boardSizeX; x++ {
+		for x := 0; x < boardSizeX+enemyBoardX; x++ {
 			for y := 0; y < boardSizeY; y++ {
+
+				if x >= boardSizeX {
+					if (x+y)%2 == 0 {
+						vector.DrawFilledRect(board.bgCache, float32(mag*x)+offPixX, float32(mag*y)+offPixY, size, size, ColorRedC, true)
+					}
+					continue
+				}
 
 				if (x+y)%2 == 0 {
 					vector.DrawFilledRect(board.bgCache, float32(mag*x)+offPixX, float32(mag*y)+offPixY, size, size, ColorGreenC, true)
@@ -98,7 +114,7 @@ func drawGameBoard(screen *ebiten.Image) {
 
 		board.bgDirty = false
 	}
-	if UserMsgDict.VoteState == VOTE_PLAYERS {
+	if 1 == 1 || UserMsgDict.VoteState == VOTE_PLAYERS {
 		screen.DrawImage(board.bgCache, nil)
 	}
 
@@ -108,7 +124,7 @@ func drawGameBoard(screen *ebiten.Image) {
 	//Works for now, but test if sorted list is faster
 	for x := 0; x < boardSizeX; x++ {
 		for y := 0; y < boardSizeY; y++ {
-			item := board.bmap[xyi{X: x, Y: y}]
+			item := board.pmap[xyi{X: x, Y: y}]
 			if item == nil {
 				continue
 			}
@@ -128,6 +144,33 @@ func drawGameBoard(screen *ebiten.Image) {
 			}
 		}
 	}
+
+	for _, item := range board.emap {
+		//Draw tower
+		/*
+			op := &ebiten.DrawImageOptions{}
+			op.GeoM.Translate(float64(((item.Pos.X+offX)*mag)-item.oTypeP.size.X), float64(((item.Pos.Y+offY)*mag)-item.oTypeP.size.Y))
+			screen.DrawImage(item.oTypeP.spriteImg, op)
+		*/
+		vector.DrawFilledCircle(screen, float32((item.Pos.X+offX)*mag)-(size/2), float32((item.Pos.Y+offY)*mag)-(size/2), size/2, ColorRed, true)
+
+		//Draw health
+		/*
+			healthBar := (float32(item.Health) / float32(item.oTypeP.maxHealth))
+			if healthBar > 0 && healthBar < 1 {
+				vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-32), float32(((item.Pos.Y+offY)*mag)-64)+1, float32(item.oTypeP.size.X), 6, ColorBlack, false)
+				vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-31), float32(((item.Pos.Y+offY)*mag)-63)+1, (healthBar*float32(item.oTypeP.size.X) - 1), 4, healthColor(healthBar), false)
+
+			}
+		*/
+	}
+
+	if board.gameover == GAME_DEFEAT {
+		vector.DrawFilledRect(screen, 0, float32(ScreenHeight)-40, float32(ScreenWidth), 100, ColorSmoke, true)
+		buf := fmt.Sprintf("Game over: The audience was defeated on round %v!", board.roundNum)
+		text.Draw(screen, buf, monoFont, 10, ScreenHeight-15, color.White)
+	}
+
 	board.lock.Unlock()
 
 }

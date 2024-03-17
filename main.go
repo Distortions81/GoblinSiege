@@ -10,8 +10,8 @@ import (
 
 var (
 	ServerRunning   bool          = true
-	playerRoundTime time.Duration = time.Second * 15
-	cpuRoundTime    time.Duration = time.Second * 5
+	playerRoundTime time.Duration = time.Millisecond * 250
+	cpuRoundTime    time.Duration = time.Millisecond
 
 	skipTwitch *bool
 	debugMode  *bool

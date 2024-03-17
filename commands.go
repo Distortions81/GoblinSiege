@@ -89,14 +89,15 @@ func clearGameBoard() {
 	qlog("Clearing game board...")
 	board.lock.Lock()
 
-	board.bmap = make(map[xyi]*objectData)
+	board.pmap = make(map[xyi]*objectData)
+	board.emap = make(map[xyi]*objectData)
 
 	if *debugMode {
 		//Test towers
 		tower1 := getOtype("Stone Tower")
 		for i := 0; i < 100; i++ {
 			tpos := xyi{X: rand.Intn(boardSizeX-1) + 1, Y: rand.Intn(boardSizeY-1) + 1}
-			board.bmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: rand.Intn(100)}
+			board.pmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: rand.Intn(100)}
 		}
 	}
 
@@ -115,6 +116,7 @@ func startGame() {
 
 	clearGameBoard()
 
+	board.gameover = GAME_RUNNING
 	UserMsgDict.GameRunning = true
 
 	startVote()
@@ -122,8 +124,6 @@ func startGame() {
 
 func endGame() {
 	qlog("Stopping game...")
-
-	clearGameBoard()
 	clearVotes()
 
 	UserMsgDict.VoteState = VOTE_NONE
@@ -148,7 +148,7 @@ func endVote() {
 		UserMsgDict.StartTime = time.Now()
 
 		if UserMsgDict.VoteCount > 0 &&
-			board.bmap[UserMsgDict.Result] == nil &&
+			board.pmap[UserMsgDict.Result] == nil &&
 			UserMsgDict.Result.X > 0 &&
 			UserMsgDict.Result.X <= boardSizeX &&
 			UserMsgDict.Result.Y > 0 &&
@@ -157,7 +157,7 @@ func endVote() {
 			board.lock.Lock()
 			tower1 := getOtype("Stone Tower")
 			tpos := UserMsgDict.Result
-			board.bmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
+			board.pmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
 			board.lock.Unlock()
 		}
 	}

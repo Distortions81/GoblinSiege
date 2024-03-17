@@ -18,6 +18,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	frameCount++
 	drawGameBoard(screen)
 
+	if board.gameover != GAME_RUNNING {
+		return
+	}
+
 	if UserMsgDict.VoteState == VOTE_PLAYERS {
 		vector.DrawFilledRect(screen, 0, float32(ScreenHeight)-40, float32(ScreenWidth), 100, ColorSmoke, true)
 		buf := fmt.Sprintf("Vote now: %vx,y -- Votes: %v -- %v remaining%v",
@@ -37,7 +41,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	} else {
 		if !UserMsgDict.GameRunning {
-			text.Draw(screen, "No game active.", monoFont, 10, ScreenHeight-7, color.White)
+			vector.DrawFilledRect(screen, 0, float32(ScreenHeight)-40, float32(ScreenWidth), 100, ColorSmoke, true)
+			buf := fmt.Sprintf("No game active%v", makeEllipsis())
+
+			text.Draw(screen, buf, monoFont, 10, ScreenHeight-15, color.White)
 		}
 	}
 
