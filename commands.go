@@ -155,7 +155,9 @@ func endVote() {
 			UserMsgDict.Result.Y <= boardSizeY {
 
 			board.lock.Lock()
-			board.bmap[UserMsgDict.Result] = &objectData{Pos: UserMsgDict.Result}
+			tower1 := getOtype("Stone Tower")
+			tpos := UserMsgDict.Result
+			board.bmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
 			board.lock.Unlock()
 		}
 	}
