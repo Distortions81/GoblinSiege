@@ -68,7 +68,7 @@ func cpuTurn() {
 		oldItem.Pos = nextPos
 		board.emap[oldItem.Pos] = oldItem
 	}
-	for x := 0; x < 3; x++ {
+	for x := 0; x < 1; x++ {
 		if rand.Intn(3) == 0 {
 
 			goblin := getOtype("Goblin")
