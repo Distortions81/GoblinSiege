@@ -92,15 +92,6 @@ func clearGameBoard() {
 	board.pmap = make(map[xyi]*objectData)
 	board.emap = make(map[xyi]*objectData)
 
-	if *debugMode {
-		//Test towers
-		tower1 := getOtype("Stone Tower")
-		for i := 0; i < 100; i++ {
-			tpos := xyi{X: rand.Intn(boardSizeX-1) + 1, Y: rand.Intn(boardSizeY-1) + 1}
-			board.pmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: rand.Intn(100)}
-		}
-	}
-
 	board.lock.Unlock()
 }
 
@@ -147,7 +138,13 @@ func endVote() {
 		UserMsgDict.VoteState = VOTE_PLAYERS_DONE
 		UserMsgDict.StartTime = time.Now()
 
-		if UserMsgDict.VoteCount > 0 &&
+		if *debugMode {
+			//Test towers
+			tower1 := getOtype("Stone Tower")
+			tpos := xyi{X: rand.Intn(boardSizeX-1) + 1, Y: rand.Intn(boardSizeY-1) + 1}
+			board.pmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
+
+		} else if UserMsgDict.VoteCount > 0 &&
 			board.pmap[UserMsgDict.Result] == nil &&
 			UserMsgDict.Result.X > 0 &&
 			UserMsgDict.Result.X <= boardSizeX &&
