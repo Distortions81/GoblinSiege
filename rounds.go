@@ -36,6 +36,4 @@ func cpuTurn() {
 
 	board.roundNum++
 
-	//spawn new unit every x rounds
-	//Every round, move one unit west
 }
