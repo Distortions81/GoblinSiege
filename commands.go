@@ -162,10 +162,13 @@ func endVote() {
 		for _, item := range board.pmap {
 			for _, enemy := range board.emap {
 				if Distance(item.Pos, enemy.Pos) < 6 {
-					if rand.Intn(6) == 0 {
-						continue
+
+					if rand.Intn(5) > 0 {
+						arrow := arrowData{tower: item.Pos, target: enemy.Pos, missed: true}
+						board.arrowsShot = append(board.arrowsShot, arrow)
+						break
 					}
-					dmgAmt := 5 + rand.Intn(5)
+					dmgAmt := 5 + rand.Intn(30)
 					enemy.Health -= dmgAmt
 
 					if enemy.Health <= 0 {

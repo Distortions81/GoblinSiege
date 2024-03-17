@@ -11,7 +11,7 @@ import (
 var (
 	ServerRunning   bool          = true
 	playerRoundTime time.Duration = time.Second * 10
-	cpuRoundTime    time.Duration = time.Second
+	cpuRoundTime    time.Duration = time.Second * 1
 
 	skipTwitch *bool
 	debugMode  *bool
@@ -23,8 +23,8 @@ func main() {
 	flag.Parse()
 
 	if *debugMode {
-		cpuRoundTime = time.Microsecond
-		playerRoundTime = time.Millisecond * 500
+		cpuRoundTime = time.Millisecond * 250
+		playerRoundTime = time.Millisecond * 250
 	}
 
 	//Wait here for process signals

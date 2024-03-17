@@ -5,6 +5,7 @@ import (
 	"image/color"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
@@ -63,11 +64,21 @@ const (
 	GAME_DRAW
 )
 
+type arrowData struct {
+	tower  xyi
+	target xyi
+
+	shot   time.Time
+	missed bool
+}
+
 type gameBoardData struct {
 	roundNum int
 	pmap     map[xyi]*objectData
 	emap     map[xyi]*objectData
 	lock     sync.Mutex
+
+	arrowsShot []arrowData
 
 	gameover int
 
@@ -165,6 +176,14 @@ func drawGameBoard(screen *ebiten.Image) {
 
 			}
 		}
+	}
+
+	//Draw arrows
+	for _, arrow := range board.arrowsShot {
+		if !arrow.missed {
+			continue
+		}
+		vector.DrawFilledCircle(screen, float32((arrow.target.X+offX)*mag)-(size/2), float32((arrow.target.Y+offY)*mag)-(size/8), size/8, ColorRed, true)
 	}
 
 	if board.gameover == GAME_DEFEAT {
