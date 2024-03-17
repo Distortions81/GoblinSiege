@@ -38,6 +38,7 @@ func getOtype(name string) *oTypeData {
 var oTypes = []oTypeData{
 	{name: "Stone Tower", maxHealth: 100, size: xyi{X: 32, Y: 64}, spriteName: "tower1"},
 	{name: "Goblin", maxHealth: 100, size: xyi{X: 32, Y: 32}, spriteName: "goblin-test"},
+	{name: "Arrow", size: xyi{X: 14, Y: 3}, spriteName: "arrow"},
 }
 
 type oTypeData struct {
@@ -179,11 +180,16 @@ func drawGameBoard(screen *ebiten.Image) {
 	}
 
 	//Draw arrows
+	aData := getOtype("arrow")
 	for _, arrow := range board.arrowsShot {
 		if !arrow.missed {
 			continue
 		}
-		vector.DrawFilledCircle(screen, float32((arrow.target.X+offX)*mag)-(size/2), float32((arrow.target.Y+offY)*mag)-(size/8), size/8, ColorRed, true)
+		//Draw tower
+		op := &ebiten.DrawImageOptions{}
+		op.GeoM.Translate(float64(((arrow.target.X+offX)*mag)-aData.size.X), float64(((arrow.target.Y+offY)*mag)-aData.size.Y))
+		screen.DrawImage(aData.spriteImg, op)
+		//vector.DrawFilledCircle(screen, float32((arrow.target.X+offX)*mag)-(size/2), float32((arrow.target.Y+offY)*mag)-(size/8), size/8, ColorRed, true)
 	}
 
 	if board.gameover == GAME_DEFEAT {
