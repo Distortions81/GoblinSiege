@@ -93,7 +93,7 @@ func clearGameBoard() {
 	tower1 := getOtype("Stone Tower")
 	for i := 0; i < 10; i++ {
 		tpos := xyi{X: rand.Intn(boardSizeX-1) + 1, Y: rand.Intn(boardSizeY-1) + 1}
-		board.bmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
+		board.bmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: 100}
 	}
 	board.lock.Unlock()
 }
