@@ -24,7 +24,7 @@ func main() {
 
 	if *debugMode {
 		cpuRoundTime = time.Microsecond
-		playerRoundTime = time.Millisecond * 100
+		playerRoundTime = time.Millisecond * 500
 	}
 
 	//Wait here for process signals

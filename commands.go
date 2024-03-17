@@ -133,17 +133,20 @@ func startVote() {
 func endVote() {
 
 	processUserDict()
+	board.lock.Lock()
+	defer board.lock.Unlock()
+
 	if UserMsgDict.VoteState == VOTE_PLAYERS {
 		qlog("Ending vote...")
 		UserMsgDict.VoteState = VOTE_PLAYERS_DONE
 		UserMsgDict.StartTime = time.Now()
 
 		if *debugMode {
+
 			//Test towers
 			tower1 := getOtype("Stone Tower")
 			tpos := xyi{X: rand.Intn(boardSizeX-1) + 1, Y: rand.Intn(boardSizeY-1) + 1}
 			board.pmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
-
 		} else if UserMsgDict.VoteCount > 0 &&
 			board.pmap[UserMsgDict.Result] == nil &&
 			UserMsgDict.Result.X > 0 &&
@@ -151,11 +154,26 @@ func endVote() {
 			UserMsgDict.Result.Y > 0 &&
 			UserMsgDict.Result.Y <= boardSizeY {
 
-			board.lock.Lock()
 			tower1 := getOtype("Stone Tower")
 			tpos := UserMsgDict.Result
 			board.pmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
-			board.lock.Unlock()
+		}
+
+		for _, item := range board.pmap {
+			for _, enemy := range board.emap {
+				if Distance(item.Pos, enemy.Pos) < 6 {
+					if rand.Intn(6) == 0 {
+						continue
+					}
+					dmgAmt := 5 + rand.Intn(5)
+					enemy.Health -= dmgAmt
+
+					if enemy.Health <= 0 {
+						delete(board.emap, enemy.Pos)
+					}
+					break
+				}
+			}
 		}
 	}
 }

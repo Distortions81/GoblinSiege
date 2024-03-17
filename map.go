@@ -121,6 +121,7 @@ func drawGameBoard(screen *ebiten.Image) {
 
 	//Draw towers
 	board.lock.Lock()
+	defer board.lock.Unlock()
 
 	for _, item := range board.emap {
 		//Draw goblin
@@ -135,8 +136,8 @@ func drawGameBoard(screen *ebiten.Image) {
 
 		healthBar := (float32(item.Health) / float32(item.oTypeP.maxHealth))
 		if healthBar > 0 && healthBar < 1 {
-			vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-32), float32(((item.Pos.Y+offY)*mag)-64)+1, float32(item.oTypeP.size.X), 6, ColorBlack, false)
-			vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-31), float32(((item.Pos.Y+offY)*mag)-63)+1, (healthBar*float32(item.oTypeP.size.X) - 1), 4, healthColor(healthBar), false)
+			vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-16), float32(((item.Pos.Y+offY)*mag)-32)+1, float32(item.oTypeP.size.X), 6, ColorBlack, false)
+			vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-15), float32(((item.Pos.Y+offY)*mag)-31)+1, (healthBar*float32(item.oTypeP.size.X) - 1), 4, healthColor(healthBar), false)
 
 		}
 
@@ -170,10 +171,14 @@ func drawGameBoard(screen *ebiten.Image) {
 		vector.DrawFilledRect(screen, 0, float32(ScreenHeight)-40, float32(ScreenWidth), 100, ColorSmoke, true)
 		buf := fmt.Sprintf("Game over: The audience was defeated on round %v!", board.roundNum)
 		text.Draw(screen, buf, monoFont, 10, ScreenHeight-15, color.White)
+	} else if board.gameover == GAME_VICTORY {
+		vector.DrawFilledRect(screen, 0, float32(ScreenHeight)-40, float32(ScreenWidth), 100, ColorSmoke, true)
+		buf := fmt.Sprintf("Game over: The audience has won, survived %v round!", board.roundNum)
+		text.Draw(screen, buf, monoFont, 10, ScreenHeight-15, color.White)
 	}
 
-	board.lock.Unlock()
-
+	buf := fmt.Sprintf("Round: %v/50!", board.roundNum)
+	text.Draw(screen, buf, monoFont, ScreenWidth-190, 25, color.Black)
 }
 
 func healthColor(input float32) color.NRGBA {
