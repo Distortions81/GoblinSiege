@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"strings"
 	"time"
 
@@ -89,6 +90,10 @@ func clearGameBoard() {
 	board.lock.Lock()
 
 	board.bmap = make(map[xyi]*objectData)
+	for i := 0; i < 10; i++ {
+		tpos := xyi{X: rand.Intn(boardSizeX-1) + 1, Y: rand.Intn(boardSizeY-1) + 1}
+		board.bmap[tpos] = &objectData{Pos: tpos}
+	}
 	board.lock.Unlock()
 }
 

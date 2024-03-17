@@ -81,7 +81,10 @@ func drawGameBoard(screen *ebiten.Image) {
 	//Draw towers
 	board.lock.Lock()
 	for _, item := range board.bmap {
-		vector.DrawFilledCircle(screen, float32((item.Pos.X+offX)*mag)-(size/1.5), float32((item.Pos.Y+offY)*mag)-(size/1.5), size/2, color.White, true)
+		//vector.DrawFilledCircle(screen, float32((item.Pos.X+offX)*mag)-(size/2), float32((item.Pos.Y+offY)*mag)-(size/2), size/2, color.White, true)
+		op := &ebiten.DrawImageOptions{}
+		op.GeoM.Translate(float64(((item.Pos.X+offX)*mag)-32), float64(((item.Pos.Y+offY)*mag)-64))
+		screen.DrawImage(towerimg, op)
 	}
 	board.lock.Unlock()
 

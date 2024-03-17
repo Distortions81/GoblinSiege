@@ -10,13 +10,19 @@ import (
 
 var (
 	//go:embed data
-	f     embed.FS
-	bgimg *ebiten.Image
+	f        embed.FS
+	bgimg    *ebiten.Image
+	towerimg *ebiten.Image
 )
 
 func init() {
 	var err error
 	bgimg, _, err = ebitenutil.NewImageFromFile("data/maps/main.png")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	towerimg, _, err = ebitenutil.NewImageFromFile("data/sprites/tower1.png")
 	if err != nil {
 		log.Fatal(err)
 	}
