@@ -26,9 +26,9 @@ type xyi struct {
 }
 
 type userMsgData struct {
-	sender  string
-	command string
-	time    time.Time
+	sender string
+	pos    xyi
+	time   time.Time
 }
 
 type userMsgDictData struct {
@@ -55,13 +55,30 @@ func handleUserDictMsg(msg twitch.PrivateMessage, command string) {
 		return
 	}
 
-	userid := strToID(msg.User.ID)
-	UserMsgDict.Lock.Lock()
-	if UserMsgDict.Users[userid] == nil {
-		UserMsgDict.VoteCount++
+	args := strings.Split(strings.ToUpper(command), ",")
+	numArgs := len(args)
+	if numArgs == 2 {
+
+		x, erra := strconv.ParseInt(args[0], 10, 64)
+		y, errb := strconv.ParseInt(args[1], 10, 64)
+
+		if erra != nil || errb != nil ||
+			x < 1 || x > boardSizeX ||
+			y < 1 || y > boardSizeY {
+			return
+		}
+
+		userid := strToID(msg.User.ID)
+		UserMsgDict.Lock.Lock()
+		if UserMsgDict.Users[userid] == nil {
+			UserMsgDict.VoteCount++
+		}
+		UserMsgDict.Users[userid] = &userMsgData{sender: msg.User.DisplayName, pos: xyi{X: int(x), Y: int(y)}, time: time.Now()}
+
+		UserMsgDict.Lock.Unlock()
+
 	}
-	UserMsgDict.Users[userid] = &userMsgData{sender: msg.User.DisplayName, command: command, time: time.Now()}
-	UserMsgDict.Lock.Unlock()
+
 }
 
 func processUserDict() {
@@ -69,26 +86,9 @@ func processUserDict() {
 	var tX, tY, count uint64
 
 	for _, user := range UserMsgDict.Users {
-		args := strings.Split(strings.ToUpper(user.command), ",")
-		numArgs := len(args)
-		if numArgs == 2 {
-
-			x, erra := strconv.ParseInt(args[0], 10, 64)
-			y, errb := strconv.ParseInt(args[1], 10, 64)
-
-			qlog("user: %v, x: %v, y: %v", user.sender, x, y)
-			if erra != nil || errb != nil ||
-				x < 1 || x > boardSizeX ||
-				y < 1 || y > boardSizeY {
-				continue
-			}
-
-			tX += uint64(x)
-			tY += uint64(y)
-
-			count++
-		}
-
+		tX += uint64(user.pos.X)
+		tY += uint64(user.pos.Y)
+		count++
 	}
 	if count > 0 {
 		UserMsgDict.VoteCount = int(count)
