@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"image/color"
+	"strings"
 	"sync"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -23,9 +24,32 @@ const (
 	boardPixelsY = ((boardSizeY) * mag)
 )
 
+func getOtype(name string) *oTypeData {
+	for o, ot := range oTypes {
+		if strings.EqualFold(ot.name, name) {
+			return &oTypes[o]
+		}
+	}
+	return nil
+}
+
+var oTypes = []oTypeData{
+	{name: "Stone Tower", maxHealth: 100, size: xyi{X: 32, Y: 64}, spriteName: "tower1"},
+}
+
+type oTypeData struct {
+	name       string
+	maxHealth  int
+	size       xyi
+	spriteName string
+	spriteImg  *ebiten.Image
+}
+
 type objectData struct {
-	Pos  xyi
-	Type int
+	Pos    xyi
+	Health int
+
+	oTypeP *oTypeData
 }
 
 var board gameBoardData
@@ -80,12 +104,41 @@ func drawGameBoard(screen *ebiten.Image) {
 
 	//Draw towers
 	board.lock.Lock()
-	for _, item := range board.bmap {
-		//vector.DrawFilledCircle(screen, float32((item.Pos.X+offX)*mag)-(size/2), float32((item.Pos.Y+offY)*mag)-(size/2), size/2, color.White, true)
-		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64(((item.Pos.X+offX)*mag)-32), float64(((item.Pos.Y+offY)*mag)-64))
-		screen.DrawImage(towerimg, op)
+
+	//Works for now, but test if sorted list is faster
+	for x := 0; x < boardSizeX; x++ {
+		for y := 0; y < boardSizeY; y++ {
+			item := board.bmap[xyi{X: x, Y: y}]
+			if item == nil {
+				continue
+			}
+
+			//Draw tower
+			op := &ebiten.DrawImageOptions{}
+			op.GeoM.Translate(float64(((item.Pos.X+offX)*mag)-item.oTypeP.size.X), float64(((item.Pos.Y+offY)*mag)-item.oTypeP.size.Y))
+			screen.DrawImage(item.oTypeP.spriteImg, op)
+			//vector.DrawFilledCircle(screen, float32((item.Pos.X+offX)*mag)-(size/2), float32((item.Pos.Y+offY)*mag)-(size/2), size/2, color.White, true)
+
+			//Draw health
+			healthBar := (float32(item.Health) / float32(item.oTypeP.maxHealth))
+			vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-32), float32(((item.Pos.Y+offY)*mag)-64), healthBar*float32(item.oTypeP.size.X-1), 4, healthColor(healthBar*100), false)
+		}
 	}
 	board.lock.Unlock()
 
+}
+
+func healthColor(health float32) color.NRGBA {
+	var healthColor color.NRGBA = color.NRGBA{R: 255, G: 255, B: 255, A: 0}
+
+	if health < 100 {
+		r := int(float32(100-(health)) * 5)
+		if r > 255 {
+			r = 255
+		}
+		healthColor.R = uint8(r)
+		healthColor.G = uint8(float32(health*100) * 1.5)
+	}
+
+	return healthColor
 }

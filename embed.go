@@ -10,9 +10,8 @@ import (
 
 var (
 	//go:embed data
-	f        embed.FS
-	bgimg    *ebiten.Image
-	towerimg *ebiten.Image
+	f     embed.FS
+	bgimg *ebiten.Image
 )
 
 func init() {
@@ -22,9 +21,15 @@ func init() {
 		log.Fatal(err)
 	}
 
-	towerimg, _, err = ebitenutil.NewImageFromFile("data/sprites/tower1.png")
-	if err != nil {
-		log.Fatal(err)
+	for i, item := range oTypes {
+		tmp, _, err := ebitenutil.NewImageFromFile("data/sprites/" + item.spriteName + ".png")
+		oTypes[i].spriteImg = tmp
+
+		log.Printf("Loaded sprite: %v", item.spriteName)
+
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 
