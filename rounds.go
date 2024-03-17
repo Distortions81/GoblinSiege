@@ -37,7 +37,7 @@ func cpuTurn() {
 	board.lock.Lock()
 	defer board.lock.Unlock()
 
-	if board.roundNum >= 50 {
+	if board.roundNum >= maxRounds {
 		board.gameover = GAME_VICTORY
 		endGame()
 	}
@@ -68,13 +68,11 @@ func cpuTurn() {
 		oldItem.Pos = nextPos
 		board.emap[oldItem.Pos] = oldItem
 	}
-	for x := 0; x < 1; x++ {
-		if rand.Intn(3) == 0 {
 
-			goblin := getOtype("Goblin")
-			rand := xyi{X: boardSizeX + enemyBoardX, Y: 1 + rand.Intn(boardSizeY-1)}
-			board.emap[rand] = &objectData{Pos: rand, oTypeP: goblin, Health: goblin.maxHealth}
-		}
+	goblin := getOtype("Goblin")
+	rand := xyi{X: boardSizeX + enemyBoardX, Y: 1 + rand.Intn(boardSizeY-1)}
+	if board.emap[rand] == nil {
+		board.emap[rand] = &objectData{Pos: rand, oTypeP: goblin, Health: goblin.maxHealth}
 	}
 
 	board.roundNum++

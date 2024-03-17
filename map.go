@@ -202,7 +202,7 @@ func drawGameBoard(screen *ebiten.Image) {
 		text.Draw(screen, buf, monoFont, 10, ScreenHeight-15, color.White)
 	}
 
-	buf := fmt.Sprintf("Round: %v/50!", board.roundNum)
+	buf := fmt.Sprintf("Round: %v/%v!", board.roundNum, maxRounds)
 	text.Draw(screen, buf, monoFont, ScreenWidth-190, 25, color.Black)
 }
 

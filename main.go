@@ -12,6 +12,7 @@ var (
 	ServerRunning   bool          = true
 	playerRoundTime time.Duration = time.Second * 10
 	cpuRoundTime    time.Duration = time.Second * 1
+	maxRounds                     = 100
 
 	skipTwitch *bool
 	debugMode  *bool
