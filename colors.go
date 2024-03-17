@@ -28,7 +28,7 @@ func Hex2Color(input string) (color.RGBA, error) {
 var (
 	ColorVeryDarkGray   = color.NRGBA{64, 64, 64, 255}
 	ColorReallyDarkGray = color.NRGBA{32, 32, 32, 255}
-	ColorSmoke          = color.NRGBA{32, 32, 32, 230}
+	ColorSmoke          = color.NRGBA{32, 32, 32, 200}
 	ColorVeryDarkGreen  = color.NRGBA{11, 73, 12, 255}
 	ColorVeryDarkRed    = color.NRGBA{73, 11, 11, 255}
 

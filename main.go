@@ -14,10 +14,12 @@ var (
 	cpuRoundTime    time.Duration = time.Second * 5
 
 	skipTwitch *bool
+	debugMode  *bool
 )
 
 func main() {
 	skipTwitch = flag.Bool("skip", false, "don't connect to twitch")
+	debugMode = flag.Bool("debug", false, "debug mode")
 	flag.Parse()
 
 	//Wait here for process signals

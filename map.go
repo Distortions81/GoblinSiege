@@ -122,8 +122,8 @@ func drawGameBoard(screen *ebiten.Image) {
 			//Draw health
 			healthBar := (float32(item.Health) / float32(item.oTypeP.maxHealth))
 			if healthBar > 0 && healthBar < 1 {
-				vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-32), float32(((item.Pos.Y+offY)*mag)-64), healthBar*float32(item.oTypeP.size.X), 6, ColorBlack, false)
-				vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-31), float32(((item.Pos.Y+offY)*mag)-63), healthBar*float32(item.oTypeP.size.X-2), 4, healthColor(healthBar), false)
+				vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-32), float32(((item.Pos.Y+offY)*mag)-64)+1, float32(item.oTypeP.size.X), 6, ColorBlack, false)
+				vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-31), float32(((item.Pos.Y+offY)*mag)-63)+1, (healthBar*float32(item.oTypeP.size.X) - 1), 4, healthColor(healthBar), false)
 
 			}
 		}
