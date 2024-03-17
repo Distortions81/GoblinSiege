@@ -121,7 +121,11 @@ func drawGameBoard(screen *ebiten.Image) {
 
 			//Draw health
 			healthBar := (float32(item.Health) / float32(item.oTypeP.maxHealth))
-			vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-32), float32(((item.Pos.Y+offY)*mag)-64), healthBar*float32(item.oTypeP.size.X-1), 4, healthColor(healthBar), false)
+			if healthBar > 0 && healthBar < 1 {
+				vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-32), float32(((item.Pos.Y+offY)*mag)-64), healthBar*float32(item.oTypeP.size.X), 6, ColorBlack, false)
+				vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-31), float32(((item.Pos.Y+offY)*mag)-63), healthBar*float32(item.oTypeP.size.X-2), 4, healthColor(healthBar), false)
+
+			}
 		}
 	}
 	board.lock.Unlock()
@@ -141,7 +145,12 @@ func healthColor(input float32) color.NRGBA {
 			r = 255
 		}
 		healthColor.R = uint8(r)
-		healthColor.G = uint8(float32(health) * 1.5)
+
+		g := int(float32(health) * 4)
+		if g > 255 {
+			g = 255
+		}
+		healthColor.G = uint8(g)
 
 	}
 
