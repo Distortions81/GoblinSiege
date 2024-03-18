@@ -92,6 +92,8 @@ func clearGameBoard() {
 
 	board.pmap = make(map[xyi]*objectData)
 	board.emap = make(map[xyi]*objectData)
+	board.roundNum = 0
+	board.arrowsShot = make([]arrowData, 0)
 
 	board.lock.Unlock()
 }
@@ -109,6 +111,7 @@ func startGame() {
 	clearGameBoard()
 
 	board.gameover = GAME_RUNNING
+	UserMsgDict.VoteCount = 0
 	UserMsgDict.GameRunning = true
 
 	startVote()
