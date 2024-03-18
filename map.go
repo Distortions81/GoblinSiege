@@ -144,7 +144,9 @@ func drawGameBoard(screen *ebiten.Image) {
 
 	//Draw arrows
 	aData := getOtype("arrow")
-	for a, arrow := range board.arrowsShot {
+	numArrows := len(board.arrowsShot) - 1
+	for x := numArrows; x >= 0; x-- {
+		arrow := board.arrowsShot[x]
 
 		//Tween animation, make sprite face direction of travel
 		startTime := time.Now()
@@ -168,7 +170,7 @@ func drawGameBoard(screen *ebiten.Image) {
 		if sX == float64(arrow.target.X) && sY == float64(arrow.target.Y) {
 			if !arrow.missed {
 				//Delete it
-				board.arrowsShot = append(board.arrowsShot[:a], board.arrowsShot[a+1:]...)
+				board.arrowsShot = append(board.arrowsShot[:x], board.arrowsShot[x+1:]...)
 				continue
 			}
 		}
