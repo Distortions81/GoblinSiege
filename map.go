@@ -96,6 +96,7 @@ func drawGameBoard(screen *ebiten.Image) {
 
 	screen.DrawImage(bgimg, nil)
 
+	//Draw checkerboard if dirty
 	if board.bgDirty {
 		board.bgCache.Clear()
 
@@ -132,6 +133,7 @@ func drawGameBoard(screen *ebiten.Image) {
 
 		board.bgDirty = false
 	}
+	//Draw checkerboard cache if voting
 	if UserMsgDict.VoteState == VOTE_PLAYERS {
 		screen.DrawImage(board.bgCache, nil)
 	}
@@ -142,8 +144,9 @@ func drawGameBoard(screen *ebiten.Image) {
 
 	//Draw arrows
 	aData := getOtype("arrow")
-	for _, arrow := range board.arrowsShot {
+	for a, arrow := range board.arrowsShot {
 
+		//Tween animation, make sprite face direction of travel
 		startTime := time.Now()
 		since := startTime.Sub(arrow.shot)
 		distance := Distance(arrow.tower, arrow.target)
@@ -161,8 +164,11 @@ func drawGameBoard(screen *ebiten.Image) {
 		sX := (float64(arrow.tower.X) - ((float64(arrow.target.X) - float64(arrow.tower.X)) * normal))
 		sY := (float64(arrow.tower.Y) - ((float64(arrow.target.Y) - float64(arrow.tower.Y)) * normal))
 
+		//Hide arrows that didn't miss once at target
 		if sX == float64(arrow.target.X) && sY == float64(arrow.target.Y) {
 			if !arrow.missed {
+				//Delete it
+				board.arrowsShot = append(board.arrowsShot[:a], board.arrowsShot[a+1:]...)
 				continue
 			}
 		}
