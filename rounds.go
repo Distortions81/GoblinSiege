@@ -34,6 +34,12 @@ func handleRounds() {
 			}
 		}
 
+		if !UserMsgDict.GameRunning {
+			if time.Since(UserMsgDict.RoundTime) > time.Second*5 {
+				startGame()
+			}
+		}
+
 		UserMsgDict.Lock.Unlock()
 		time.Sleep(time.Millisecond * 10)
 	}
