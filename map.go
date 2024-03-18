@@ -97,7 +97,7 @@ func drawGameBoard(screen *ebiten.Image) {
 	if board.bgDirty {
 		board.bgCache.Clear()
 
-		for x := 0; x < boardSizeX+enemyBoardX; x++ {
+		for x := 0; x < boardSizeX; x++ {
 			for y := 0; y < boardSizeY; y++ {
 
 				if x >= boardSizeX {
@@ -130,7 +130,7 @@ func drawGameBoard(screen *ebiten.Image) {
 
 		board.bgDirty = false
 	}
-	if 1 == 1 || UserMsgDict.VoteState == VOTE_PLAYERS {
+	if UserMsgDict.VoteState == VOTE_PLAYERS {
 		screen.DrawImage(board.bgCache, nil)
 	}
 
