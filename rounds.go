@@ -104,6 +104,7 @@ func goblinAttack() {
 		}
 		//Delete enemy, add to list
 		delete(board.emap, item.Pos)
+		oldItem.OldPos = oldItem.Pos
 		oldItem.Pos = nextPos
 		newitems = append(newitems, oldItem)
 	}

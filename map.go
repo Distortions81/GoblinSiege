@@ -55,6 +55,7 @@ type oTypeData struct {
 
 type objectData struct {
 	Pos    xyi
+	OldPos xyi
 	Health int
 	dead   bool
 
@@ -179,7 +180,7 @@ func drawGameBoard(screen *ebiten.Image) {
 		targetPos := geom.Coord{float64(arrow.target.X), float64(arrow.target.Y), 0}
 		angle := xy.Angle(towerPos, targetPos)
 
-		//Draw tower
+		//Draw arrow
 		op := &ebiten.DrawImageOptions{}
 		op.GeoM.Rotate(angle)
 		op.GeoM.Translate(((sX+float64(offX))*float64(mag))-float64(aData.size.X)-16,
@@ -191,9 +192,27 @@ func drawGameBoard(screen *ebiten.Image) {
 
 	//Draw goblin
 	for _, item := range board.emap {
+		//Tween animation
+		startTime := time.Now()
+		since := startTime.Sub(UserMsgDict.CpuTime)
+		distance := Distance(item.Pos, item.OldPos)
+		remaining := (distance * float64(cpuRoundTime.Nanoseconds())) - float64(since.Nanoseconds())
+		normal := (float64(remaining)/(distance*float64(cpuRoundTime.Nanoseconds())) - 1.0)
+
+		//Extrapolation limits
+		if normal < -1 {
+			normal = -1
+		} else if normal > 1 {
+			normal = 1
+		}
+
+		sX := (float64(item.OldPos.X) - ((float64(item.Pos.X) - float64(item.OldPos.X)) * normal))
+		sY := (float64(item.OldPos.Y) - ((float64(item.Pos.Y) - float64(item.OldPos.Y)) * normal))
 
 		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64(((item.Pos.X+offX)*mag)-item.oTypeP.size.X), float64(((item.Pos.Y+offY)*mag)-item.oTypeP.size.Y))
+		op.GeoM.Translate(((sX+float64(offX))*float64(mag))-float64(aData.size.X),
+			((sY+float64(offY))*float64(mag))-float64(aData.size.Y))
+
 		if item.dead {
 			screen.DrawImage(item.oTypeP.deadImg, op)
 		} else {
