@@ -123,7 +123,6 @@ func endGame() {
 }
 
 func startVote() {
-	clearVotes()
 	qlog("Starting new vote...")
 	UserMsgDict.StartTime = time.Now()
 	UserMsgDict.VoteState = VOTE_PLAYERS
@@ -143,18 +142,11 @@ func endVote() {
 
 		addTower()
 	}
+	clearVotes()
 }
 
 func addTower() {
-	if *debugMode {
-
-		//Test towers
-		tower1 := getOtype("Stone Tower")
-		tpos := xyi{X: rand.Intn(boardSizeX-1) + 1, Y: rand.Intn(boardSizeY-1) + 1}
-		if board.emap[tpos] == nil && board.pmap[tpos] == nil {
-			board.pmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
-		}
-	} else if UserMsgDict.VoteCount > 0 &&
+	if UserMsgDict.VoteCount > 0 &&
 		board.pmap[UserMsgDict.Result] == nil &&
 		UserMsgDict.Result.X > 0 &&
 		UserMsgDict.Result.X <= boardSizeX &&
@@ -163,6 +155,14 @@ func addTower() {
 
 		tower1 := getOtype("Stone Tower")
 		tpos := UserMsgDict.Result
+		if board.emap[tpos] == nil && board.pmap[tpos] == nil {
+			board.pmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
+		}
+	} else {
+
+		//Test towers
+		tower1 := getOtype("Stone Tower")
+		tpos := xyi{X: rand.Intn(boardSizeX-1) + 1, Y: rand.Intn(boardSizeY-1) + 1}
 		if board.emap[tpos] == nil && board.pmap[tpos] == nil {
 			board.pmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
 		}

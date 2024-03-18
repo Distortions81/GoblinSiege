@@ -15,11 +15,11 @@ func handleRounds() {
 
 		} else if UserMsgDict.VoteState == VOTE_PLAYERS_DONE {
 			UserMsgDict.VoteState = VOTE_COMPUTER
-			UserMsgDict.StartTime = time.Now()
+			UserMsgDict.CpuTime = time.Now()
 			cpuTurn()
 
 		} else if UserMsgDict.VoteState == VOTE_COMPUTER &&
-			time.Since(UserMsgDict.StartTime) > cpuRoundTime {
+			time.Since(UserMsgDict.CpuTime) > cpuRoundTime {
 
 			UserMsgDict.VoteState = VOTE_COMPUTER_DONE
 
@@ -29,13 +29,13 @@ func handleRounds() {
 				startVote()
 			} else {
 				UserMsgDict.VoteState = VOTE_COMPUTER
-				UserMsgDict.StartTime = time.Now()
+				UserMsgDict.CpuTime = time.Now()
 				cpuTurn()
 			}
 		}
 
 		UserMsgDict.Lock.Unlock()
-		time.Sleep(time.Millisecond * 100)
+		time.Sleep(time.Millisecond * 10)
 	}
 }
 

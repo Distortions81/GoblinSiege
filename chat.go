@@ -20,7 +20,7 @@ func handleChat(msg twitch.PrivateMessage) {
 		if handleModCommands(msg, command) {
 			return
 
-		} else if UserMsgDict.VoteState == VOTE_PLAYERS {
+		} else {
 			//If a vote is active, handle votes
 			handleUserDictMsg(msg, command)
 		}

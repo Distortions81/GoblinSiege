@@ -39,6 +39,7 @@ type userMsgDictData struct {
 	VoteCount int
 	VoteState VOTE_STATE
 	StartTime time.Time
+	CpuTime   time.Time
 	Lock      sync.Mutex
 	RoundTime time.Time
 	Result    xyi
