@@ -42,6 +42,7 @@ func cpuTurn() {
 		endGame()
 	}
 
+	var newitems []*objectData
 	for _, item := range board.emap {
 		oldItem := item
 		if oldItem.Pos.X < 1 {
@@ -58,7 +59,7 @@ func cpuTurn() {
 			continue
 		}
 		if tower != nil {
-			tower.Health -= 5 + rand.Intn(15)
+			tower.Health -= 5 + rand.Intn(10)
 			if tower.Health <= 0 {
 				delete(board.pmap, tower.Pos)
 			}
@@ -66,7 +67,11 @@ func cpuTurn() {
 		}
 		delete(board.emap, item.Pos)
 		oldItem.Pos = nextPos
-		board.emap[oldItem.Pos] = oldItem
+		newitems = append(newitems, oldItem)
+	}
+
+	for i, item := range newitems {
+		board.emap[item.Pos] = newitems[i]
 	}
 
 	goblin := getOtype("Goblin")
