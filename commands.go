@@ -203,6 +203,8 @@ func towerShootArrow() {
 
 				if enemy.Health <= 0 {
 					board.emap[enemy.Pos].dead = true
+					//For tweening
+					board.emap[enemy.Pos].OldPos = board.emap[enemy.Pos].Pos
 				}
 				break
 			}

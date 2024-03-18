@@ -56,6 +56,7 @@ type oTypeData struct {
 type objectData struct {
 	Pos    xyi
 	OldPos xyi
+
 	Health int
 	dead   bool
 
@@ -146,11 +147,11 @@ func drawGameBoard(screen *ebiten.Image) {
 	//Draw arrows
 	aData := getOtype("arrow")
 	numArrows := len(board.arrowsShot) - 1
+	startTime := time.Now()
 	for x := numArrows; x >= 0; x-- {
 		arrow := board.arrowsShot[x]
 
 		//Tween animation, make sprite face direction of travel
-		startTime := time.Now()
 		since := startTime.Sub(arrow.shot)
 		distance := Distance(arrow.tower, arrow.target)
 		const ratio = 30
@@ -191,9 +192,10 @@ func drawGameBoard(screen *ebiten.Image) {
 	}
 
 	//Draw goblin
+	aData = getOtype("Goblin")
 	for _, item := range board.emap {
 		//Tween animation
-		startTime := time.Now()
+
 		since := startTime.Sub(UserMsgDict.CpuTime)
 		remaining := (float64(cpuRoundTime.Nanoseconds())) - float64(since.Nanoseconds())
 		normal := (float64(remaining)/(float64(cpuRoundTime.Nanoseconds())) - 1.0)
@@ -219,8 +221,8 @@ func drawGameBoard(screen *ebiten.Image) {
 			healthBar := (float32(item.Health) / float32(item.oTypeP.maxHealth))
 
 			if healthBar > 0 && healthBar < 1 {
-				vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-32), float32(((item.Pos.Y+offY)*mag)-32)+1, float32(item.oTypeP.size.X), 6, ColorBlack, false)
-				vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-31), float32(((item.Pos.Y+offY)*mag)-31)+1, (healthBar*float32(item.oTypeP.size.X) - 1), 4, healthColor(healthBar), false)
+				vector.DrawFilledRect(screen, float32(((sX+offX)*mag)-32), float32(((sY+offY)*mag)-32)+1, float32(item.oTypeP.size.X), 6, ColorBlack, false)
+				vector.DrawFilledRect(screen, float32(((sX+offX)*mag)-31), float32(((sY+offY)*mag)-31)+1, (healthBar*float32(item.oTypeP.size.X) - 1), 4, healthColor(healthBar), false)
 			}
 		}
 

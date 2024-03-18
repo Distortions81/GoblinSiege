@@ -56,9 +56,9 @@ func cpuTurn() {
 		endGame()
 	}
 
-	goblinAttack()
 	towerShootArrow()
 	spawnGoblins()
+	goblinAttack()
 
 }
 
@@ -86,6 +86,7 @@ func goblinAttack() {
 
 		//Setup next enemy position
 		nextPos := item.Pos
+		oldItem.OldPos = oldItem.Pos
 		nextPos.X -= 1
 
 		//Check towers and enemy positions before moving
@@ -104,7 +105,6 @@ func goblinAttack() {
 		}
 		//Delete enemy, add to list
 		delete(board.emap, item.Pos)
-		oldItem.OldPos = oldItem.Pos
 		oldItem.Pos = nextPos
 		newitems = append(newitems, oldItem)
 	}
