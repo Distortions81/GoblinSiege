@@ -14,20 +14,6 @@ import (
 	"github.com/twpayne/go-geom/xy"
 )
 
-const (
-	size         = 32
-	mag          = size
-	boardSizeX   = 20
-	boardSizeY   = 20
-	enemyBoardX  = 15
-	offX         = 5
-	offY         = 1
-	offPixX      = size * offX
-	offPixY      = size * offY
-	boardPixelsX = ((boardSizeX) * mag)
-	boardPixelsY = ((boardSizeY) * mag)
-)
-
 func getOtype(name string) *oTypeData {
 	for o, ot := range oTypes {
 		if strings.EqualFold(ot.name, name) {
@@ -271,29 +257,4 @@ func drawGameBoard(screen *ebiten.Image) {
 
 	buf := fmt.Sprintf("Round: %v/%v!", board.roundNum, maxRounds)
 	text.Draw(screen, buf, monoFont, ScreenWidth-210, 25, color.Black)
-}
-
-func healthColor(input float32) color.NRGBA {
-	var healthColor color.NRGBA = color.NRGBA{R: 255, G: 255, B: 255, A: 0}
-	health := input * 100
-
-	if health < 100 && health > 0 {
-		healthColor.A = 255
-		healthColor.B = 0
-
-		r := int(float32(100-(health)) * 5)
-		if r > 255 {
-			r = 255
-		}
-		healthColor.R = uint8(r)
-
-		g := int(float32(health) * 4)
-		if g > 255 {
-			g = 255
-		}
-		healthColor.G = uint8(g)
-
-	}
-
-	return healthColor
 }

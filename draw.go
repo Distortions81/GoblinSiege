@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"image/color"
-	"strings"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -52,8 +51,4 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		}
 	}
 
-}
-
-func makeEllipsis() string {
-	return strings.Repeat(".", (int(frameCount%120) / 30))
 }

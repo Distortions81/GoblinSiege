@@ -9,7 +9,7 @@ import (
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
-const maxDictMsgLen = 10
+const maxVoteLen = 10
 
 type VOTE_STATE int
 
@@ -52,7 +52,7 @@ var (
 func handleUserDictMsg(msg twitch.PrivateMessage, command string) {
 	msgLen := len(command)
 
-	if msgLen == 0 || msgLen > maxDictMsgLen {
+	if msgLen == 0 || msgLen > maxVoteLen {
 		return
 	}
 
