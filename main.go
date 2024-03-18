@@ -26,8 +26,8 @@ func main() {
 	flag.Parse()
 
 	if *fastMode {
-		cpuRoundTime = time.Millisecond * 500
-		playerRoundTime = time.Millisecond * 500
+		cpuRoundTime = time.Millisecond * 2000
+		playerRoundTime = time.Millisecond * 100
 	}
 
 	board.pmap = make(map[xyi]*objectData)

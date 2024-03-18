@@ -50,8 +50,8 @@ func cpuTurn() {
 		endGame()
 	}
 
-	towerShootArrow()
 	goblinAttack()
+	towerShootArrow()
 	spawnGoblins()
 
 }

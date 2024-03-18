@@ -10,6 +10,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/hajimehoshi/ebiten/v2/vector"
+	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/xy"
 )
 
 const (
@@ -191,12 +193,37 @@ func drawGameBoard(screen *ebiten.Image) {
 	//Draw arrows
 	aData := getOtype("arrow")
 	for _, arrow := range board.arrowsShot {
-		if !arrow.missed {
-			continue
+
+		startTime := time.Now()
+		since := startTime.Sub(arrow.shot)
+		distance := Distance(arrow.tower, arrow.target)
+		const ratio = 30
+		remaining := (distance * float64(cpuRoundTime.Nanoseconds()/ratio)) - float64(since.Nanoseconds())
+		normal := (float64(remaining)/(distance*float64(cpuRoundTime.Nanoseconds()/ratio)) - 1.0)
+
+		//Extrapolation limits
+		if normal < -1 {
+			normal = -1
+		} else if normal > 1 {
+			normal = 1
+			if !arrow.missed {
+				continue
+			}
 		}
+
+		sX := (float64(arrow.tower.X) - ((float64(arrow.target.X) - float64(arrow.tower.X)) * normal))
+		sY := (float64(arrow.tower.Y) - ((float64(arrow.target.Y) - float64(arrow.tower.Y)) * normal))
+
+		towerPos := geom.Coord{float64(arrow.tower.X), float64(arrow.tower.Y), 0}
+		targetPos := geom.Coord{float64(arrow.target.X), float64(arrow.target.Y), 0}
+		angle := xy.Angle(towerPos, targetPos)
+
 		//Draw tower
 		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64(((arrow.target.X+offX)*mag)-aData.size.X), float64(((arrow.target.Y+offY)*mag)-aData.size.Y))
+		op.GeoM.Rotate(angle)
+		op.GeoM.Translate(((sX+float64(offX))*float64(mag))-float64(aData.size.X)-16,
+			((sY+float64(offY))*float64(mag))-float64(aData.size.Y)-16)
+
 		screen.DrawImage(aData.spriteImg, op)
 		//vector.DrawFilledCircle(screen, float32((arrow.target.X+offX)*mag)-(size/2), float32((arrow.target.Y+offY)*mag)-(size/8), size/8, ColorRed, true)
 	}

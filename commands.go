@@ -177,6 +177,8 @@ func addTower() {
 }
 
 func towerShootArrow() {
+	curTime := time.Now()
+
 	for _, item := range board.pmap {
 		if item.dead {
 			continue
@@ -189,10 +191,13 @@ func towerShootArrow() {
 			if Distance(item.Pos, enemy.Pos) < 6 {
 
 				if rand.Intn(2) != 0 {
-					arrow := arrowData{tower: item.Pos, target: enemy.Pos, missed: true}
-					board.arrowsShot = append(board.arrowsShot, arrow)
+					//arrow := arrowData{tower: item.Pos, target: enemy.Pos, missed: true, shot: curTime}
+					//board.arrowsShot = append(board.arrowsShot, arrow)
 					break
 				}
+				arrow := arrowData{tower: item.Pos, target: enemy.Pos, missed: false, shot: curTime}
+				board.arrowsShot = append(board.arrowsShot, arrow)
+
 				dmgAmt := 5 + rand.Intn(20)
 				enemy.Health -= dmgAmt
 
