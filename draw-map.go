@@ -68,8 +68,8 @@ type arrowData struct {
 
 type gameBoardData struct {
 	roundNum int
-	pmap     map[xyi]*objectData
-	emap     map[xyi]*objectData
+	playMap  map[xyi]*objectData
+	enemyMap map[xyi]*objectData
 	lock     sync.Mutex
 
 	arrowsShot []arrowData
@@ -122,7 +122,7 @@ func drawGameBoard(screen *ebiten.Image) {
 		board.bgDirty = false
 	}
 	//Draw checkerboard cache if voting
-	if UserMsgDict.VoteState == VOTE_PLAYERS {
+	if votes.VoteState == VOTE_PLAYERS {
 		screen.DrawImage(board.bgCache, nil)
 	}
 
@@ -179,10 +179,10 @@ func drawGameBoard(screen *ebiten.Image) {
 
 	//Draw goblin
 	aData = getOtype("Goblin")
-	for _, item := range board.emap {
+	for _, item := range board.enemyMap {
 		//Tween animation
 
-		since := startTime.Sub(UserMsgDict.CpuTime)
+		since := startTime.Sub(votes.CpuTime)
 		remaining := (float64(cpuRoundTime.Nanoseconds())) - float64(since.Nanoseconds())
 		normal := (float64(remaining)/(float64(cpuRoundTime.Nanoseconds())) - 1.0)
 
@@ -219,7 +219,7 @@ func drawGameBoard(screen *ebiten.Image) {
 	//Draw towers
 	for x := 0; x <= boardSizeX; x++ {
 		for y := 0; y <= boardSizeY; y++ {
-			item := board.pmap[xyi{X: x, Y: y}]
+			item := board.playMap[xyi{X: x, Y: y}]
 			if item == nil {
 				continue
 			}
@@ -240,7 +240,6 @@ func drawGameBoard(screen *ebiten.Image) {
 
 				}
 			}
-			//vector.DrawFilledCircle(screen, float32((item.Pos.X+offX)*mag)-(size/2), float32((item.Pos.Y+offY)*mag)-(size/2), size/2, color.White, true)
 
 		}
 	}

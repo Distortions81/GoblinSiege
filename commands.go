@@ -64,9 +64,9 @@ func handleModCommands(msg twitch.PrivateMessage, command string) bool {
 					sayLog("Command %v%v has nil func.", userSettings.CmdPrefix, item.Name)
 					continue
 				}
-				UserMsgDict.Lock.Lock()
+				votes.Lock.Lock()
 				item.Handle()
-				UserMsgDict.Lock.Unlock()
+				votes.Lock.Unlock()
 				return true
 			}
 		}
@@ -79,8 +79,8 @@ func clearGameBoard() {
 	qlog("Clearing game board...")
 	board.lock.Lock()
 
-	board.pmap = make(map[xyi]*objectData)
-	board.emap = make(map[xyi]*objectData)
+	board.playMap = make(map[xyi]*objectData)
+	board.enemyMap = make(map[xyi]*objectData)
 	board.roundNum = 0
 	board.arrowsShot = make([]arrowData, 0)
 
@@ -89,9 +89,9 @@ func clearGameBoard() {
 
 func clearVotes() {
 	qlog("Resetting votes...")
-	UserMsgDict.VoteCount = 0
-	UserMsgDict.Result = xyi{}
-	UserMsgDict.Users = make(map[int64]*userMsgData)
+	votes.VoteCount = 0
+	votes.Result = xyi{}
+	votes.Users = make(map[int64]*userMsgData)
 }
 
 func startGame() {
@@ -100,8 +100,8 @@ func startGame() {
 	clearGameBoard()
 
 	board.gameover = GAME_RUNNING
-	UserMsgDict.VoteCount = 0
-	UserMsgDict.GameRunning = true
+	votes.VoteCount = 0
+	votes.GameRunning = true
 
 	startVote()
 }
@@ -110,15 +110,15 @@ func endGame() {
 	qlog("Stopping game...")
 	clearVotes()
 
-	UserMsgDict.VoteState = VOTE_NONE
-	UserMsgDict.GameRunning = false
+	votes.VoteState = VOTE_NONE
+	votes.GameRunning = false
 
 }
 
 func startVote() {
 	qlog("Starting new vote...")
-	UserMsgDict.StartTime = time.Now()
-	UserMsgDict.VoteState = VOTE_PLAYERS
+	votes.StartTime = time.Now()
+	votes.VoteState = VOTE_PLAYERS
 }
 
 // Locks and unlocks board
@@ -128,12 +128,12 @@ func endVote() {
 	board.lock.Lock()
 	defer board.lock.Unlock()
 
-	if UserMsgDict.VoteState == VOTE_PLAYERS {
+	if votes.VoteState == VOTE_PLAYERS {
 		qlog("Ending vote...")
 
 		addTower()
-		UserMsgDict.VoteState = VOTE_PLAYERS_DONE
-		UserMsgDict.StartTime = time.Now()
+		votes.VoteState = VOTE_PLAYERS_DONE
+		votes.StartTime = time.Now()
 	}
 	clearVotes()
 }

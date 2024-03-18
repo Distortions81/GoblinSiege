@@ -9,15 +9,15 @@ import (
 func addTower() {
 	tower1 := getOtype("Stone Tower")
 
-	if UserMsgDict.VoteCount > 0 &&
-		UserMsgDict.Result.X > 0 &&
-		UserMsgDict.Result.Y > 0 &&
-		UserMsgDict.Result.X <= boardSizeX &&
-		UserMsgDict.Result.Y <= boardSizeY {
+	if votes.VoteCount > 0 &&
+		votes.Result.X > 0 &&
+		votes.Result.Y > 0 &&
+		votes.Result.X <= boardSizeX &&
+		votes.Result.Y <= boardSizeY {
 
-		tpos := UserMsgDict.Result
-		if board.emap[tpos] == nil && board.pmap[tpos] == nil {
-			board.pmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
+		tpos := votes.Result
+		if board.enemyMap[tpos] == nil && board.playMap[tpos] == nil {
+			board.playMap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
 		} else {
 			log.Println("COLLISION!")
 		}
@@ -26,8 +26,8 @@ func addTower() {
 		log.Println("Not enough votes, picking random.")
 		//Invalid or not enough votes, pick a pos at random
 		tpos := xyi{X: rand.Intn(boardSizeX-1) + 1, Y: rand.Intn(boardSizeY-1) + 1}
-		if board.emap[tpos] == nil && board.pmap[tpos] == nil {
-			board.pmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
+		if board.enemyMap[tpos] == nil && board.playMap[tpos] == nil {
+			board.playMap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
 		}
 	}
 
@@ -36,11 +36,11 @@ func addTower() {
 func towerShootArrow() {
 	curTime := time.Now()
 
-	for _, item := range board.pmap {
+	for _, item := range board.playMap {
 		if item.dead {
 			continue
 		}
-		for _, enemy := range board.emap {
+		for _, enemy := range board.enemyMap {
 			if enemy.dead {
 				continue
 			}
@@ -59,9 +59,9 @@ func towerShootArrow() {
 				enemy.Health -= dmgAmt
 
 				if enemy.Health <= 0 {
-					board.emap[enemy.Pos].dead = true
+					board.enemyMap[enemy.Pos].dead = true
 					//For tweening
-					board.emap[enemy.Pos].OldPos = board.emap[enemy.Pos].Pos
+					board.enemyMap[enemy.Pos].OldPos = board.enemyMap[enemy.Pos].Pos
 				}
 				break
 			}

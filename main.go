@@ -30,9 +30,9 @@ func main() {
 		playerRoundTime = time.Millisecond * 1000
 	}
 
-	board.pmap = make(map[xyi]*objectData)
-	board.emap = make(map[xyi]*objectData)
-	UserMsgDict.Users = make(map[int64]*userMsgData)
+	board.playMap = make(map[xyi]*objectData)
+	board.enemyMap = make(map[xyi]*objectData)
+	votes.Users = make(map[int64]*userMsgData)
 
 	//Wait here for process signals
 	signalHandle := make(chan os.Signal, 1)
