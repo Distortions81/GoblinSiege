@@ -43,6 +43,8 @@ func cpuTurn() {
 	board.lock.Lock()
 	defer board.lock.Unlock()
 
+	board.roundNum++
+
 	if board.roundNum >= maxRounds {
 		board.gameover = GAME_VICTORY
 		endGame()
@@ -52,7 +54,6 @@ func cpuTurn() {
 	goblinAttack()
 	spawnGoblins()
 
-	board.roundNum++
 }
 
 func spawnGoblins() {
