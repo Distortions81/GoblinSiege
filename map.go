@@ -160,8 +160,8 @@ func drawGameBoard(screen *ebiten.Image) {
 	}
 
 	//Works for now, but test if sorted list is faster
-	for x := 0; x < boardSizeX; x++ {
-		for y := 0; y < boardSizeY; y++ {
+	for x := 0; x <= boardSizeX; x++ {
+		for y := 0; y <= boardSizeY; y++ {
 			item := board.pmap[xyi{X: x, Y: y}]
 			if item == nil {
 				continue
@@ -212,7 +212,7 @@ func drawGameBoard(screen *ebiten.Image) {
 	}
 
 	buf := fmt.Sprintf("Round: %v/%v!", board.roundNum, maxRounds)
-	text.Draw(screen, buf, monoFont, ScreenWidth-190, 25, color.Black)
+	text.Draw(screen, buf, monoFont, ScreenWidth-210, 25, color.Black)
 }
 
 func healthColor(input float32) color.NRGBA {

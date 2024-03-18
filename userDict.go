@@ -64,8 +64,8 @@ func handleUserDictMsg(msg twitch.PrivateMessage, command string) {
 		y, errb := strconv.ParseInt(args[1], 10, 64)
 
 		if erra != nil || errb != nil ||
-			x < 1 || x > boardSizeX ||
-			y < 1 || y > boardSizeY {
+			x <= 0 || x > boardSizeX ||
+			y <= 0 || y > boardSizeY {
 			return
 		}
 
@@ -94,8 +94,6 @@ func processUserDict() {
 	if count > 0 {
 		UserMsgDict.VoteCount = int(count)
 		UserMsgDict.Result = xyi{X: int(tX / count), Y: int(tY / count)}
-	} else {
-		qlog("Not enough votes.")
 	}
 }
 

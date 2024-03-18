@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"strings"
 	"time"
@@ -137,31 +138,33 @@ func endVote() {
 
 	if UserMsgDict.VoteState == VOTE_PLAYERS {
 		qlog("Ending vote...")
-		UserMsgDict.VoteState = VOTE_PLAYERS_DONE
-		UserMsgDict.StartTime = time.Now()
 
 		addTower()
+		UserMsgDict.VoteState = VOTE_PLAYERS_DONE
+		UserMsgDict.StartTime = time.Now()
 	}
 	clearVotes()
 }
 
 func addTower() {
+	tower1 := getOtype("Stone Tower")
+
 	if UserMsgDict.VoteCount > 0 &&
-		board.pmap[UserMsgDict.Result] == nil &&
 		UserMsgDict.Result.X > 0 &&
-		UserMsgDict.Result.X <= boardSizeX &&
 		UserMsgDict.Result.Y > 0 &&
+		UserMsgDict.Result.X <= boardSizeX &&
 		UserMsgDict.Result.Y <= boardSizeY {
 
-		tower1 := getOtype("Stone Tower")
 		tpos := UserMsgDict.Result
 		if board.emap[tpos] == nil && board.pmap[tpos] == nil {
 			board.pmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
+		} else {
+			log.Println("COLLISION!")
 		}
 	} else {
 
-		//Test towers
-		tower1 := getOtype("Stone Tower")
+		log.Println("Not enough votes, picking random.")
+		//Invalid or not enough votes, pick a pos at random
 		tpos := xyi{X: rand.Intn(boardSizeX-1) + 1, Y: rand.Intn(boardSizeY-1) + 1}
 		if board.emap[tpos] == nil && board.pmap[tpos] == nil {
 			board.pmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}

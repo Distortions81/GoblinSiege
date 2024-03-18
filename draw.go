@@ -25,7 +25,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	if UserMsgDict.VoteState == VOTE_PLAYERS {
 		till := float32(time.Until(UserMsgDict.StartTime.Add(playerRoundTime)).Milliseconds()) / 1000.0
 		if till > 0 {
-			buf := fmt.Sprintf("Your turn. Vote: %vx,y -- Votes: %v -- %2.1fs remaining%v",
+			buf := fmt.Sprintf("Your turn!!! Vote: %vx,y -- Votes: %v -- %2.1fs remaining%v",
 				userSettings.CmdPrefix, UserMsgDict.VoteCount,
 				till,
 				makeEllipsis())
