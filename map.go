@@ -136,59 +136,9 @@ func drawGameBoard(screen *ebiten.Image) {
 		screen.DrawImage(board.bgCache, nil)
 	}
 
-	//Draw towers
+	//Draw board
 	board.lock.Lock()
 	defer board.lock.Unlock()
-
-	for _, item := range board.emap {
-		//Draw goblin
-
-		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64(((item.Pos.X+offX)*mag)-item.oTypeP.size.X), float64(((item.Pos.Y+offY)*mag)-item.oTypeP.size.Y))
-		if item.dead {
-			screen.DrawImage(item.oTypeP.deadImg, op)
-		} else {
-			screen.DrawImage(item.oTypeP.spriteImg, op)
-			healthBar := (float32(item.Health) / float32(item.oTypeP.maxHealth))
-
-			if healthBar > 0 && healthBar < 1 {
-				vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-32), float32(((item.Pos.Y+offY)*mag)-32)+1, float32(item.oTypeP.size.X), 6, ColorBlack, false)
-				vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-31), float32(((item.Pos.Y+offY)*mag)-31)+1, (healthBar*float32(item.oTypeP.size.X) - 1), 4, healthColor(healthBar), false)
-			}
-		}
-
-		//vector.DrawFilledCircle(screen, float32((item.Pos.X+offX)*mag)-(size/2), float32((item.Pos.Y+offY)*mag)-(size/2), size/2, ColorRed, true)
-
-	}
-
-	//Works for now, but test if sorted list is faster
-	for x := 0; x <= boardSizeX; x++ {
-		for y := 0; y <= boardSizeY; y++ {
-			item := board.pmap[xyi{X: x, Y: y}]
-			if item == nil {
-				continue
-			}
-
-			//Draw tower
-			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(float64(((item.Pos.X+offX)*mag)-item.oTypeP.size.X), float64(((item.Pos.Y+offY)*mag)-item.oTypeP.size.Y))
-			if item.dead {
-				screen.DrawImage(item.oTypeP.deadImg, op)
-			} else {
-				screen.DrawImage(item.oTypeP.spriteImg, op)
-
-				//Draw health
-				healthBar := (float32(item.Health) / float32(item.oTypeP.maxHealth))
-				if healthBar > 0 && healthBar < 1 {
-					vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-32), float32(((item.Pos.Y+offY)*mag)-64)+1, float32(item.oTypeP.size.X), 6, ColorBlack, false)
-					vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-31), float32(((item.Pos.Y+offY)*mag)-63)+1, (healthBar*float32(item.oTypeP.size.X) - 1), 4, healthColor(healthBar), false)
-
-				}
-			}
-			//vector.DrawFilledCircle(screen, float32((item.Pos.X+offX)*mag)-(size/2), float32((item.Pos.Y+offY)*mag)-(size/2), size/2, color.White, true)
-
-		}
-	}
 
 	//Draw arrows
 	aData := getOtype("arrow")
@@ -229,6 +179,56 @@ func drawGameBoard(screen *ebiten.Image) {
 
 		screen.DrawImage(aData.spriteImg, op)
 		//vector.DrawFilledCircle(screen, float32((arrow.target.X+offX)*mag)-(size/2), float32((arrow.target.Y+offY)*mag)-(size/8), size/8, ColorRed, true)
+	}
+
+	//Draw goblin
+	for _, item := range board.emap {
+
+		op := &ebiten.DrawImageOptions{}
+		op.GeoM.Translate(float64(((item.Pos.X+offX)*mag)-item.oTypeP.size.X), float64(((item.Pos.Y+offY)*mag)-item.oTypeP.size.Y))
+		if item.dead {
+			screen.DrawImage(item.oTypeP.deadImg, op)
+		} else {
+			screen.DrawImage(item.oTypeP.spriteImg, op)
+			healthBar := (float32(item.Health) / float32(item.oTypeP.maxHealth))
+
+			if healthBar > 0 && healthBar < 1 {
+				vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-32), float32(((item.Pos.Y+offY)*mag)-32)+1, float32(item.oTypeP.size.X), 6, ColorBlack, false)
+				vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-31), float32(((item.Pos.Y+offY)*mag)-31)+1, (healthBar*float32(item.oTypeP.size.X) - 1), 4, healthColor(healthBar), false)
+			}
+		}
+
+		//vector.DrawFilledCircle(screen, float32((item.Pos.X+offX)*mag)-(size/2), float32((item.Pos.Y+offY)*mag)-(size/2), size/2, ColorRed, true)
+
+	}
+
+	//Draw towers
+	for x := 0; x <= boardSizeX; x++ {
+		for y := 0; y <= boardSizeY; y++ {
+			item := board.pmap[xyi{X: x, Y: y}]
+			if item == nil {
+				continue
+			}
+
+			//Draw tower
+			op := &ebiten.DrawImageOptions{}
+			op.GeoM.Translate(float64(((item.Pos.X+offX)*mag)-item.oTypeP.size.X), float64(((item.Pos.Y+offY)*mag)-item.oTypeP.size.Y))
+			if item.dead {
+				screen.DrawImage(item.oTypeP.deadImg, op)
+			} else {
+				screen.DrawImage(item.oTypeP.spriteImg, op)
+
+				//Draw health
+				healthBar := (float32(item.Health) / float32(item.oTypeP.maxHealth))
+				if healthBar > 0 && healthBar < 1 {
+					vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-32), float32(((item.Pos.Y+offY)*mag)-64)+1, float32(item.oTypeP.size.X), 6, ColorBlack, false)
+					vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-31), float32(((item.Pos.Y+offY)*mag)-63)+1, (healthBar*float32(item.oTypeP.size.X) - 1), 4, healthColor(healthBar), false)
+
+				}
+			}
+			//vector.DrawFilledCircle(screen, float32((item.Pos.X+offX)*mag)-(size/2), float32((item.Pos.Y+offY)*mag)-(size/2), size/2, color.White, true)
+
+		}
 	}
 
 	if board.gameover == GAME_DEFEAT {
