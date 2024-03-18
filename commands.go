@@ -146,7 +146,9 @@ func endVote() {
 			//Test towers
 			tower1 := getOtype("Stone Tower")
 			tpos := xyi{X: rand.Intn(boardSizeX-1) + 1, Y: rand.Intn(boardSizeY-1) + 1}
-			board.pmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
+			if board.emap[tpos] == nil && board.pmap[tpos] == nil {
+				board.pmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
+			}
 		} else if UserMsgDict.VoteCount > 0 &&
 			board.pmap[UserMsgDict.Result] == nil &&
 			UserMsgDict.Result.X > 0 &&
@@ -156,7 +158,9 @@ func endVote() {
 
 			tower1 := getOtype("Stone Tower")
 			tpos := UserMsgDict.Result
-			board.pmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
+			if board.emap[tpos] == nil && board.pmap[tpos] == nil {
+				board.pmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
+			}
 		}
 
 		for _, item := range board.pmap {

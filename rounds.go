@@ -59,7 +59,7 @@ func cpuTurn() {
 			continue
 		}
 		if tower != nil {
-			tower.Health -= 5 + rand.Intn(10)
+			tower.Health -= 5 + rand.Intn(5)
 			if tower.Health <= 0 {
 				delete(board.pmap, tower.Pos)
 			}
