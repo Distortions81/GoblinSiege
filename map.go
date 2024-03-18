@@ -36,8 +36,8 @@ func getOtype(name string) *oTypeData {
 }
 
 var oTypes = []oTypeData{
-	{name: "Stone Tower", maxHealth: 100, size: xyi{X: 32, Y: 64}, spriteName: "tower1"},
-	{name: "Goblin", maxHealth: 100, size: xyi{X: 32, Y: 32}, spriteName: "goblin-test"},
+	{name: "Stone Tower", maxHealth: 100, size: xyi{X: 32, Y: 64}, spriteName: "tower1", deadName: "tower1-d"},
+	{name: "Goblin", maxHealth: 100, size: xyi{X: 32, Y: 32}, spriteName: "goblin-test", deadName: "goblin-test-d"},
 	{name: "Arrow", size: xyi{X: 14, Y: 3}, spriteName: "arrow"},
 }
 
@@ -46,12 +46,15 @@ type oTypeData struct {
 	maxHealth  int
 	size       xyi
 	spriteName string
+	deadName   string
 	spriteImg  *ebiten.Image
+	deadImg    *ebiten.Image
 }
 
 type objectData struct {
 	Pos    xyi
 	Health int
+	dead   bool
 
 	oTypeP *oTypeData
 }
@@ -140,18 +143,19 @@ func drawGameBoard(screen *ebiten.Image) {
 
 		op := &ebiten.DrawImageOptions{}
 		op.GeoM.Translate(float64(((item.Pos.X+offX)*mag)-item.oTypeP.size.X), float64(((item.Pos.Y+offY)*mag)-item.oTypeP.size.Y))
-		screen.DrawImage(item.oTypeP.spriteImg, op)
+		if item.dead {
+			screen.DrawImage(item.oTypeP.deadImg, op)
+		} else {
+			screen.DrawImage(item.oTypeP.spriteImg, op)
+			healthBar := (float32(item.Health) / float32(item.oTypeP.maxHealth))
+
+			if healthBar > 0 && healthBar < 1 {
+				vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-32), float32(((item.Pos.Y+offY)*mag)-32)+1, float32(item.oTypeP.size.X), 6, ColorBlack, false)
+				vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-31), float32(((item.Pos.Y+offY)*mag)-31)+1, (healthBar*float32(item.oTypeP.size.X) - 1), 4, healthColor(healthBar), false)
+			}
+		}
 
 		//vector.DrawFilledCircle(screen, float32((item.Pos.X+offX)*mag)-(size/2), float32((item.Pos.Y+offY)*mag)-(size/2), size/2, ColorRed, true)
-
-		//Draw health
-
-		healthBar := (float32(item.Health) / float32(item.oTypeP.maxHealth))
-		if healthBar > 0 && healthBar < 1 {
-			vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-32), float32(((item.Pos.Y+offY)*mag)-32)+1, float32(item.oTypeP.size.X), 6, ColorBlack, false)
-			vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-31), float32(((item.Pos.Y+offY)*mag)-31)+1, (healthBar*float32(item.oTypeP.size.X) - 1), 4, healthColor(healthBar), false)
-
-		}
 
 	}
 
@@ -166,16 +170,21 @@ func drawGameBoard(screen *ebiten.Image) {
 			//Draw tower
 			op := &ebiten.DrawImageOptions{}
 			op.GeoM.Translate(float64(((item.Pos.X+offX)*mag)-item.oTypeP.size.X), float64(((item.Pos.Y+offY)*mag)-item.oTypeP.size.Y))
-			screen.DrawImage(item.oTypeP.spriteImg, op)
+			if item.dead {
+				screen.DrawImage(item.oTypeP.deadImg, op)
+			} else {
+				screen.DrawImage(item.oTypeP.spriteImg, op)
+
+				//Draw health
+				healthBar := (float32(item.Health) / float32(item.oTypeP.maxHealth))
+				if healthBar > 0 && healthBar < 1 {
+					vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-32), float32(((item.Pos.Y+offY)*mag)-64)+1, float32(item.oTypeP.size.X), 6, ColorBlack, false)
+					vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-31), float32(((item.Pos.Y+offY)*mag)-63)+1, (healthBar*float32(item.oTypeP.size.X) - 1), 4, healthColor(healthBar), false)
+
+				}
+			}
 			//vector.DrawFilledCircle(screen, float32((item.Pos.X+offX)*mag)-(size/2), float32((item.Pos.Y+offY)*mag)-(size/2), size/2, color.White, true)
 
-			//Draw health
-			healthBar := (float32(item.Health) / float32(item.oTypeP.maxHealth))
-			if healthBar > 0 && healthBar < 1 {
-				vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-32), float32(((item.Pos.Y+offY)*mag)-64)+1, float32(item.oTypeP.size.X), 6, ColorBlack, false)
-				vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-31), float32(((item.Pos.Y+offY)*mag)-63)+1, (healthBar*float32(item.oTypeP.size.X) - 1), 4, healthColor(healthBar), false)
-
-			}
 		}
 	}
 

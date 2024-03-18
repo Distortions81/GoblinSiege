@@ -22,8 +22,24 @@ func init() {
 	}
 
 	for i, item := range oTypes {
+		if item.spriteName == "" {
+			continue
+		}
 		tmp, _, err := ebitenutil.NewImageFromFile("data/sprites/" + item.spriteName + ".png")
 		oTypes[i].spriteImg = tmp
+
+		log.Printf("Loaded sprite: %v", item.spriteName)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	for i, item := range oTypes {
+		if item.deadName == "" {
+			continue
+		}
+		tmp, _, err := ebitenutil.NewImageFromFile("data/sprites/" + item.deadName + ".png")
+		oTypes[i].deadImg = tmp
 
 		log.Printf("Loaded sprite: %v", item.spriteName)
 
