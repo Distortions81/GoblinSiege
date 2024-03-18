@@ -195,9 +195,8 @@ func drawGameBoard(screen *ebiten.Image) {
 		//Tween animation
 		startTime := time.Now()
 		since := startTime.Sub(UserMsgDict.CpuTime)
-		distance := Distance(item.Pos, item.OldPos)
-		remaining := (distance * float64(cpuRoundTime.Nanoseconds())) - float64(since.Nanoseconds())
-		normal := (float64(remaining)/(distance*float64(cpuRoundTime.Nanoseconds())) - 1.0)
+		remaining := (float64(cpuRoundTime.Nanoseconds())) - float64(since.Nanoseconds())
+		normal := (float64(remaining)/(float64(cpuRoundTime.Nanoseconds())) - 1.0)
 
 		//Extrapolation limits
 		if normal < -1 {

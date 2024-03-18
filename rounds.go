@@ -68,7 +68,7 @@ func spawnGoblins() {
 		goblin := getOtype("Goblin")
 		rand := xyi{X: boardSizeX + enemyBoardX, Y: 1 + rand.Intn(boardSizeY-1)}
 		if board.emap[rand] == nil {
-			board.emap[rand] = &objectData{Pos: rand, oTypeP: goblin, Health: goblin.maxHealth, OldPos: rand}
+			board.emap[rand] = &objectData{Pos: rand, oTypeP: goblin, Health: goblin.maxHealth, OldPos: xyi{X: rand.X + goblin.size.X, Y: rand.Y}}
 		}
 	}
 }
