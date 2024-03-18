@@ -206,13 +206,16 @@ func drawGameBoard(screen *ebiten.Image) {
 			normal = -1
 		} else if normal > 1 {
 			normal = 1
-			if !arrow.missed {
-				continue
-			}
 		}
 
 		sX := (float64(arrow.tower.X) - ((float64(arrow.target.X) - float64(arrow.tower.X)) * normal))
 		sY := (float64(arrow.tower.Y) - ((float64(arrow.target.Y) - float64(arrow.tower.Y)) * normal))
+
+		if sX == float64(arrow.target.X) && sY == float64(arrow.target.Y) {
+			if !arrow.missed {
+				continue
+			}
+		}
 
 		towerPos := geom.Coord{float64(arrow.tower.X), float64(arrow.tower.Y), 0}
 		targetPos := geom.Coord{float64(arrow.target.X), float64(arrow.target.Y), 0}

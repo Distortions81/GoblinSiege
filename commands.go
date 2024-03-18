@@ -191,8 +191,8 @@ func towerShootArrow() {
 			if Distance(item.Pos, enemy.Pos) < 6 {
 
 				if rand.Intn(2) != 0 {
-					//arrow := arrowData{tower: item.Pos, target: enemy.Pos, missed: true, shot: curTime}
-					//board.arrowsShot = append(board.arrowsShot, arrow)
+					arrow := arrowData{tower: item.Pos, target: enemy.Pos, missed: true, shot: curTime}
+					board.arrowsShot = append(board.arrowsShot, arrow)
 					break
 				}
 				arrow := arrowData{tower: item.Pos, target: enemy.Pos, missed: false, shot: curTime}
