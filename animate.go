@@ -11,6 +11,7 @@ type spriteSheetData struct {
 	health    int
 	file      string
 	frameSize xyi
+	center    xyi
 	frames    int
 	anims     [ANI_MAX]animationData
 	img       *ebiten.Image
@@ -45,6 +46,7 @@ var obj_goblinBarb = spriteSheetData{
 	file:      "Goblin_Barbarian",
 	health:    100,
 	frameSize: xyi{X: 32, Y: 32},
+	center:    xyi{X: 16, Y: 16},
 	frames:    4,
 
 	anims: [ANI_MAX]animationData{
