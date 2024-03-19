@@ -180,8 +180,8 @@ func drawGameBoard(screen *ebiten.Image) {
 			healthBar := (float32(item.Health) / float32(item.sheetP.health))
 
 			if healthBar > 0 && healthBar < 1 {
-				vector.DrawFilledRect(screen, float32(((sX+offX)*mag)-32), float32(((sY+offY)*mag)-32)+1, float32(item.sheetP.frameSize.X), 6, ColorSmoke, false)
-				vector.DrawFilledRect(screen, float32(((sX+offX)*mag)-31), float32(((sY+offY)*mag)-31)+1, (healthBar*float32(item.sheetP.frameSize.X) - 1), 4, healthColor(healthBar), false)
+				vector.DrawFilledRect(screen, float32(((sX+offX)*mag)-32), float32(((sY+offY)*mag)-32)+1, float32(item.sheetP.frameSize.X), 4, ColorSmoke, false)
+				vector.DrawFilledRect(screen, float32(((sX+offX)*mag)-31), float32(((sY+offY)*mag)-31)+1, (healthBar*float32(item.sheetP.frameSize.X) - 1), 2, healthColor(healthBar), false)
 			}
 		}
 	}
@@ -205,8 +205,8 @@ func drawGameBoard(screen *ebiten.Image) {
 				//Draw health
 				healthBar := (float32(item.Health) / float32(item.sheetP.health))
 				if healthBar > 0 && healthBar < 1 {
-					vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-32), float32(((item.Pos.Y+offY)*mag)-64)+1, float32(item.sheetP.frameSize.X), 6, ColorSmoke, false)
-					vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-31), float32(((item.Pos.Y+offY)*mag)-63)+1, (healthBar*float32(item.sheetP.frameSize.X) - 1), 4, healthColor(healthBar), false)
+					vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-32), float32(((item.Pos.Y+offY)*mag)-64)+1, float32(item.sheetP.frameSize.X), 4, ColorSmoke, false)
+					vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-31), float32(((item.Pos.Y+offY)*mag)-63)+1, (healthBar*float32(item.sheetP.frameSize.X) - 1), 2, healthColor(healthBar), false)
 
 				}
 			}

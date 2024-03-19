@@ -18,7 +18,7 @@ func healthColor(input float32) color.NRGBA {
 	health := input * 100
 
 	if health < 100 && health > 0 {
-		healthColor.A = 128
+		healthColor.A = 255
 		healthColor.B = 0
 
 		r := int(float32(100-(health)) * 5)
