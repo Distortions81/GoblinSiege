@@ -81,7 +81,7 @@ func clearGameBoard() {
 
 	board.playMap = make(map[xyi]*objectData)
 	board.enemyMap = make(map[xyi]*objectData)
-	board.roundNum = 0
+	board.moveNum = 0
 	board.arrowsShot = make([]arrowData, 0)
 
 	board.lock.Unlock()

@@ -5,12 +5,12 @@ import (
 	"time"
 )
 
-func handleRounds() {
+func handleMoves() {
 	for ServerRunning {
 		votes.Lock.Lock()
 
 		if votes.VoteState == VOTE_PLAYERS &&
-			time.Since(votes.StartTime) > playerRoundTime {
+			time.Since(votes.StartTime) > playerMoveTime {
 			endVote()
 
 		} else if votes.VoteState == VOTE_PLAYERS_DONE {
@@ -19,13 +19,13 @@ func handleRounds() {
 			cpuTurn()
 
 		} else if votes.VoteState == VOTE_COMPUTER &&
-			time.Since(votes.CpuTime) > cpuRoundTime {
+			time.Since(votes.CpuTime) > cpuMoveTime {
 
 			votes.VoteState = VOTE_COMPUTER_DONE
 
 		} else if votes.VoteState == VOTE_COMPUTER_DONE &&
 			votes.GameRunning {
-			if board.roundNum%3 == 0 {
+			if board.moveNum%3 == 0 {
 				startVote()
 			} else {
 				votes.VoteState = VOTE_COMPUTER
@@ -49,9 +49,9 @@ func cpuTurn() {
 	board.lock.Lock()
 	defer board.lock.Unlock()
 
-	board.roundNum++
+	board.moveNum++
 
-	if board.roundNum >= maxRounds {
+	if board.moveNum >= maxMoves {
 		board.gameover = GAME_VICTORY
 		endGame()
 	}
@@ -64,7 +64,7 @@ func cpuTurn() {
 
 func spawnGoblins() {
 	//Spawn goblins
-	if board.roundNum%2 == 0 {
+	if board.moveNum%2 == 0 {
 		goblin := getOtype("Goblin")
 		rand := xyi{X: boardSizeX + enemyBoardX, Y: 1 + rand.Intn(boardSizeY-1)}
 		if board.enemyMap[rand] == nil {

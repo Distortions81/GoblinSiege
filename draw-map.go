@@ -67,7 +67,7 @@ type arrowData struct {
 }
 
 type gameBoardData struct {
-	roundNum int
+	moveNum  int
 	playMap  map[xyi]*objectData
 	enemyMap map[xyi]*objectData
 	lock     sync.Mutex
@@ -141,8 +141,8 @@ func drawGameBoard(screen *ebiten.Image) {
 		since := startTime.Sub(arrow.shot)
 		distance := Distance(arrow.tower, arrow.target)
 		const ratio = 30
-		remaining := (distance * float64(cpuRoundTime.Nanoseconds()/ratio)) - float64(since.Nanoseconds())
-		normal := (float64(remaining)/(distance*float64(cpuRoundTime.Nanoseconds()/ratio)) - 1.0)
+		remaining := (distance * float64(cpuMoveTime.Nanoseconds()/ratio)) - float64(since.Nanoseconds())
+		normal := (float64(remaining)/(distance*float64(cpuMoveTime.Nanoseconds()/ratio)) - 1.0)
 
 		//Extrapolation limits
 		if normal < -1 {
@@ -183,8 +183,8 @@ func drawGameBoard(screen *ebiten.Image) {
 		//Tween animation
 
 		since := startTime.Sub(votes.CpuTime)
-		remaining := (float64(cpuRoundTime.Nanoseconds())) - float64(since.Nanoseconds())
-		normal := (float64(remaining)/(float64(cpuRoundTime.Nanoseconds())) - 1.0)
+		remaining := (float64(cpuMoveTime.Nanoseconds())) - float64(since.Nanoseconds())
+		normal := (float64(remaining)/(float64(cpuMoveTime.Nanoseconds())) - 1.0)
 
 		//Extrapolation limits
 		if normal < -1 {
@@ -246,14 +246,14 @@ func drawGameBoard(screen *ebiten.Image) {
 
 	if board.gameover == GAME_DEFEAT {
 		vector.DrawFilledRect(screen, 0, float32(ScreenHeight)-40, float32(ScreenWidth), 100, ColorSmoke, true)
-		buf := fmt.Sprintf("Game over: The audience was defeated on round %v!", board.roundNum)
+		buf := fmt.Sprintf("Game over: The audience was defeated on move %v!", board.moveNum)
 		text.Draw(screen, buf, monoFont, 10, ScreenHeight-15, color.White)
 	} else if board.gameover == GAME_VICTORY {
 		vector.DrawFilledRect(screen, 0, float32(ScreenHeight)-40, float32(ScreenWidth), 100, ColorSmoke, true)
-		buf := fmt.Sprintf("Game over: The audience has won, survived %v round!", board.roundNum)
+		buf := fmt.Sprintf("Game over: The audience has won, survived %v move!", board.moveNum)
 		text.Draw(screen, buf, monoFont, 10, ScreenHeight-15, color.White)
 	}
 
-	buf := fmt.Sprintf("Round: %v/%v!", board.roundNum, maxRounds)
+	buf := fmt.Sprintf("Move: %v/%v!", board.moveNum, maxMoves)
 	text.Draw(screen, buf, monoFont, ScreenWidth-210, 25, color.Black)
 }

@@ -9,25 +9,23 @@ import (
 )
 
 var (
-	ServerRunning   bool          = true
-	playerRoundTime time.Duration = time.Second * 10
-	cpuRoundTime    time.Duration = time.Second * 2
-	maxRounds                     = 100
+	ServerRunning  bool          = true
+	playerMoveTime time.Duration = time.Second * 10
+	cpuMoveTime    time.Duration = time.Second * 2
+	maxMoves                     = 100
 
 	skipTwitch *bool
-	debugMode  *bool
 	fastMode   *bool
 )
 
 func main() {
 	skipTwitch = flag.Bool("skip", false, "don't connect to twitch")
-	debugMode = flag.Bool("debug", false, "debug mode")
 	fastMode = flag.Bool("fast", false, "fast mode")
 	flag.Parse()
 
 	if *fastMode {
-		cpuRoundTime = time.Millisecond * 2000
-		playerRoundTime = time.Millisecond * 1000
+		cpuMoveTime = time.Millisecond * 2000
+		playerMoveTime = time.Millisecond * 1000
 	}
 
 	board.playMap = make(map[xyi]*objectData)
@@ -60,7 +58,7 @@ func main() {
 	go playersAutosave()
 
 	//Voting loop
-	go handleRounds()
+	go handleMoves()
 
 	//Start the game mode
 	startGame()
