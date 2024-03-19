@@ -49,7 +49,7 @@ var (
 	votes userMsgDictData
 )
 
-func handleUserDictMsg(msg twitch.PrivateMessage, command string) {
+func handleVoteMsg(msg twitch.PrivateMessage, command string) {
 	msgLen := len(command)
 
 	if msgLen == 0 || msgLen > maxVoteLen {
@@ -82,7 +82,7 @@ func handleUserDictMsg(msg twitch.PrivateMessage, command string) {
 
 }
 
-func processUserDict() {
+func processVotes() {
 
 	var tX, tY, count uint64
 

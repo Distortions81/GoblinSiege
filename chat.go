@@ -22,7 +22,7 @@ func handleChat(msg twitch.PrivateMessage) {
 
 		} else {
 			//If a vote is active, handle votes
-			handleUserDictMsg(msg, command)
+			handleVoteMsg(msg, command)
 		}
 	}
 }

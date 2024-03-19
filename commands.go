@@ -124,9 +124,7 @@ func startVote() {
 // Locks and unlocks board
 func endVote() {
 
-	processUserDict()
-	board.lock.Lock()
-	defer board.lock.Unlock()
+	processVotes()
 
 	if votes.VoteState == VOTE_PLAYERS {
 		qlog("Ending vote...")
