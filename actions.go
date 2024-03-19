@@ -7,7 +7,6 @@ import (
 )
 
 func addTower() {
-	tower1 := getOtype("Stone Tower")
 
 	if votes.VoteCount > 0 &&
 		votes.Result.X > 0 &&
@@ -17,7 +16,7 @@ func addTower() {
 
 		tpos := votes.Result
 		if board.enemyMap[tpos] == nil && board.playMap[tpos] == nil {
-			board.playMap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
+			board.playMap[tpos] = &objectData{Pos: tpos, sheetP: &obj_tower1, Health: obj_tower1.health}
 		} else {
 			log.Println("COLLISION!")
 		}
@@ -27,7 +26,7 @@ func addTower() {
 		//Invalid or not enough votes, pick a pos at random
 		tpos := xyi{X: rand.Intn(boardSizeX-1) + 1, Y: rand.Intn(boardSizeY-1) + 1}
 		if board.enemyMap[tpos] == nil && board.playMap[tpos] == nil {
-			board.playMap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
+			board.playMap[tpos] = &objectData{Pos: tpos, sheetP: &obj_tower1, Health: obj_tower1.health}
 		}
 	}
 

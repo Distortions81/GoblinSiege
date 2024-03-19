@@ -129,7 +129,10 @@ func endVote() {
 	if votes.VoteState == VOTE_PLAYERS {
 		qlog("Ending vote...")
 
+		board.lock.Lock()
 		addTower()
+		board.lock.Unlock()
+
 		votes.VoteState = VOTE_PLAYERS_DONE
 		votes.StartTime = time.Now()
 	}

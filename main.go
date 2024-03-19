@@ -35,6 +35,8 @@ func main() {
 	//Wait here for process signals
 	signalHandle := make(chan os.Signal, 1)
 
+	go aniTimer()
+
 	//Start ebiten game lib
 	go func() {
 		startEbiten()
@@ -71,4 +73,11 @@ func main() {
 
 	players.lock.Lock()
 	writePlayers()
+}
+
+func aniTimer() {
+	for {
+		aniCount++
+		time.Sleep(time.Millisecond * 125)
+	}
 }

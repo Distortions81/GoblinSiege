@@ -11,6 +11,7 @@ import (
 )
 
 var frameCount uint64
+var aniCount uint64
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	frameCount++

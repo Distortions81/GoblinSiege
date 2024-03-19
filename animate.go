@@ -1,55 +1,112 @@
 package main
 
-type spriteSheet struct {
-	name   string
-	file   string
-	size   xyi
-	frames int
-	anims  []animationData
+import (
+	"image"
+
+	"github.com/hajimehoshi/ebiten/v2"
+)
+
+type spriteSheetData struct {
+	name      string
+	health    int
+	file      string
+	frameSize xyi
+	frames    int
+	anims     [ANI_MAX]animationData
+	img       *ebiten.Image
 }
 
 type animationData struct {
 	name   string
 	row    int
 	mirror bool
+	img    []*ebiten.Image
 }
 
-var goblinBarb = spriteSheet{
-	name:   "goblin barbarian",
-	file:   "Goblin_Barbarian",
-	size:   xyi{X: 32, Y: 32},
-	frames: 4,
+const (
+	ANI_IDLE = iota
+	ANI_RUN
+	ANI_FADE
+	ANI_DIE
+	ANI_ATTACK
+	ANI_SWIM
+	ANI_MAX
+)
 
-	anims: []animationData{
+// heh
+var sheetPile = []*spriteSheetData{
+	&obj_goblinBarb,
+	&obj_tower1,
+	&obj_arrow,
+}
+
+var obj_goblinBarb = spriteSheetData{
+	name:      "goblin barbarian",
+	file:      "Goblin_Barbarian",
+	health:    100,
+	frameSize: xyi{X: 32, Y: 32},
+	frames:    4,
+
+	anims: [ANI_MAX]animationData{
 		{
 			name:   "idle",
-			row:    2,
+			row:    1,
 			mirror: true,
 		},
 		{
 			name:   "run",
-			row:    5,
+			row:    4,
 			mirror: true,
 		},
 		{
 			name:   "fade",
-			row:    8,
+			row:    7,
 			mirror: true,
 		},
 		{
 			name:   "die",
-			row:    10,
+			row:    9,
 			mirror: true,
 		},
 		{
 			name:   "attack",
-			row:    13,
+			row:    12,
 			mirror: true,
 		},
 		{
 			name:   "swim",
-			row:    16,
+			row:    15,
 			mirror: true,
 		},
 	},
+}
+
+var obj_tower1 = spriteSheetData{
+	name:   "tower1",
+	file:   "tower1",
+	health: 100,
+}
+
+var obj_arrow = spriteSheetData{
+	name: "arrow",
+	file: "arrow",
+}
+
+func getAni(sheet *spriteSheetData, auiNum int, frame int) *ebiten.Image {
+	aniData := sheet.anims[auiNum]
+	var r image.Rectangle
+	if aniData.mirror {
+		r = image.Rect(
+			(sheet.frameSize.X*frame)+sheet.frameSize.X,
+			aniData.row*sheet.frameSize.Y,
+			sheet.frameSize.X*frame,
+			(aniData.row*sheet.frameSize.Y)+sheet.frameSize.Y)
+	} else {
+		r = image.Rect(
+			sheet.frameSize.X*frame,
+			aniData.row*sheet.frameSize.Y,
+			(sheet.frameSize.X*frame)+sheet.frameSize.X,
+			(aniData.row*sheet.frameSize.Y)+sheet.frameSize.Y)
+	}
+	return sheet.img.SubImage(r).(*ebiten.Image)
 }

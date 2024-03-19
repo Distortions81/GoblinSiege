@@ -65,10 +65,9 @@ func cpuTurn() {
 func spawnGoblins() {
 	//Spawn goblins
 	if board.moveNum%2 == 0 {
-		goblin := getOtype("Goblin")
 		rand := xyi{X: boardSizeX + enemyBoardX, Y: 1 + rand.Intn(boardSizeY-1)}
 		if board.enemyMap[rand] == nil {
-			board.enemyMap[rand] = &objectData{Pos: rand, oTypeP: goblin, Health: goblin.maxHealth, OldPos: xyi{X: rand.X + goblin.size.X, Y: rand.Y}}
+			board.enemyMap[rand] = &objectData{Pos: rand, sheetP: &obj_goblinBarb, Health: obj_goblinBarb.health, OldPos: xyi{X: rand.X, Y: rand.Y}}
 		}
 	}
 }

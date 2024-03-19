@@ -21,30 +21,26 @@ func init() {
 		log.Fatal(err)
 	}
 
-	for i, item := range oTypes {
-		if item.spriteName == "" {
-			continue
-		}
-		tmp, _, err := ebitenutil.NewImageFromFile("data/sprites/" + item.spriteName + ".png")
-		oTypes[i].spriteImg = tmp
+	for s, sheet := range sheetPile {
+		tmp, _, err := ebitenutil.NewImageFromFile("data/sprites/" + sheet.file + ".png")
+		sheetPile[s].img = tmp
 
-		log.Printf("Loaded sprite: %v", item.spriteName)
+		log.Printf("Loaded spritesheet: %v", sheet.name)
 
 		if err != nil {
 			log.Fatal(err)
 		}
-	}
-	for i, item := range oTypes {
-		if item.deadName == "" {
+
+		if sheet.frames <= 0 {
+			sheetPile[s].frameSize.X = tmp.Bounds().Dx()
+			sheetPile[s].frameSize.Y = tmp.Bounds().Dy()
 			continue
 		}
-		tmp, _, err := ebitenutil.NewImageFromFile("data/sprites/" + item.deadName + ".png")
-		oTypes[i].deadImg = tmp
-
-		log.Printf("Loaded sprite: %v", item.spriteName)
-
-		if err != nil {
-			log.Fatal(err)
+		for a, ani := range sheet.anims {
+			for x := 0; x < sheet.frames; x++ {
+				log.Printf("Sliced: %v frame %v\n", ani.name, x)
+				sheet.anims[a].img = append(sheet.anims[a].img, getAni(sheet, a, x))
+			}
 		}
 	}
 }
