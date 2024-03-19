@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"math/rand"
 	"strings"
 	"time"
 
@@ -18,15 +16,6 @@ type commandData struct {
 
 /* Lame workaround for initialization cycle error */
 var modCmdHelp []commandData
-
-func init() {
-	for _, cmd := range modCommands {
-		if cmd.Name == "help" || cmd.Name == "modHelp" {
-			continue
-		}
-		modCmdHelp = append(modCmdHelp, commandData{Name: cmd.Name, Desc: cmd.Desc})
-	}
-}
 
 var modCommands []commandData = []commandData{
 	{
@@ -75,9 +64,9 @@ func handleModCommands(msg twitch.PrivateMessage, command string) bool {
 					sayLog("Command %v%v has nil func.", userSettings.CmdPrefix, item.Name)
 					continue
 				}
-				UserMsgDict.Lock.Lock()
+				votes.Lock.Lock()
 				item.Handle()
-				UserMsgDict.Lock.Unlock()
+				votes.Lock.Unlock()
 				return true
 			}
 		}
@@ -90,9 +79,9 @@ func clearGameBoard() {
 	qlog("Clearing game board...")
 	board.lock.Lock()
 
-	board.pmap = make(map[xyi]*objectData)
-	board.emap = make(map[xyi]*objectData)
-	board.roundNum = 0
+	board.playMap = make(map[xyi]*objectData)
+	board.enemyMap = make(map[xyi]*objectData)
+	board.moveNum = 0
 	board.arrowsShot = make([]arrowData, 0)
 
 	board.lock.Unlock()
@@ -100,9 +89,9 @@ func clearGameBoard() {
 
 func clearVotes() {
 	qlog("Resetting votes...")
-	UserMsgDict.VoteCount = 0
-	UserMsgDict.Result = xyi{}
-	UserMsgDict.Users = make(map[int64]*userMsgData)
+	votes.VoteCount = 0
+	votes.Result = xyi{}
+	votes.Users = make(map[int64]*userMsgData)
 }
 
 func startGame() {
@@ -111,8 +100,8 @@ func startGame() {
 	clearGameBoard()
 
 	board.gameover = GAME_RUNNING
-	UserMsgDict.VoteCount = 0
-	UserMsgDict.GameRunning = true
+	votes.VoteCount = 0
+	votes.GameRunning = true
 
 	startVote()
 }
@@ -121,95 +110,33 @@ func endGame() {
 	qlog("Stopping game...")
 	clearVotes()
 
-	UserMsgDict.VoteState = VOTE_NONE
-	UserMsgDict.GameRunning = false
+	votes.VoteState = VOTE_NONE
+	votes.GameRunning = false
 
 }
 
 func startVote() {
 	qlog("Starting new vote...")
-	UserMsgDict.StartTime = time.Now()
-	UserMsgDict.VoteState = VOTE_PLAYERS
+	votes.StartTime = time.Now()
+	votes.VoteState = VOTE_PLAYERS
 }
 
 // Locks and unlocks board
 func endVote() {
 
-	processUserDict()
-	board.lock.Lock()
-	defer board.lock.Unlock()
+	processVotes()
 
-	if UserMsgDict.VoteState == VOTE_PLAYERS {
+	if votes.VoteState == VOTE_PLAYERS {
 		qlog("Ending vote...")
 
+		board.lock.Lock()
 		addTower()
-		UserMsgDict.VoteState = VOTE_PLAYERS_DONE
-		UserMsgDict.StartTime = time.Now()
+		board.lock.Unlock()
+
+		votes.VoteState = VOTE_PLAYERS_DONE
+		votes.StartTime = time.Now()
 	}
 	clearVotes()
-}
-
-func addTower() {
-	tower1 := getOtype("Stone Tower")
-
-	if UserMsgDict.VoteCount > 0 &&
-		UserMsgDict.Result.X > 0 &&
-		UserMsgDict.Result.Y > 0 &&
-		UserMsgDict.Result.X <= boardSizeX &&
-		UserMsgDict.Result.Y <= boardSizeY {
-
-		tpos := UserMsgDict.Result
-		if board.emap[tpos] == nil && board.pmap[tpos] == nil {
-			board.pmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
-		} else {
-			log.Println("COLLISION!")
-		}
-	} else {
-
-		log.Println("Not enough votes, picking random.")
-		//Invalid or not enough votes, pick a pos at random
-		tpos := xyi{X: rand.Intn(boardSizeX-1) + 1, Y: rand.Intn(boardSizeY-1) + 1}
-		if board.emap[tpos] == nil && board.pmap[tpos] == nil {
-			board.pmap[tpos] = &objectData{Pos: tpos, oTypeP: tower1, Health: tower1.maxHealth}
-		}
-	}
-
-}
-
-func towerShootArrow() {
-	curTime := time.Now()
-
-	for _, item := range board.pmap {
-		if item.dead {
-			continue
-		}
-		for _, enemy := range board.emap {
-			if enemy.dead {
-				continue
-			}
-			//If enemy within range
-			if Distance(item.Pos, enemy.Pos) < 6 {
-
-				if rand.Intn(2) != 0 {
-					arrow := arrowData{tower: item.Pos, target: enemy.Pos, missed: true, shot: curTime}
-					board.arrowsShot = append(board.arrowsShot, arrow)
-					break
-				}
-				arrow := arrowData{tower: item.Pos, target: enemy.Pos, missed: false, shot: curTime}
-				board.arrowsShot = append(board.arrowsShot, arrow)
-
-				dmgAmt := 5 + rand.Intn(20)
-				enemy.Health -= dmgAmt
-
-				if enemy.Health <= 0 {
-					board.emap[enemy.Pos].dead = true
-					//For tweening
-					board.emap[enemy.Pos].OldPos = board.emap[enemy.Pos].Pos
-				}
-				break
-			}
-		}
-	}
 }
 
 func modHelpCommand() {
@@ -223,4 +150,13 @@ func modHelpCommand() {
 func helpCommand() {
 	buf := fmt.Sprintf("%vx,y", userSettings.CmdPrefix)
 	fSay(buf)
+}
+
+func init() {
+	for _, cmd := range modCommands {
+		if cmd.Name == "help" || cmd.Name == "modHelp" {
+			continue
+		}
+		modCmdHelp = append(modCmdHelp, commandData{Name: cmd.Name, Desc: cmd.Desc})
+	}
 }

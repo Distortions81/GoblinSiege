@@ -9,7 +9,7 @@ import (
 	"github.com/gempir/go-twitch-irc/v4"
 )
 
-const maxDictMsgLen = 10
+const maxVoteLen = 10
 
 type VOTE_STATE int
 
@@ -46,13 +46,13 @@ type userMsgDictData struct {
 }
 
 var (
-	UserMsgDict userMsgDictData
+	votes userMsgDictData
 )
 
-func handleUserDictMsg(msg twitch.PrivateMessage, command string) {
+func handleVoteMsg(msg twitch.PrivateMessage, command string) {
 	msgLen := len(command)
 
-	if msgLen == 0 || msgLen > maxDictMsgLen {
+	if msgLen == 0 || msgLen > maxVoteLen {
 		return
 	}
 
@@ -70,30 +70,30 @@ func handleUserDictMsg(msg twitch.PrivateMessage, command string) {
 		}
 
 		userid := strToID(msg.User.ID)
-		UserMsgDict.Lock.Lock()
-		if UserMsgDict.Users[userid] == nil {
-			UserMsgDict.VoteCount++
+		votes.Lock.Lock()
+		if votes.Users[userid] == nil {
+			votes.VoteCount++
 		}
-		UserMsgDict.Users[userid] = &userMsgData{sender: msg.User.DisplayName, pos: xyi{X: int(x), Y: int(y)}, time: time.Now()}
+		votes.Users[userid] = &userMsgData{sender: msg.User.DisplayName, pos: xyi{X: int(x), Y: int(y)}, time: time.Now()}
 
-		UserMsgDict.Lock.Unlock()
+		votes.Lock.Unlock()
 
 	}
 
 }
 
-func processUserDict() {
+func processVotes() {
 
 	var tX, tY, count uint64
 
-	for _, user := range UserMsgDict.Users {
+	for _, user := range votes.Users {
 		tX += uint64(user.pos.X)
 		tY += uint64(user.pos.Y)
 		count++
 	}
 	if count > 0 {
-		UserMsgDict.VoteCount = int(count)
-		UserMsgDict.Result = xyi{X: int(tX / count), Y: int(tY / count)}
+		votes.VoteCount = int(count)
+		votes.Result = xyi{X: int(tX / count), Y: int(tY / count)}
 	}
 }
 

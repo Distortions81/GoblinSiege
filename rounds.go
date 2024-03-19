@@ -5,42 +5,42 @@ import (
 	"time"
 )
 
-func handleRounds() {
+func handleMoves() {
 	for ServerRunning {
-		UserMsgDict.Lock.Lock()
+		votes.Lock.Lock()
 
-		if UserMsgDict.VoteState == VOTE_PLAYERS &&
-			time.Since(UserMsgDict.StartTime) > playerRoundTime {
+		if votes.VoteState == VOTE_PLAYERS &&
+			time.Since(votes.StartTime) > playerMoveTime {
 			endVote()
 
-		} else if UserMsgDict.VoteState == VOTE_PLAYERS_DONE {
-			UserMsgDict.VoteState = VOTE_COMPUTER
-			UserMsgDict.CpuTime = time.Now()
+		} else if votes.VoteState == VOTE_PLAYERS_DONE {
+			votes.VoteState = VOTE_COMPUTER
+			votes.CpuTime = time.Now()
 			cpuTurn()
 
-		} else if UserMsgDict.VoteState == VOTE_COMPUTER &&
-			time.Since(UserMsgDict.CpuTime) > cpuRoundTime {
+		} else if votes.VoteState == VOTE_COMPUTER &&
+			time.Since(votes.CpuTime) > cpuMoveTime {
 
-			UserMsgDict.VoteState = VOTE_COMPUTER_DONE
+			votes.VoteState = VOTE_COMPUTER_DONE
 
-		} else if UserMsgDict.VoteState == VOTE_COMPUTER_DONE &&
-			UserMsgDict.GameRunning {
-			if board.roundNum%3 == 0 {
+		} else if votes.VoteState == VOTE_COMPUTER_DONE &&
+			votes.GameRunning {
+			if board.moveNum%3 == 0 {
 				startVote()
 			} else {
-				UserMsgDict.VoteState = VOTE_COMPUTER
-				UserMsgDict.CpuTime = time.Now()
+				votes.VoteState = VOTE_COMPUTER
+				votes.CpuTime = time.Now()
 				cpuTurn()
 			}
 		}
 
-		if !UserMsgDict.GameRunning {
-			if time.Since(UserMsgDict.RoundTime) > time.Second*5 {
+		if !votes.GameRunning {
+			if time.Since(votes.RoundTime) > time.Second*5 {
 				startGame()
 			}
 		}
 
-		UserMsgDict.Lock.Unlock()
+		votes.Lock.Unlock()
 		time.Sleep(time.Millisecond * 10)
 	}
 }
@@ -49,9 +49,9 @@ func cpuTurn() {
 	board.lock.Lock()
 	defer board.lock.Unlock()
 
-	board.roundNum++
+	board.moveNum++
 
-	if board.roundNum >= maxRounds {
+	if board.moveNum >= maxMoves {
 		board.gameover = GAME_VICTORY
 		endGame()
 	}
@@ -64,11 +64,10 @@ func cpuTurn() {
 
 func spawnGoblins() {
 	//Spawn goblins
-	if board.roundNum%2 == 0 {
-		goblin := getOtype("Goblin")
+	if board.moveNum%2 == 0 {
 		rand := xyi{X: boardSizeX + enemyBoardX, Y: 1 + rand.Intn(boardSizeY-1)}
-		if board.emap[rand] == nil {
-			board.emap[rand] = &objectData{Pos: rand, oTypeP: goblin, Health: goblin.maxHealth, OldPos: xyi{X: rand.X + goblin.size.X, Y: rand.Y}}
+		if board.enemyMap[rand] == nil {
+			board.enemyMap[rand] = &objectData{Pos: rand, sheetP: &obj_goblinBarb, Health: obj_goblinBarb.health, OldPos: xyi{X: rand.X, Y: rand.Y}}
 		}
 	}
 }
@@ -76,7 +75,7 @@ func spawnGoblins() {
 func goblinAttack() {
 	var newitems []*objectData
 	//Detect defeat, defeat, do damage to towers, remove dead towers
-	for _, item := range board.emap {
+	for _, item := range board.enemyMap {
 		if item.dead {
 			continue
 		}
@@ -90,8 +89,8 @@ func goblinAttack() {
 		nextPos.X -= 1
 
 		//Check towers and enemy positions before moving
-		tower := board.pmap[nextPos]
-		self := board.emap[nextPos]
+		tower := board.playMap[nextPos]
+		self := board.enemyMap[nextPos]
 		if self != nil && !self.dead {
 			continue
 		}
@@ -104,14 +103,14 @@ func goblinAttack() {
 			continue
 		}
 		//Delete enemy, add to list
-		delete(board.emap, item.Pos)
+		delete(board.enemyMap, item.Pos)
 		oldItem.Pos = nextPos
 		newitems = append(newitems, oldItem)
 	}
 
 	//Add enemy back to new position
 	for i, item := range newitems {
-		board.emap[item.Pos] = newitems[i]
+		board.enemyMap[item.Pos] = newitems[i]
 		if item.Pos.X < 1 {
 			board.gameover = GAME_DEFEAT
 			endGame()

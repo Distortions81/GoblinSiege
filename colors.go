@@ -6,25 +6,6 @@ import (
 	"strings"
 )
 
-func Hex2Color(input string) (color.RGBA, error) {
-	input = strings.TrimPrefix(input, "#")
-
-	var rgb color.RGBA
-	values, err := strconv.ParseUint(string(input), 16, 32)
-
-	if err != nil {
-		return color.RGBA{}, err
-	}
-
-	rgb = color.RGBA{
-		R: uint8(values >> 16),
-		G: uint8((values >> 8) & 0xFF),
-		B: uint8(values & 0xFF),
-	}
-
-	return rgb, nil
-}
-
 var (
 	ColorVeryDarkGray   = color.NRGBA{64, 64, 64, 255}
 	ColorReallyDarkGray = color.NRGBA{32, 32, 32, 255}
@@ -90,3 +71,22 @@ var (
 	ColorDarkFuchsia = color.NRGBA{154, 45, 141, 255}
 	ColorDarkAqua    = color.NRGBA{45, 154, 154, 255}
 )
+
+func Hex2Color(input string) (color.RGBA, error) {
+	input = strings.TrimPrefix(input, "#")
+
+	var rgb color.RGBA
+	values, err := strconv.ParseUint(string(input), 16, 32)
+
+	if err != nil {
+		return color.RGBA{}, err
+	}
+
+	rgb = color.RGBA{
+		R: uint8(values >> 16),
+		G: uint8((values >> 8) & 0xFF),
+		B: uint8(values & 0xFF),
+	}
+
+	return rgb, nil
+}
