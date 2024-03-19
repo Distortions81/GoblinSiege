@@ -94,11 +94,11 @@ var obj_tower1 = spriteSheetData{
 			row:  0,
 		},
 		{
-			name: "run",
+			name: "build",
 			row:  1,
 		},
 		{
-			name: "fade",
+			name: "broken",
 			row:  2,
 		},
 	},
