@@ -197,9 +197,9 @@ func drawGameBoard(screen *ebiten.Image) {
 			op := &ebiten.DrawImageOptions{}
 			op.GeoM.Translate(float64(((item.Pos.X+offX)*mag)-item.sheetP.frameSize.X), float64(((item.Pos.Y+offY)*mag)-item.sheetP.frameSize.Y))
 			if item.dead {
-				screen.DrawImage(item.sheetP.img, op)
+				screen.DrawImage(item.sheetP.anims[ANI_FADE].img[aniCount%3], op)
 			} else {
-				screen.DrawImage(item.sheetP.img, op)
+				screen.DrawImage(item.sheetP.anims[ANI_IDLE].img[aniCount%3], op)
 
 				//Draw health
 				healthBar := (float32(item.Health) / float32(item.sheetP.health))

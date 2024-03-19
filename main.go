@@ -78,6 +78,6 @@ func main() {
 func aniTimer() {
 	for {
 		aniCount++
-		time.Sleep(time.Millisecond * 125)
+		time.Sleep(time.Second / 3)
 	}
 }
