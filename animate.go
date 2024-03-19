@@ -65,7 +65,7 @@ var obj_goblinBarb = spriteSheetData{
 		},
 		{
 			name:   "die",
-			row:    9,
+			row:    10,
 			mirror: true,
 		},
 		{

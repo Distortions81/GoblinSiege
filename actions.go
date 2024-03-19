@@ -59,6 +59,8 @@ func towerShootArrow() {
 
 				if enemy.Health <= 0 {
 					board.enemyMap[enemy.Pos].dead = true
+					board.enemyMap[enemy.Pos].diedAt = time.Now()
+
 					//For tweening
 					board.enemyMap[enemy.Pos].OldPos = board.enemyMap[enemy.Pos].Pos
 				}

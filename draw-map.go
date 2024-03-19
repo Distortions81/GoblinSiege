@@ -19,6 +19,7 @@ type objectData struct {
 
 	Health    int
 	dead      bool
+	diedAt    time.Time
 	aniOffset uint64
 
 	sheetP *spriteSheetData
@@ -174,7 +175,11 @@ func drawGameBoard(screen *ebiten.Image) {
 			((sY+float64(offY))*float64(mag))-float64(obj_goblinBarb.frameSize.Y))
 
 		if item.dead {
-			screen.DrawImage(item.sheetP.anims[ANI_DIE].img[int(float64(item.aniOffset)+sX*16)%4], op)
+			deadAni := 0
+			if time.Since(item.diedAt) > time.Second/3 {
+				deadAni = 1
+			}
+			screen.DrawImage(item.sheetP.anims[ANI_DIE].img[deadAni], op)
 		} else {
 			screen.DrawImage(item.sheetP.anims[ANI_RUN].img[int(float64(item.aniOffset)+sX*16)%4], op)
 			healthBar := (float32(item.Health) / float32(item.sheetP.health))
