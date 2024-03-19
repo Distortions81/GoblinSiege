@@ -26,7 +26,7 @@ func addTower() {
 		//Invalid or not enough votes, pick a pos at random
 		tpos := xyi{X: rand.Intn(boardSizeX-1) + 1, Y: rand.Intn(boardSizeY-1) + 1}
 		if board.enemyMap[tpos] == nil && board.playMap[tpos] == nil {
-			board.playMap[tpos] = &objectData{Pos: tpos, sheetP: &obj_tower1, Health: obj_tower1.health}
+			board.playMap[tpos] = &objectData{Pos: tpos, sheetP: &obj_tower1, Health: obj_tower1.health, aniOffset: uint64(rand.Intn(obj_tower1.frames))}
 		}
 	}
 
@@ -64,6 +64,62 @@ func towerShootArrow() {
 				}
 				break
 			}
+		}
+	}
+}
+
+func spawnGoblins() {
+	//Spawn goblins
+	if board.moveNum%2 == 0 {
+		rpos := xyi{X: boardSizeX + enemyBoardX, Y: 1 + rand.Intn(boardSizeY-1)}
+		if board.enemyMap[rpos] == nil {
+			board.enemyMap[rpos] = &objectData{Pos: rpos, sheetP: &obj_goblinBarb, Health: obj_goblinBarb.health, OldPos: xyi{X: rpos.X, Y: rpos.Y}, aniOffset: uint64(rand.Intn(obj_goblinBarb.frames))}
+		}
+	}
+}
+
+func goblinAttack() {
+	var newitems []*objectData
+	//Detect defeat, defeat, do damage to towers, remove dead towers
+	for _, item := range board.enemyMap {
+		if item.dead {
+			continue
+		}
+
+		//Detect game over
+		oldItem := item
+
+		//Setup next enemy position
+		nextPos := item.Pos
+		oldItem.OldPos = oldItem.Pos
+		nextPos.X -= 1
+
+		//Check towers and enemy positions before moving
+		tower := board.playMap[nextPos]
+		self := board.enemyMap[nextPos]
+		if self != nil && !self.dead {
+			continue
+		}
+		//If a tower is in our way, do damage
+		if tower != nil && !tower.dead {
+			tower.Health -= 10 + rand.Intn(10)
+			if tower.Health <= 0 {
+				tower.dead = true
+			}
+			continue
+		}
+		//Delete enemy, add to list
+		delete(board.enemyMap, item.Pos)
+		oldItem.Pos = nextPos
+		newitems = append(newitems, oldItem)
+	}
+
+	//Add enemy back to new position
+	for i, item := range newitems {
+		board.enemyMap[item.Pos] = newitems[i]
+		if item.Pos.X < 1 {
+			board.gameover = GAME_DEFEAT
+			endGame()
 		}
 	}
 }

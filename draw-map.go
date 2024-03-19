@@ -17,8 +17,9 @@ type objectData struct {
 	Pos    xyi
 	OldPos xyi
 
-	Health int
-	dead   bool
+	Health    int
+	dead      bool
+	aniOffset uint64
 
 	sheetP *spriteSheetData
 }
@@ -173,13 +174,13 @@ func drawGameBoard(screen *ebiten.Image) {
 			((sY+float64(offY))*float64(mag))-float64(obj_goblinBarb.frameSize.Y))
 
 		if item.dead {
-			screen.DrawImage(item.sheetP.anims[ANI_DIE].img[int(sX*16)%4], op)
+			screen.DrawImage(item.sheetP.anims[ANI_DIE].img[int(float64(item.aniOffset)+sX*16)%4], op)
 		} else {
-			screen.DrawImage(item.sheetP.anims[ANI_RUN].img[int(sX*16)%4], op)
+			screen.DrawImage(item.sheetP.anims[ANI_RUN].img[int(float64(item.aniOffset)+sX*16)%4], op)
 			healthBar := (float32(item.Health) / float32(item.sheetP.health))
 
 			if healthBar > 0 && healthBar < 1 {
-				vector.DrawFilledRect(screen, float32(((sX+offX)*mag)-32), float32(((sY+offY)*mag)-32)+1, float32(item.sheetP.frameSize.X), 6, ColorBlack, false)
+				vector.DrawFilledRect(screen, float32(((sX+offX)*mag)-32), float32(((sY+offY)*mag)-32)+1, float32(item.sheetP.frameSize.X), 6, ColorSmoke, false)
 				vector.DrawFilledRect(screen, float32(((sX+offX)*mag)-31), float32(((sY+offY)*mag)-31)+1, (healthBar*float32(item.sheetP.frameSize.X) - 1), 4, healthColor(healthBar), false)
 			}
 		}
@@ -197,14 +198,14 @@ func drawGameBoard(screen *ebiten.Image) {
 			op := &ebiten.DrawImageOptions{}
 			op.GeoM.Translate(float64(((item.Pos.X+offX)*mag)-item.sheetP.frameSize.X), float64(((item.Pos.Y+offY)*mag)-item.sheetP.frameSize.Y))
 			if item.dead {
-				screen.DrawImage(item.sheetP.anims[ANI_FADE].img[aniCount%3], op)
+				screen.DrawImage(item.sheetP.anims[ANI_FADE].img[(aniCount+item.aniOffset)%3], op)
 			} else {
-				screen.DrawImage(item.sheetP.anims[ANI_IDLE].img[aniCount%3], op)
+				screen.DrawImage(item.sheetP.anims[ANI_IDLE].img[(aniCount+item.aniOffset)%3], op)
 
 				//Draw health
 				healthBar := (float32(item.Health) / float32(item.sheetP.health))
 				if healthBar > 0 && healthBar < 1 {
-					vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-32), float32(((item.Pos.Y+offY)*mag)-64)+1, float32(item.sheetP.frameSize.X), 6, ColorBlack, false)
+					vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-32), float32(((item.Pos.Y+offY)*mag)-64)+1, float32(item.sheetP.frameSize.X), 6, ColorSmoke, false)
 					vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-31), float32(((item.Pos.Y+offY)*mag)-63)+1, (healthBar*float32(item.sheetP.frameSize.X) - 1), 4, healthColor(healthBar), false)
 
 				}
