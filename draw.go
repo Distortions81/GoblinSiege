@@ -37,7 +37,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 		till := float32(time.Until(votes.StartTime.Add(cpuMoveTime*3)).Milliseconds()) / 1000.0
 		if till > 0 {
-			buf := fmt.Sprintf("ORC'S TURN. Vote: %vx,y -- Votes: %v -- %2.1fs remaining%v",
+			buf := fmt.Sprintf("ENEMY'S TURN. Vote: %vx,y -- Votes: %v -- %2.1fs remaining%v",
 				userSettings.CmdPrefix, votes.VoteCount,
 				till,
 				makeEllipsis())
