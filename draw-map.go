@@ -169,8 +169,8 @@ func drawGameBoard(screen *ebiten.Image) {
 
 		op := &ebiten.DrawImageOptions{}
 		op.GeoM.Scale(-1, 1)
-		op.GeoM.Translate(((sX+float64(offX))*float64(mag))-float64(obj_arrow.frameSize.X),
-			((sY+float64(offY))*float64(mag))-float64(obj_arrow.frameSize.Y))
+		op.GeoM.Translate(((sX + float64(offX)) * float64(mag)),
+			((sY+float64(offY))*float64(mag))-float64(obj_goblinBarb.frameSize.Y))
 
 		if item.dead {
 			screen.DrawImage(item.sheetP.anims[ANI_DIE].img[int(sX*16)%4], op)
