@@ -1,8 +1,11 @@
 package main
 
+import "time"
+
 const (
 	defaultWindowWidth  = 1280
 	defaultWindowHeight = 720
+	deathDelay          = time.Millisecond * 300
 
 	playersFile = "players.json"
 	authFile    = "settings.json"

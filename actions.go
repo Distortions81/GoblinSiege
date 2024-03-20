@@ -96,7 +96,7 @@ func towerShootArrow() {
 
 	if didDie {
 		go func() {
-			time.Sleep(time.Millisecond * 500)
+			time.Sleep(deathDelay)
 			if sounds[SND_GOBLIN_DIE].player.IsPlaying() {
 				return
 			}

@@ -174,9 +174,9 @@ func drawGameBoard(screen *ebiten.Image) {
 		op.GeoM.Translate(((sX + float64(offX)) * float64(mag)),
 			((sY+float64(offY))*float64(mag))-float64(obj_goblinBarb.frameSize.Y))
 
-		if item.dead && time.Since(item.diedAt) > time.Millisecond*500 {
+		if item.dead && time.Since(item.diedAt) > deathDelay {
 			deadAni := 0
-			if time.Since(item.diedAt) > time.Millisecond*700 {
+			if time.Since(item.diedAt) > (deathDelay * 2) {
 				deadAni = 1
 			}
 			screen.DrawImage(item.sheetP.anims[ANI_DIE].img[deadAni], op)
