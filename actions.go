@@ -36,6 +36,8 @@ func towerShootArrow() {
 	curTime := time.Now()
 
 	var didShoot bool
+	var didDie bool
+	var didHurt bool
 
 	for _, item := range board.playMap {
 		if item.dead {
@@ -60,10 +62,12 @@ func towerShootArrow() {
 
 				dmgAmt := 5 + rand.Intn(20)
 				enemy.Health -= dmgAmt
+				didHurt = true
 
 				if enemy.Health <= 0 {
 					board.enemyMap[enemy.Pos].dead = true
 					board.enemyMap[enemy.Pos].diedAt = time.Now()
+					didDie = true
 
 					//For tweening
 					board.enemyMap[enemy.Pos].OldPos = board.enemyMap[enemy.Pos].Pos
@@ -83,6 +87,21 @@ func towerShootArrow() {
 		sounds[SND_ARROW_SHOOT].player.Rewind()
 		sounds[SND_ARROW_SHOOT].player.SetVolume(0.4)
 		sounds[SND_ARROW_SHOOT].player.Play()
+	}
+
+	if didDie {
+		if sounds[SND_GOBLIN_YELL].player.IsPlaying() {
+			return
+		}
+		sounds[SND_GOBLIN_YELL].player.SetVolume(0)
+		sounds[SND_GOBLIN_YELL].player.Pause()
+		sounds[SND_GOBLIN_YELL].player.Rewind()
+		sounds[SND_GOBLIN_YELL].player.SetVolume(0.4)
+		sounds[SND_GOBLIN_YELL].player.Play()
+	}
+
+	if didHurt {
+		//
 	}
 }
 
