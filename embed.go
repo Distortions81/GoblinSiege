@@ -3,8 +3,10 @@ package main
 import (
 	"embed"
 	"log"
+	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/audio/wav"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
@@ -42,6 +44,18 @@ func init() {
 				sheet.anims[a].img = append(sheet.anims[a].img, getAni(sheet, a, x))
 			}
 		}
+	}
+
+	for s, sound := range sounds {
+		sRead, err := os.Open("data/sounds/" + sound.file)
+		if err != nil {
+			log.Fatal(err)
+		}
+		sounds[s].wav, err = wav.DecodeWithoutResampling(sRead)
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Printf("Loaded %v.", sound.file)
 	}
 }
 
