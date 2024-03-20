@@ -43,6 +43,11 @@ func towerShootArrow() {
 		if item.dead {
 			continue
 		}
+
+		//Shoot from tower top
+		towerPos := item.Pos
+		towerPos.Y -= 1
+
 		for _, enemy := range board.enemyMap {
 			if enemy.dead {
 				continue
@@ -53,11 +58,11 @@ func towerShootArrow() {
 				didShoot = true
 
 				if rand.Intn(2) != 0 {
-					arrow := arrowData{tower: item.Pos, target: enemy.Pos, missed: true, shot: curTime}
+					arrow := arrowData{tower: towerPos, target: enemy.Pos, missed: true, shot: curTime}
 					board.arrowsShot = append(board.arrowsShot, arrow)
 					break
 				}
-				arrow := arrowData{tower: item.Pos, target: enemy.Pos, missed: false, shot: curTime}
+				arrow := arrowData{tower: towerPos, target: enemy.Pos, missed: false, shot: curTime}
 				board.arrowsShot = append(board.arrowsShot, arrow)
 
 				dmgAmt := 5 + rand.Intn(20)
@@ -90,14 +95,17 @@ func towerShootArrow() {
 	}
 
 	if didDie {
-		if sounds[SND_GOBLIN_YELL].player.IsPlaying() {
-			return
-		}
-		sounds[SND_GOBLIN_YELL].player.SetVolume(0)
-		sounds[SND_GOBLIN_YELL].player.Pause()
-		sounds[SND_GOBLIN_YELL].player.Rewind()
-		sounds[SND_GOBLIN_YELL].player.SetVolume(0.4)
-		sounds[SND_GOBLIN_YELL].player.Play()
+		go func() {
+			time.Sleep(time.Millisecond * 500)
+			if sounds[SND_GOBLIN_DIE].player.IsPlaying() {
+				return
+			}
+			sounds[SND_GOBLIN_DIE].player.SetVolume(0)
+			sounds[SND_GOBLIN_DIE].player.Pause()
+			sounds[SND_GOBLIN_DIE].player.Rewind()
+			sounds[SND_GOBLIN_DIE].player.SetVolume(0.4)
+			sounds[SND_GOBLIN_DIE].player.Play()
+		}()
 	}
 
 	if didHurt {

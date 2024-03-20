@@ -9,7 +9,7 @@ func handleMoves() {
 		votes.Lock.Lock()
 
 		if *fastMode {
-			if board.moveNum < 15 {
+			if board.moveNum < 20 {
 				cpuMoveTime = time.Millisecond * 100
 				playerMoveTime = time.Nanosecond
 			} else {
@@ -56,7 +56,6 @@ func handleMoves() {
 
 func cpuTurn() {
 	board.lock.Lock()
-	defer board.lock.Unlock()
 
 	board.moveNum++
 
@@ -68,5 +67,6 @@ func cpuTurn() {
 	towerShootArrow()
 	spawnGoblins()
 	goblinAttack()
+	board.lock.Unlock()
 
 }

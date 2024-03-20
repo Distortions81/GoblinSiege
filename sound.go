@@ -5,7 +5,7 @@ import "github.com/hajimehoshi/ebiten/v2/audio"
 const (
 	SND_ARROW_MISS = iota
 	SND_ARROW_SHOOT
-	SND_GOBLIN_YELL
+	SND_GOBLIN_DIE
 	SND_GRASS_WALK
 	SND_WIND
 	SND_MAX
@@ -31,7 +31,7 @@ var sounds = [SND_MAX]soundData{
 		file: "arrow-shoot.wav",
 	},
 	{
-		file: "goblin-yell.wav",
+		file: "goblin-die.wav",
 	},
 	{
 		file: "grass-walk.wav",
