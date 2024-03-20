@@ -35,6 +35,8 @@ func addTower() {
 func towerShootArrow() {
 	curTime := time.Now()
 
+	var didShoot bool
+
 	for _, item := range board.playMap {
 		if item.dead {
 			continue
@@ -43,8 +45,10 @@ func towerShootArrow() {
 			if enemy.dead {
 				continue
 			}
+
 			//If enemy within range
 			if Distance(item.Pos, enemy.Pos) < 6 {
+				didShoot = true
 
 				if rand.Intn(2) != 0 {
 					arrow := arrowData{tower: item.Pos, target: enemy.Pos, missed: true, shot: curTime}
@@ -66,7 +70,19 @@ func towerShootArrow() {
 				}
 				break
 			}
+
 		}
+	}
+
+	if didShoot {
+		if sounds[SND_ARROW_SHOOT].player.IsPlaying() {
+			return
+		}
+		sounds[SND_ARROW_SHOOT].player.SetVolume(0)
+		sounds[SND_ARROW_SHOOT].player.Pause()
+		sounds[SND_ARROW_SHOOT].player.Rewind()
+		sounds[SND_ARROW_SHOOT].player.SetVolume(0.4)
+		sounds[SND_ARROW_SHOOT].player.Play()
 	}
 }
 

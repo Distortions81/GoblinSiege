@@ -6,14 +6,15 @@ import (
 	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/audio/wav"
+	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
 var (
 	//go:embed data
-	f     embed.FS
-	bgimg *ebiten.Image
+	f        embed.FS
+	bgimg    *ebiten.Image
+	audioCon *audio.Context
 )
 
 func init() {
@@ -46,16 +47,19 @@ func init() {
 		}
 	}
 
-	for s, sound := range sounds {
-		sRead, err := os.Open("data/sounds/" + sound.file)
+	if audioCon == nil {
+		audioCon = audio.NewContext(44100)
+	}
+
+	for s, snd := range sounds {
+		sndBytes, err := os.ReadFile("data/sounds/" + snd.file)
 		if err != nil {
 			log.Fatal(err)
 		}
-		sounds[s].wav, err = wav.DecodeWithoutResampling(sRead)
-		if err != nil {
-			log.Fatal(err)
-		}
-		log.Printf("Loaded %v.", sound.file)
+
+		audioPlayer := audioCon.NewPlayerFromBytes(sndBytes)
+		sounds[s].player = audioPlayer
+		log.Printf("Loaded %v.", snd.file)
 	}
 }
 

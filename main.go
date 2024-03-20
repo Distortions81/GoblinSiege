@@ -23,11 +23,6 @@ func main() {
 	fastMode = flag.Bool("fast", false, "fast mode")
 	flag.Parse()
 
-	if *fastMode {
-		cpuMoveTime = time.Millisecond * 2000
-		playerMoveTime = time.Millisecond * 1000
-	}
-
 	board.playMap = make(map[xyi]*objectData)
 	board.enemyMap = make(map[xyi]*objectData)
 	votes.Users = make(map[int64]*userMsgData)

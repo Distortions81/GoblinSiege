@@ -1,11 +1,10 @@
 package main
 
-import "github.com/hajimehoshi/ebiten/v2/audio/wav"
+import "github.com/hajimehoshi/ebiten/v2/audio"
 
 const (
 	SND_ARROW_MISS = iota
 	SND_ARROW_SHOOT
-	SND_ARROW_SWOOSH
 	SND_GOBLIN_YELL
 	SND_GRASS_WALK
 	SND_WIND
@@ -13,8 +12,8 @@ const (
 )
 
 type soundData struct {
-	file string
-	wav  *wav.Stream
+	file   string
+	player *audio.Player
 }
 
 type varSoundData struct {
@@ -30,9 +29,6 @@ var sounds = [SND_MAX]soundData{
 	},
 	{
 		file: "arrow-shoot.wav",
-	},
-	{
-		file: "arrow-swoosh.wav",
 	},
 	{
 		file: "goblin-yell.wav",
