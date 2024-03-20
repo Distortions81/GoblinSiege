@@ -8,12 +8,14 @@ func handleMoves() {
 	for ServerRunning {
 		votes.Lock.Lock()
 
-		if *fastMode && board.moveNum < 15 {
-			cpuMoveTime = time.Millisecond * 100
-			playerMoveTime = time.Nanosecond
-		} else {
-			cpuMoveTime = time.Millisecond * 2000
-			playerMoveTime = time.Millisecond * 1000
+		if *fastMode {
+			if board.moveNum < 15 {
+				cpuMoveTime = time.Millisecond * 100
+				playerMoveTime = time.Nanosecond
+			} else {
+				cpuMoveTime = time.Millisecond * 2000
+				playerMoveTime = time.Millisecond * 1000
+			}
 		}
 
 		if votes.VoteState == VOTE_PLAYERS &&
