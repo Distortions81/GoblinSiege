@@ -4,6 +4,7 @@ import (
 	"embed"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
@@ -51,7 +52,11 @@ func init() {
 		audioCon = audio.NewContext(44100)
 	}
 
+	//Standard sounds
 	for s, snd := range sounds {
+		if snd.variated {
+			continue
+		}
 		sndBytes, err := os.ReadFile("data/sounds/" + snd.file)
 		if err != nil {
 			log.Fatal(err)
@@ -60,6 +65,33 @@ func init() {
 		audioPlayer := audioCon.NewPlayerFromBytes(sndBytes)
 		sounds[s].player = audioPlayer
 		log.Printf("Loaded %v.", snd.file)
+	}
+	//Variated
+	for s, vsnd := range sounds {
+		if !vsnd.variated {
+			continue
+		}
+		variations, err := os.ReadDir("data/sounds/" + vsnd.file + "/")
+		if err != nil {
+			log.Fatal(err)
+		}
+		for _, item := range variations {
+			if item.IsDir() {
+				continue
+			}
+			if strings.HasSuffix(item.Name(), ".wav") {
+				sndBytes, err := os.ReadFile("data/sounds/" + vsnd.file + "/" + item.Name())
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				audioPlayer := audioCon.NewPlayerFromBytes(sndBytes)
+				newSound := soundData{player: audioPlayer}
+				varSounds[s].variants = append(varSounds[s].variants, newSound)
+				varSounds[s].numSounds++
+				log.Printf("Loaded %v.", item.Name())
+			}
+		}
 	}
 }
 

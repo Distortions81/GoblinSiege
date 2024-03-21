@@ -84,27 +84,13 @@ func towerShootArrow() {
 	}
 
 	if didShoot {
-		if sounds[SND_ARROW_SHOOT].player.IsPlaying() {
-			return
-		}
-		sounds[SND_ARROW_SHOOT].player.SetVolume(0)
-		sounds[SND_ARROW_SHOOT].player.Pause()
-		sounds[SND_ARROW_SHOOT].player.Rewind()
-		sounds[SND_ARROW_SHOOT].player.SetVolume(0.4)
-		sounds[SND_ARROW_SHOOT].player.Play()
+		playVariated(SND_ARROW_SHOOT)
 	}
 
 	if didDie {
 		go func() {
 			time.Sleep(deathDelay)
-			if sounds[SND_GOBLIN_DIE].player.IsPlaying() {
-				return
-			}
-			sounds[SND_GOBLIN_DIE].player.SetVolume(0)
-			sounds[SND_GOBLIN_DIE].player.Pause()
-			sounds[SND_GOBLIN_DIE].player.Rewind()
-			sounds[SND_GOBLIN_DIE].player.SetVolume(0.4)
-			sounds[SND_GOBLIN_DIE].player.Play()
+			playSound(SND_GOBLIN_DIE)
 		}()
 	}
 
