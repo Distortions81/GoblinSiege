@@ -2,6 +2,7 @@ package main
 
 import (
 	"math/rand"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2/audio"
 )
@@ -23,22 +24,26 @@ func playSound(s int) {
 	sounds[s].player.SetVolume(0)
 	sounds[s].player.Pause()
 	sounds[s].player.Rewind()
-	sounds[s].player.SetVolume(0.4)
+	sounds[s].player.SetVolume(defaultVolume)
 	sounds[s].player.Play()
 }
 
-func playVariated(s int) {
-	vSounds := varSounds[s]
-	sound := vSounds.variants[rand.Intn(vSounds.numSounds)].player
+func playVariated(s int, count int) {
+	for d := 0; d < count; d++ {
 
-	if sound.IsPlaying() {
-		return
+		vSounds := varSounds[s]
+		sound := vSounds.variants[rand.Intn(vSounds.numSounds)].player
+
+		if sound.IsPlaying() {
+			go playVariated(s, 1)
+		}
+		sound.SetVolume(0)
+		time.Sleep(time.Millisecond)
+		sound.Pause()
+		sound.Rewind()
+		sound.SetVolume(defaultVolume)
+		sound.Play()
 	}
-	sound.SetVolume(0)
-	sound.Pause()
-	sound.Rewind()
-	sound.SetVolume(0.4)
-	sound.Play()
 }
 
 type soundData struct {

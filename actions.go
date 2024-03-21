@@ -35,9 +35,7 @@ func addTower() {
 func towerShootArrow() {
 	curTime := time.Now()
 
-	var didShoot bool
-	var didDie bool
-	var didHurt bool
+	var didShoot, didDie, didHurt int
 
 	for _, item := range board.playMap {
 		if item.dead {
@@ -55,7 +53,7 @@ func towerShootArrow() {
 
 			//If enemy within range
 			if Distance(item.Pos, enemy.Pos) < 6 {
-				didShoot = true
+				didShoot++
 
 				if rand.Intn(2) != 0 {
 					arrow := arrowData{tower: towerPos, target: enemy.Pos, missed: true, shot: curTime}
@@ -67,12 +65,11 @@ func towerShootArrow() {
 
 				dmgAmt := 5 + rand.Intn(20)
 				enemy.Health -= dmgAmt
-				didHurt = true
-
+				didHurt++
 				if enemy.Health <= 0 {
 					board.enemyMap[enemy.Pos].dead = true
 					board.enemyMap[enemy.Pos].diedAt = time.Now()
-					didDie = true
+					didDie++
 
 					//For tweening
 					board.enemyMap[enemy.Pos].OldPos = board.enemyMap[enemy.Pos].Pos
@@ -83,18 +80,18 @@ func towerShootArrow() {
 		}
 	}
 
-	if didShoot {
-		playVariated(SND_ARROW_SHOOT)
+	if didShoot > 0 {
+		go playVariated(SND_ARROW_SHOOT, didShoot)
 	}
 
-	if didDie {
+	if didDie > 0 {
 		go func() {
 			time.Sleep(deathDelay)
 			playSound(SND_GOBLIN_DIE)
 		}()
 	}
 
-	if didHurt {
+	if didHurt > 0 {
 		//
 	}
 }
@@ -110,6 +107,8 @@ func spawnGoblins() {
 }
 
 func goblinAttack() {
+	var didHit int
+
 	var newitems []*objectData
 	//Detect defeat, defeat, do damage to towers, remove dead towers
 	for _, item := range board.enemyMap {
@@ -134,7 +133,7 @@ func goblinAttack() {
 		//If a tower is in our way, do damage
 		if tower != nil && !tower.dead {
 			tower.Health -= 10 + rand.Intn(10)
-			playVariated(SND_AXE)
+			didHit++
 			if tower.Health <= 0 {
 				tower.dead = true
 			}
@@ -153,5 +152,9 @@ func goblinAttack() {
 			board.gameover = GAME_DEFEAT
 			endGame()
 		}
+	}
+
+	if didHit > 0 {
+		playVariated(SND_AXE, didHit)
 	}
 }

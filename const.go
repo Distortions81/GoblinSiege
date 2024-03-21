@@ -21,4 +21,6 @@ const (
 	offPixY      = size * offY
 	boardPixelsX = ((boardSizeX) * mag)
 	boardPixelsY = ((boardSizeY) * mag)
+
+	defaultVolume = 0.5
 )
