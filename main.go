@@ -30,15 +30,9 @@ func main() {
 	//Wait here for process signals
 	signalHandle := make(chan os.Signal, 1)
 
+	loadEmbed()
+
 	go aniTimer()
-
-	//Start ebiten game lib
-	go func() {
-		startEbiten()
-
-		//Exit if window closed
-		signalHandle <- os.Interrupt
-	}()
 
 	//Read player scores
 	readPlayers()
@@ -59,6 +53,9 @@ func main() {
 
 	//Start the game mode
 	startGame()
+
+	//Start ebiten
+	startEbiten()
 
 	signal.Notify(signalHandle, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-signalHandle

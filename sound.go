@@ -20,10 +20,8 @@ func playSound(s int) {
 	if sounds[s].player.IsPlaying() {
 		return
 	}
-	sounds[s].player.SetVolume(0)
-	sounds[s].player.Pause()
-	sounds[s].player.Rewind()
 	sounds[s].player.SetVolume(defaultVolume)
+	sounds[s].player.Rewind()
 	sounds[s].player.Play()
 }
 
@@ -45,8 +43,6 @@ func playVariated(s int) {
 		}
 	}
 
-	sound.SetVolume(0)
-	sound.Pause()
 	sound.Rewind()
 	sound.SetVolume(defaultVolume)
 	sound.Play()

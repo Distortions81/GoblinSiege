@@ -8,6 +8,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
+	"github.com/hajimehoshi/ebiten/v2/audio/wav"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
@@ -18,7 +19,7 @@ var (
 	audioCon *audio.Context
 )
 
-func init() {
+func loadEmbed() {
 	var err error
 	bgimg, _, err = ebitenutil.NewImageFromFile("data/maps/main.png")
 	if err != nil {
@@ -48,21 +49,14 @@ func init() {
 		}
 	}
 
-	if audioCon == nil {
-		audioCon = audio.NewContext(44100)
-	}
+	audioCon = audio.NewContext(44100)
 
 	//Standard sounds
 	for s, snd := range sounds {
 		if snd.variated {
 			continue
 		}
-		sndBytes, err := os.ReadFile("data/sounds/" + snd.file)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		audioPlayer := audioCon.NewPlayerFromBytes(sndBytes)
+		audioPlayer := getSound("data/sounds/" + snd.file)
 		sounds[s].player = audioPlayer
 		log.Printf("Loaded %v.", snd.file)
 	}
@@ -80,12 +74,7 @@ func init() {
 				continue
 			}
 			if strings.HasSuffix(item.Name(), ".wav") {
-				sndBytes, err := os.ReadFile("data/sounds/" + vsnd.file + "/" + item.Name())
-				if err != nil {
-					log.Fatal(err)
-				}
-
-				audioPlayer := audioCon.NewPlayerFromBytes(sndBytes)
+				audioPlayer := getSound("data/sounds/" + vsnd.file + "/" + item.Name())
 				newSound := soundData{player: audioPlayer}
 				varSounds[s].variants = append(varSounds[s].variants, newSound)
 				varSounds[s].numSounds++
@@ -102,4 +91,22 @@ func getFont(name string) []byte {
 	}
 	return data
 
+}
+
+func getSound(input string) *audio.Player {
+	sndReader, err := os.Open(input)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	wav, err := wav.DecodeWithoutResampling(sndReader)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	audioPlayer, err := audioCon.NewPlayer(wav)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return audioPlayer
 }

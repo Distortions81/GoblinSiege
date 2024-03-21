@@ -32,7 +32,7 @@ func readSettings() {
 			}
 
 			if userSettings.AuthToken == "" || userSettings.UserName == "" {
-				log.Fatal("readSettings: Missing UserName, BotName or AuthToken in settings.")
+				log.Printf("readSettings: Missing UserName, BotName or AuthToken in settings.")
 				return
 			}
 
