@@ -21,6 +21,7 @@ type objectData struct {
 	dead      bool
 	diedAt    time.Time
 	aniOffset uint64
+	attacking bool
 
 	sheetP *spriteSheetData
 }
@@ -174,7 +175,17 @@ func drawGameBoard(screen *ebiten.Image) {
 		op.GeoM.Translate(((sX + float64(offX)) * float64(mag)),
 			((sY+float64(offY))*float64(mag))-float64(obj_goblinBarb.frameSize.Y))
 
-		if item.dead && time.Since(item.diedAt) > deathDelay {
+		if item.attacking {
+			aAni := 0
+			if time.Since(votes.CpuTime) > (attackDelay * 3) {
+				aAni = 3
+			} else if time.Since(votes.CpuTime) > (attackDelay * 2) {
+				aAni = 2
+			} else if time.Since(votes.CpuTime) > (attackDelay) {
+				aAni = 1
+			}
+			screen.DrawImage(item.sheetP.anims[ANI_ATTACK].img[aAni%4], op)
+		} else if item.dead && time.Since(item.diedAt) > deathDelay {
 			deadAni := 0
 			if time.Since(item.diedAt) > (deathDelay * 2) {
 				deadAni = 1

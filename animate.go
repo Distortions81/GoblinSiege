@@ -70,7 +70,7 @@ var obj_goblinBarb = spriteSheetData{
 		},
 		{
 			name:   "attack",
-			row:    12,
+			row:    13,
 			mirror: true,
 		},
 		{

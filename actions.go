@@ -119,10 +119,13 @@ func goblinAttack() {
 			continue
 		}
 		//If a tower is in our way, do damage
+		item.attacking = false
 		if tower != nil && !tower.dead {
 			tower.Health -= 10 + rand.Intn(10)
+			item.attacking = true
+
 			go func() {
-				time.Sleep(time.Millisecond * time.Duration(rand.Intn(100)))
+				time.Sleep(time.Millisecond*100 + time.Duration(rand.Intn(100)))
 				playVariated(SND_AXE)
 			}()
 			if tower.Health <= 0 {

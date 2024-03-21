@@ -6,6 +6,7 @@ const (
 	defaultWindowWidth  = 1280
 	defaultWindowHeight = 720
 	deathDelay          = time.Millisecond * 300
+	attackDelay         = time.Millisecond * 100
 
 	playersFile = "players.json"
 	authFile    = "settings.json"
