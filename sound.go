@@ -7,8 +7,7 @@ import (
 )
 
 const (
-	SND_ARROW_MISS = iota
-	SND_ARROW_SHOOT
+	SND_ARROW_SHOOT = iota
 	SND_GOBLIN_DIE
 	SND_GRASS_WALK
 	SND_WIND
@@ -67,9 +66,6 @@ type variSoundData struct {
 var varSounds [SND_MAX]variSoundData
 
 var sounds = [SND_MAX]soundData{
-	{
-		file: "arrow-miss.wav",
-	},
 	{
 		variated: true,
 		file:     "arrow-shoot",
