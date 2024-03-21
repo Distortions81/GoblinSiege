@@ -171,36 +171,41 @@ func drawGameBoard(screen *ebiten.Image) {
 		sY := (float64(item.OldPos.Y) - ((float64(item.Pos.Y) - float64(item.OldPos.Y)) * normal))
 
 		op := &ebiten.DrawImageOptions{}
+		//Horizontal mirroring
 		op.GeoM.Scale(-1, 1)
+
 		op.GeoM.Translate(((sX + float64(offX)) * float64(mag)),
 			((sY+float64(offY))*float64(mag))-float64(obj_goblinBarb.frameSize.Y))
 
 		if item.Pos.X > 31 {
+			//Swim animation for the water
 			screen.DrawImage(item.sheetP.anims[ANI_SWIM].img[int(float64(item.aniOffset)+sX*16)%4], op)
+
 		} else if item.dead && time.Since(item.diedAt) > deathDelay {
+			//Goblin died
 			deadAni := 0
-			if time.Since(item.diedAt) > (deathDelay * 2) {
+			if time.Since(item.diedAt) > (deathDelay) {
 				deadAni = 1
 			}
 			screen.DrawImage(item.sheetP.anims[ANI_DIE].img[deadAni], op)
 		} else if item.attacking {
-			aAni := 0
-			if time.Since(votes.CpuTime) > (attackDelay * 3) {
-				aAni = 3
-			} else if time.Since(votes.CpuTime) > (attackDelay * 2) {
-				aAni = 2
-			} else if time.Since(votes.CpuTime) > (attackDelay) {
-				aAni = 1
+			//Goblin attacking tower
+			attackFrame := time.Since(votes.CpuTime) / attackDelay
+			if attackFrame > 3 {
+				attackFrame = 3
 			}
-			screen.DrawImage(item.sheetP.anims[ANI_ATTACK].img[aAni%4], op)
+			screen.DrawImage(item.sheetP.anims[ANI_ATTACK].img[attackFrame%4], op)
 		} else {
+			///Draw running
 			screen.DrawImage(item.sheetP.anims[ANI_RUN].img[int(float64(item.aniOffset)+sX*16)%4], op)
-			healthBar := (float32(item.Health) / float32(item.sheetP.health))
 
-			if healthBar > 0 && healthBar < 1 {
-				vector.DrawFilledRect(screen, float32(((sX+offX)*mag)-32), float32(((sY+offY)*mag)-32)+1, float32(item.sheetP.frameSize.X), 4, ColorSmoke, false)
-				vector.DrawFilledRect(screen, float32(((sX+offX)*mag)-31), float32(((sY+offY)*mag)-31)+1, (healthBar*float32(item.sheetP.frameSize.X) - 1), 2, healthColor(healthBar), false)
-			}
+		}
+
+		//Show health bar
+		healthBar := (float32(item.Health) / float32(item.sheetP.health))
+		if !item.dead && healthBar > 0 && healthBar < 1 {
+			vector.DrawFilledRect(screen, float32(((sX+offX)*mag)-32), float32(((sY+offY)*mag)-32)+1, float32(item.sheetP.frameSize.X), 4, ColorSmoke, false)
+			vector.DrawFilledRect(screen, float32(((sX+offX)*mag)-31), float32(((sY+offY)*mag)-31)+1, (healthBar*float32(item.sheetP.frameSize.X) - 1), 2, healthColor(healthBar), false)
 		}
 	}
 
