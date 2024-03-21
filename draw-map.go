@@ -175,7 +175,9 @@ func drawGameBoard(screen *ebiten.Image) {
 		op.GeoM.Translate(((sX + float64(offX)) * float64(mag)),
 			((sY+float64(offY))*float64(mag))-float64(obj_goblinBarb.frameSize.Y))
 
-		if item.attacking {
+		if item.Pos.X > 31 {
+			screen.DrawImage(item.sheetP.anims[ANI_SWIM].img[int(float64(item.aniOffset)+sX*16)%4], op)
+		} else if item.attacking {
 			aAni := 0
 			if time.Since(votes.CpuTime) > (attackDelay * 3) {
 				aAni = 3
