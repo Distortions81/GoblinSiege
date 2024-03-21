@@ -126,9 +126,7 @@ func goblinAttack() {
 				playVariated(SND_AXE)
 			}()
 			if tower.Health <= 0 {
-				go func() {
-					playSound(SND_TOWER_DIE)
-				}()
+				go playSound(SND_TOWER_DIE)
 				tower.dead = true
 			}
 			continue
