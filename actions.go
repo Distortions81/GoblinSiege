@@ -134,6 +134,7 @@ func goblinAttack() {
 		//If a tower is in our way, do damage
 		if tower != nil && !tower.dead {
 			tower.Health -= 10 + rand.Intn(10)
+			playVariated(SND_AXE)
 			if tower.Health <= 0 {
 				tower.dead = true
 			}
