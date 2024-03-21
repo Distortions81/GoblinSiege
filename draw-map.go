@@ -14,14 +14,17 @@ import (
 )
 
 type objectData struct {
-	Pos    xyi
-	OldPos xyi
+	pos     xyi
+	prevPos xyi
 
-	Health    int
-	dead      bool
-	diedAt    time.Time
+	health int
+	dead   bool
+	diedAt time.Time
+
 	aniOffset uint64
 	attacking bool
+	building  int
+	upgrade   int
 
 	sheetP *spriteSheetData
 }
@@ -167,8 +170,8 @@ func drawGameBoard(screen *ebiten.Image) {
 			normal = 1
 		}
 
-		sX := (float64(item.OldPos.X) - ((float64(item.Pos.X) - float64(item.OldPos.X)) * normal))
-		sY := (float64(item.OldPos.Y) - ((float64(item.Pos.Y) - float64(item.OldPos.Y)) * normal))
+		sX := (float64(item.prevPos.X) - ((float64(item.pos.X) - float64(item.prevPos.X)) * normal))
+		sY := (float64(item.prevPos.Y) - ((float64(item.pos.Y) - float64(item.prevPos.Y)) * normal))
 
 		op := &ebiten.DrawImageOptions{}
 		//Horizontal mirroring
@@ -177,7 +180,7 @@ func drawGameBoard(screen *ebiten.Image) {
 		op.GeoM.Translate(((sX + float64(offX)) * float64(mag)),
 			((sY+float64(offY))*float64(mag))-float64(obj_goblinBarb.frameSize.Y))
 
-		if item.Pos.X > 31 {
+		if item.pos.X > 31 {
 			//Swim animation for the water
 			screen.DrawImage(item.sheetP.anims[ANI_SWIM].img[int(float64(item.aniOffset)+sX*16)%4], op)
 
@@ -202,7 +205,7 @@ func drawGameBoard(screen *ebiten.Image) {
 		}
 
 		//Show health bar
-		healthBar := (float32(item.Health) / float32(item.sheetP.health))
+		healthBar := (float32(item.health) / float32(item.sheetP.health))
 		if !item.dead && healthBar > 0 && healthBar < 1 {
 			vector.DrawFilledRect(screen, float32(((sX+offX)*mag)-32), float32(((sY+offY)*mag)-32)+1, float32(item.sheetP.frameSize.X), 4, ColorSmoke, false)
 			vector.DrawFilledRect(screen, float32(((sX+offX)*mag)-31), float32(((sY+offY)*mag)-31)+1, (healthBar*float32(item.sheetP.frameSize.X) - 1), 2, healthColor(healthBar), false)
@@ -219,17 +222,21 @@ func drawGameBoard(screen *ebiten.Image) {
 
 			//Draw tower
 			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(float64(((item.Pos.X+offX)*mag)-item.sheetP.frameSize.X), float64(((item.Pos.Y+offY)*mag)-item.sheetP.frameSize.Y))
+			op.GeoM.Translate(float64(((item.pos.X+offX)*mag)-item.sheetP.frameSize.X), float64(((item.pos.Y+offY)*mag)-item.sheetP.frameSize.Y))
 			if item.dead {
 				screen.DrawImage(item.sheetP.anims[ANI_FADE].img[(aniCount+item.aniOffset)%3], op)
 			} else {
-				screen.DrawImage(item.sheetP.anims[ANI_IDLE].img[(aniCount+item.aniOffset)%3], op)
+				if item.building < 2 {
+					screen.DrawImage(item.sheetP.anims[ANI_RUN].img[item.building%3], op)
+				} else {
+					screen.DrawImage(item.sheetP.anims[ANI_IDLE].img[(aniCount+item.aniOffset)%3], op)
+				}
 
 				//Draw health
-				healthBar := (float32(item.Health) / float32(item.sheetP.health))
+				healthBar := (float32(item.health) / float32(item.sheetP.health))
 				if healthBar > 0 && healthBar < 1 {
-					vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-32), float32(((item.Pos.Y+offY)*mag)-64)+1, float32(item.sheetP.frameSize.X), 4, ColorSmoke, false)
-					vector.DrawFilledRect(screen, float32(((item.Pos.X+offX)*mag)-31), float32(((item.Pos.Y+offY)*mag)-63)+1, (healthBar*float32(item.sheetP.frameSize.X) - 1), 2, healthColor(healthBar), false)
+					vector.DrawFilledRect(screen, float32(((item.pos.X+offX)*mag)-32), float32(((item.pos.Y+offY)*mag)-64)+1, float32(item.sheetP.frameSize.X), 4, ColorSmoke, false)
+					vector.DrawFilledRect(screen, float32(((item.pos.X+offX)*mag)-31), float32(((item.pos.Y+offY)*mag)-63)+1, (healthBar*float32(item.sheetP.frameSize.X) - 1), 2, healthColor(healthBar), false)
 
 				}
 			}

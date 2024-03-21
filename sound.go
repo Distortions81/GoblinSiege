@@ -79,7 +79,7 @@ var sounds = [SND_MAX]soundData{
 	},
 	{
 		file: "wind.wav",
-		vol:  0.2,
+		vol:  0.10,
 	},
 	{
 		variated: true,

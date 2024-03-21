@@ -74,6 +74,6 @@ func cpuTurn() {
 	towerShootArrow()
 	spawnGoblins()
 	goblinAttack()
-	board.lock.Unlock()
 
+	board.lock.Unlock()
 }
