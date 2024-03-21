@@ -61,7 +61,7 @@ type gameBoardData struct {
 	lock     sync.Mutex
 
 	arrowsShot  []arrowData
-	wallDamaged bool
+	wallDmgTime time.Time
 
 	gameover int
 	bgCache  *ebiten.Image

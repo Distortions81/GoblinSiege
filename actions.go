@@ -164,8 +164,8 @@ func goblinAttack() {
 			}
 			if tower.worldObjType == OTYPE_VWALL {
 				//Wall damaged, play a sound to alert players
-				if !board.wallDamaged {
-					board.wallDamaged = true
+				if time.Since(board.wallDmgTime) > time.Second*30 {
+					board.wallDmgTime = time.Now()
 					playSound(SND_TENSION)
 				}
 			}
