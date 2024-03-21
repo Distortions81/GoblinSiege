@@ -177,6 +177,12 @@ func drawGameBoard(screen *ebiten.Image) {
 
 		if item.Pos.X > 31 {
 			screen.DrawImage(item.sheetP.anims[ANI_SWIM].img[int(float64(item.aniOffset)+sX*16)%4], op)
+		} else if item.dead && time.Since(item.diedAt) > deathDelay {
+			deadAni := 0
+			if time.Since(item.diedAt) > (deathDelay * 2) {
+				deadAni = 1
+			}
+			screen.DrawImage(item.sheetP.anims[ANI_DIE].img[deadAni], op)
 		} else if item.attacking {
 			aAni := 0
 			if time.Since(votes.CpuTime) > (attackDelay * 3) {
@@ -187,12 +193,6 @@ func drawGameBoard(screen *ebiten.Image) {
 				aAni = 1
 			}
 			screen.DrawImage(item.sheetP.anims[ANI_ATTACK].img[aAni%4], op)
-		} else if item.dead && time.Since(item.diedAt) > deathDelay {
-			deadAni := 0
-			if time.Since(item.diedAt) > (deathDelay * 2) {
-				deadAni = 1
-			}
-			screen.DrawImage(item.sheetP.anims[ANI_DIE].img[deadAni], op)
 		} else {
 			screen.DrawImage(item.sheetP.anims[ANI_RUN].img[int(float64(item.aniOffset)+sX*16)%4], op)
 			healthBar := (float32(item.Health) / float32(item.sheetP.health))

@@ -75,7 +75,7 @@ var obj_goblinBarb = spriteSheetData{
 		},
 		{
 			name:   "swim",
-			row:    15,
+			row:    16,
 			mirror: true,
 		},
 	},
