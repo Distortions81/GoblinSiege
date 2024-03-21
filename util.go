@@ -6,13 +6,14 @@ import (
 	"strings"
 )
 
-/* give distance between two coordinates */
+// give distance between two coordinates
 func Distance(a, b xyi) float64 {
 	x := math.Abs(float64(a.X - b.X))
 	y := math.Abs(float64(a.Y - b.Y))
 	return float64(math.Sqrt(x*x + y*y))
 }
 
+// Return healthbar color
 func healthColor(input float32) color.NRGBA {
 	var healthColor color.NRGBA = color.NRGBA{R: 255, G: 255, B: 255, A: 0}
 	health := input * 100
@@ -38,6 +39,7 @@ func healthColor(input float32) color.NRGBA {
 	return healthColor
 }
 
+// Text progess dots
 func makeEllipsis() string {
 	return strings.Repeat(".", (int(frameCount%120) / 30))
 }

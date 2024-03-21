@@ -60,6 +60,7 @@ type variSoundData struct {
 	variants  []soundData
 }
 
+// Sounds that have variations for variety
 var varSounds [SND_MAX]variSoundData
 
 var sounds = [SND_MAX]soundData{

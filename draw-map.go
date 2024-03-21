@@ -13,19 +13,27 @@ import (
 	"github.com/twpayne/go-geom/xy"
 )
 
+const (
+	OTYPE_TOWER = iota
+	OTYPE_VWALL
+	OTYPE_MAX
+)
+
 type objectData struct {
-	pos     xyi
-	prevPos xyi
+	worldObjType int
+	pos          xyi
+	prevPos      xyi
 
 	health int
 	dead   bool
 	diedAt time.Time
 
-	aniOffset uint64
-	attacking bool
-	building  int
-	upgrade   int
+	aniOffset uint64 //Animation offset so animations are synced
+	attacking bool   //Goblin is attacking
+	building  int    //Tower building step
+	upgrade   int    //TODO tower upgrades
 
+	//Item spritesheet data
 	sheetP *spriteSheetData
 }
 
@@ -55,9 +63,8 @@ type gameBoardData struct {
 	arrowsShot []arrowData
 
 	gameover int
-
-	bgCache *ebiten.Image
-	bgDirty bool
+	bgCache  *ebiten.Image
+	bgDirty  bool
 }
 
 func drawGameBoard(screen *ebiten.Image) {
@@ -130,6 +137,7 @@ func drawGameBoard(screen *ebiten.Image) {
 			normal = 1
 		}
 
+		//Tweened position
 		sX := (float64(arrow.tower.X) - ((float64(arrow.target.X) - float64(arrow.tower.X)) * normal))
 		sY := (float64(arrow.tower.Y) - ((float64(arrow.target.Y) - float64(arrow.tower.Y)) * normal))
 
@@ -142,6 +150,7 @@ func drawGameBoard(screen *ebiten.Image) {
 			}
 		}
 
+		//Tweening begin and ending points, convert to geom.Coord for the xy library
 		towerPos := geom.Coord{float64(arrow.tower.X), float64(arrow.tower.Y), 0}
 		targetPos := geom.Coord{float64(arrow.target.X), float64(arrow.target.Y), 0}
 		angle := xy.Angle(towerPos, targetPos)
@@ -157,8 +166,8 @@ func drawGameBoard(screen *ebiten.Image) {
 
 	//Draw goblin
 	for _, item := range board.enemyMap {
-		//Tween animation
 
+		//Tween animation
 		since := startTime.Sub(votes.CpuTime)
 		remaining := (float64(cpuMoveTime.Nanoseconds())) - float64(since.Nanoseconds())
 		normal := (float64(remaining)/(float64(cpuMoveTime.Nanoseconds())) - 1.0)
@@ -170,13 +179,13 @@ func drawGameBoard(screen *ebiten.Image) {
 			normal = 1
 		}
 
+		//Tweened position
 		sX := (float64(item.prevPos.X) - ((float64(item.pos.X) - float64(item.prevPos.X)) * normal))
 		sY := (float64(item.prevPos.Y) - ((float64(item.pos.Y) - float64(item.prevPos.Y)) * normal))
 
 		op := &ebiten.DrawImageOptions{}
-		//Horizontal mirroring
+		//Horizontal mirroring for sprites that are marked mirror
 		op.GeoM.Scale(-1, 1)
-
 		op.GeoM.Translate(((sX + float64(offX)) * float64(mag)),
 			((sY+float64(offY))*float64(mag))-float64(obj_goblinBarb.frameSize.Y))
 
@@ -200,8 +209,7 @@ func drawGameBoard(screen *ebiten.Image) {
 			screen.DrawImage(item.sheetP.anims[ANI_ATTACK].img[attackFrame%4], op)
 		} else {
 			///Draw running
-			screen.DrawImage(item.sheetP.anims[ANI_RUN].img[int(float64(item.aniOffset)+sX*16)%4], op)
-
+			screen.DrawImage(item.sheetP.anims[ANI_RUN].img[int(float64(item.aniOffset)+(sX+offX)*16)%4], op)
 		}
 
 		//Show health bar
@@ -213,37 +221,41 @@ func drawGameBoard(screen *ebiten.Image) {
 	}
 
 	//Draw towers
-	for x := 0; x <= boardSizeX; x++ {
+	for x := -1; x <= boardSizeX; x++ {
 		for y := 0; y <= boardSizeY; y++ {
 			item := board.playMap[xyi{X: x, Y: y}]
 			if item == nil {
 				continue
 			}
 
-			//Draw tower
-			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(float64(((item.pos.X+offX)*mag)-item.sheetP.frameSize.X), float64(((item.pos.Y+offY)*mag)-item.sheetP.frameSize.Y))
-			if item.dead {
-				screen.DrawImage(item.sheetP.anims[ANI_FADE].img[(aniCount+item.aniOffset)%3], op)
-			} else {
-				if item.building < 2 {
-					screen.DrawImage(item.sheetP.anims[ANI_RUN].img[item.building%3], op)
+			if item.worldObjType == OTYPE_TOWER {
+				//Draw tower
+				op := &ebiten.DrawImageOptions{}
+				op.GeoM.Translate(float64(((item.pos.X+offX)*mag)-item.sheetP.frameSize.X), float64(((item.pos.Y+offY)*mag)-item.sheetP.frameSize.Y))
+				if item.dead {
+					//Broken tower
+					screen.DrawImage(item.sheetP.anims[ANI_FADE].img[(aniCount+item.aniOffset)%3], op)
 				} else {
-					screen.DrawImage(item.sheetP.anims[ANI_IDLE].img[(aniCount+item.aniOffset)%3], op)
-				}
-
-				//Draw health
-				healthBar := (float32(item.health) / float32(item.sheetP.health))
-				if healthBar > 0 && healthBar < 1 {
-					vector.DrawFilledRect(screen, float32(((item.pos.X+offX)*mag)-32), float32(((item.pos.Y+offY)*mag)-64)+1, float32(item.sheetP.frameSize.X), 4, ColorSmoke, false)
-					vector.DrawFilledRect(screen, float32(((item.pos.X+offX)*mag)-31), float32(((item.pos.Y+offY)*mag)-63)+1, (healthBar*float32(item.sheetP.frameSize.X) - 1), 2, healthColor(healthBar), false)
-
+					//Draw tower being built, otherwise animate fully built one
+					if item.building < 2 {
+						screen.DrawImage(item.sheetP.anims[ANI_RUN].img[item.building%3], op)
+					} else {
+						screen.DrawImage(item.sheetP.anims[ANI_IDLE].img[(aniCount+item.aniOffset)%3], op)
+					}
 				}
 			}
 
+			//Draw health
+			healthBar := (float32(item.health) / float32(item.sheetP.health))
+			if healthBar > 0 && healthBar < 1 {
+				vector.DrawFilledRect(screen, float32(((item.pos.X+offX)*mag)-32), float32(((item.pos.Y+offY)*mag)-64)+1, float32(item.sheetP.frameSize.X), 4, ColorSmoke, false)
+				vector.DrawFilledRect(screen, float32(((item.pos.X+offX)*mag)-31), float32(((item.pos.Y+offY)*mag)-63)+1, (healthBar*float32(item.sheetP.frameSize.X) - 1), 2, healthColor(healthBar), false)
+			}
 		}
 	}
 
+	//Handle game ending conditions
+	//TODO: End game credits and countdown timer
 	if board.gameover == GAME_DEFEAT {
 		vector.DrawFilledRect(screen, 0, float32(defaultWindowHeight)-40, float32(defaultWindowWidth), 100, ColorSmoke, true)
 		buf := fmt.Sprintf("Game over: The audience was defeated on move %v!", board.moveNum)
@@ -254,6 +266,7 @@ func drawGameBoard(screen *ebiten.Image) {
 		text.Draw(screen, buf, monoFont, 10, defaultWindowHeight-15, color.White)
 	}
 
+	//Show the current move number in the corner
 	buf := fmt.Sprintf("Move: %v/%v!", board.moveNum, maxMoves)
 	text.Draw(screen, buf, monoFont, defaultWindowWidth-210, 25, color.Black)
 }

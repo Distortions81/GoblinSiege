@@ -84,6 +84,17 @@ func clearGameBoard() {
 	board.moveNum = 0
 	board.arrowsShot = make([]arrowData, 0)
 
+	for p := 0; p < boardSizeY; p++ {
+		newPos := xyi{X: -1, Y: p}
+		board.playMap[newPos] = &objectData{
+			pos:          newPos,
+			health:       100,
+			sheetP:       &obj_tower1,
+			worldObjType: OTYPE_VWALL,
+			building:     2,
+		}
+	}
+
 	board.lock.Unlock()
 }
 
@@ -112,7 +123,6 @@ func endGame() {
 
 	votes.VoteState = VOTE_NONE
 	votes.GameRunning = false
-
 }
 
 func startVote() {

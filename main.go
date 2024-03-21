@@ -13,19 +13,23 @@ var (
 
 	skipTwitch *bool
 	fastMode   *bool
+	noTowers   *bool
 )
 
 func main() {
 	skipTwitch = flag.Bool("skip", false, "don't connect to twitch")
 	fastMode = flag.Bool("fast", false, "fast mode")
+	noTowers = flag.Bool("notower", false, "don't spawn towers")
 	flag.Parse()
 
 	board.playMap = make(map[xyi]*objectData)
 	board.enemyMap = make(map[xyi]*objectData)
 	votes.Users = make(map[int64]*userMsgData)
 
+	//Load fonts, sprites and sounds
 	loadEmbed()
 
+	//Used for action animations
 	go aniTimer()
 
 	//Read player scores
@@ -58,6 +62,8 @@ func main() {
 	writePlayers()
 }
 
+// Used for action animations
+// TODO move this to the ebiten update handler
 func aniTimer() {
 	for {
 		aniCount++

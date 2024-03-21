@@ -104,11 +104,21 @@ var obj_tower1 = spriteSheetData{
 	},
 }
 
+var obj_wall = spriteSheetData{
+	name:      "wall",
+	health:    100,
+	frameSize: xyi{X: 32, Y: 32},
+	frames:    0,
+
+	anims: [ANI_MAX]animationData{},
+}
+
 var obj_arrow = spriteSheetData{
 	name: "arrow",
 	file: "arrow",
 }
 
+// Return a cell of a sprite sheet
 func getAni(sheet *spriteSheetData, auiNum int, frame int) *ebiten.Image {
 	aniData := sheet.anims[auiNum]
 	var r image.Rectangle

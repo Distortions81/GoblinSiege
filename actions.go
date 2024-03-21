@@ -8,12 +8,18 @@ import (
 
 func addTower() {
 
+	if *noTowers {
+		return
+	}
+
+	//Increment build step
 	for _, item := range board.playMap {
 		if item.building < 2 {
 			item.building++
 		}
 	}
 
+	//Get votes, or choose random point if no votes
 	if votes.VoteCount > 0 &&
 		votes.Result.X > 0 &&
 		votes.Result.Y > 0 &&
@@ -22,17 +28,28 @@ func addTower() {
 
 		tpos := votes.Result
 		if board.enemyMap[tpos] == nil && board.playMap[tpos] == nil {
-			board.playMap[tpos] = &objectData{pos: tpos, sheetP: &obj_tower1, health: obj_tower1.health, aniOffset: uint64(rand.Intn(obj_tower1.frames)), building: 0}
+			board.playMap[tpos] = &objectData{
+				pos:          tpos,
+				sheetP:       &obj_tower1,
+				health:       obj_tower1.health,
+				aniOffset:    uint64(rand.Intn(obj_tower1.frames)),
+				building:     0,
+				worldObjType: OTYPE_TOWER}
 		} else {
 			log.Println("COLLISION!")
 		}
 	} else {
 
 		log.Println("Not enough votes, picking random.")
-		//Invalid or not enough votes, pick a pos at random
 		tpos := xyi{X: rand.Intn(boardSizeX-1) + 1, Y: rand.Intn(boardSizeY-1) + 1}
 		if board.enemyMap[tpos] == nil && board.playMap[tpos] == nil {
-			board.playMap[tpos] = &objectData{pos: tpos, sheetP: &obj_tower1, health: obj_tower1.health, aniOffset: uint64(rand.Intn(obj_tower1.frames)), building: 0}
+			board.playMap[tpos] = &objectData{
+				pos:          tpos,
+				sheetP:       &obj_tower1,
+				health:       obj_tower1.health,
+				aniOffset:    uint64(rand.Intn(obj_tower1.frames)),
+				building:     0,
+				worldObjType: OTYPE_TOWER}
 		}
 	}
 
@@ -42,7 +59,8 @@ func towerShootArrow() {
 	curTime := time.Now()
 
 	for _, item := range board.playMap {
-		if item.dead || item.building < 2 {
+		//If tower is dead or not fully built, skip.
+		if item.dead || item.building < 2 || item.worldObjType != OTYPE_TOWER {
 			continue
 		}
 
@@ -96,7 +114,12 @@ func spawnGoblins() {
 	if board.moveNum%2 == 0 {
 		rpos := xyi{X: boardSizeX + enemyBoardX + 1, Y: 1 + rand.Intn(boardSizeY-1)}
 		if board.enemyMap[rpos] == nil {
-			board.enemyMap[rpos] = &objectData{pos: rpos, sheetP: &obj_goblinBarb, health: obj_goblinBarb.health, prevPos: xyi{X: rpos.X, Y: rpos.Y}, aniOffset: uint64(rand.Intn(obj_goblinBarb.frames))}
+			board.enemyMap[rpos] = &objectData{
+				pos:       rpos,
+				sheetP:    &obj_goblinBarb,
+				health:    obj_goblinBarb.health,
+				prevPos:   xyi{X: rpos.X, Y: rpos.Y},
+				aniOffset: uint64(rand.Intn(obj_goblinBarb.frames))}
 		}
 	}
 }
@@ -124,6 +147,7 @@ func goblinAttack() {
 		if self != nil && !self.dead {
 			continue
 		}
+
 		//If a tower is in our way, do damage
 		item.attacking = false
 		if tower != nil && !tower.dead && tower.building >= 2 {
@@ -149,9 +173,10 @@ func goblinAttack() {
 	//Add enemy back to new position
 	for i, item := range newitems {
 		board.enemyMap[item.pos] = newitems[i]
-		if item.pos.X < 1 {
+		if item.pos.X < -2 {
 			board.gameover = GAME_DEFEAT
-			endGame()
+			votes.RoundTime = time.Now()
+			votes.GameRunning = false
 		}
 	}
 

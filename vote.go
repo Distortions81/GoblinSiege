@@ -45,13 +45,12 @@ type userMsgDictData struct {
 	Result    xyi
 }
 
-var (
-	votes userMsgDictData
-)
+var votes userMsgDictData
 
 func handleVoteMsg(msg twitch.PrivateMessage, command string) {
 	msgLen := len(command)
 
+	//If the message is empty, or huge just discard it
 	if msgLen == 0 || msgLen > maxVoteLen {
 		return
 	}
@@ -82,6 +81,8 @@ func handleVoteMsg(msg twitch.PrivateMessage, command string) {
 
 }
 
+// Currently averages votes
+// TODO: add option to use most popular coord
 func processVotes() {
 
 	var tX, tY, count uint64
