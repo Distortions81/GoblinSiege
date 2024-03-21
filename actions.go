@@ -72,7 +72,7 @@ func towerShootArrow() {
 					board.enemyMap[enemy.Pos].diedAt = time.Now()
 					go func() {
 						time.Sleep(deathDelay + (time.Millisecond * time.Duration(rand.Intn(200))))
-						playSound(SND_GOBLIN_DIE)
+						playVariated(SND_GOBLIN_DIE)
 					}()
 
 					//For tweening

@@ -51,6 +51,13 @@ func handleMoves() {
 
 		votes.Lock.Unlock()
 		time.Sleep(time.Millisecond * 10)
+
+		//Bg sound
+		if !sounds[SND_WIND].player.IsPlaying() {
+			sounds[SND_WIND].player.Rewind()
+			sounds[SND_WIND].player.SetVolume(sounds[SND_WIND].vol)
+			sounds[SND_WIND].player.Play()
+		}
 	}
 }
 

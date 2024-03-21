@@ -20,7 +20,7 @@ func playSound(s int) {
 	if sounds[s].player.IsPlaying() {
 		return
 	}
-	sounds[s].player.SetVolume(defaultVolume)
+	sounds[s].player.SetVolume(sounds[s].vol)
 	sounds[s].player.Rewind()
 	sounds[s].player.Play()
 }
@@ -44,7 +44,7 @@ func playVariated(s int) {
 	}
 
 	sound.Rewind()
-	sound.SetVolume(defaultVolume)
+	sound.SetVolume(sounds[s].vol)
 	sound.Play()
 }
 
@@ -52,6 +52,7 @@ type soundData struct {
 	file     string
 	player   *audio.Player
 	variated bool
+	vol      float64
 }
 
 type variSoundData struct {
@@ -65,21 +66,28 @@ var sounds = [SND_MAX]soundData{
 	{
 		variated: true,
 		file:     "arrow-shoot",
+		vol:      0.5,
 	},
 	{
-		file: "goblin-die.wav",
+		variated: true,
+		file:     "goblin-die",
+		vol:      0.25,
 	},
 	{
 		file: "grass-walk.wav",
+		vol:  0.1,
 	},
 	{
 		file: "wind.wav",
+		vol:  0.2,
 	},
 	{
 		variated: true,
 		file:     "axe",
+		vol:      0.4,
 	},
 	{
 		file: "tower-die.wav",
+		vol:  0.3,
 	},
 }
