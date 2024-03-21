@@ -89,7 +89,7 @@ func clearGameBoard() {
 		board.playMap[newPos] = &objectData{
 			pos:          newPos,
 			health:       100,
-			sheetP:       &obj_tower1,
+			sheetP:       &obj_wall,
 			worldObjType: OTYPE_VWALL,
 			building:     2,
 		}

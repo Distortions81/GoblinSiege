@@ -117,6 +117,18 @@ func drawGameBoard(screen *ebiten.Image) {
 	board.lock.Lock()
 	defer board.lock.Unlock()
 
+	//Draw wall covering
+	for y := 0; y <= boardSizeY; y++ {
+		item := board.playMap[xyi{X: -1, Y: y}]
+		if item == nil {
+			continue
+		}
+		if item.dead && item.worldObjType == OTYPE_VWALL {
+			op := &ebiten.DrawImageOptions{}
+			op.GeoM.Translate(float64(((item.pos.X+offX)*mag)-item.sheetP.frameSize.X), float64(((item.pos.Y+offY)*mag)-item.sheetP.frameSize.Y))
+			screen.DrawImage(item.sheetP.img, op)
+		}
+	}
 	//Draw arrows
 	numArrows := len(board.arrowsShot) - 1
 	startTime := time.Now()

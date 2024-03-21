@@ -38,6 +38,7 @@ var sheetPile = []*spriteSheetData{
 	&obj_goblinBarb,
 	&obj_tower1,
 	&obj_arrow,
+	&obj_wall,
 }
 
 var obj_goblinBarb = spriteSheetData{
@@ -106,11 +107,9 @@ var obj_tower1 = spriteSheetData{
 
 var obj_wall = spriteSheetData{
 	name:      "wall",
+	file:      "wall",
 	health:    100,
 	frameSize: xyi{X: 32, Y: 32},
-	frames:    0,
-
-	anims: [ANI_MAX]animationData{},
 }
 
 var obj_arrow = spriteSheetData{
