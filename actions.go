@@ -88,7 +88,7 @@ func towerShootArrow() {
 				arrow := arrowData{tower: towerPos, target: enemy.pos, missed: false, shot: curTime}
 				board.arrowsShot = append(board.arrowsShot, arrow)
 
-				dmgAmt := 5 + rand.Intn(20)
+				dmgAmt := 5 + rand.Intn(15)
 				enemy.health -= dmgAmt
 
 				if enemy.health <= 0 {
