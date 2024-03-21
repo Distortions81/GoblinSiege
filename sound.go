@@ -2,7 +2,6 @@ package main
 
 import (
 	"math/rand"
-	"time"
 
 	"github.com/hajimehoshi/ebiten/v2/audio"
 )
@@ -14,6 +13,7 @@ const (
 	SND_GRASS_WALK
 	SND_WIND
 	SND_AXE
+	SND_TOWER_DIE
 	SND_MAX
 )
 
@@ -28,22 +28,29 @@ func playSound(s int) {
 	sounds[s].player.Play()
 }
 
-func playVariated(s int, count int) {
-	for d := 0; d < count; d++ {
+func playVariated(s int) {
 
-		vSounds := varSounds[s]
-		sound := vSounds.variants[rand.Intn(vSounds.numSounds)].player
+	//Get a random variation of the sound
+	vSounds := varSounds[s]
+	sound := vSounds.variants[rand.Intn(vSounds.numSounds)].player
 
-		if sound.IsPlaying() {
-			go playVariated(s, 1)
+	//Sound channel busy, try to find another
+	if sound.IsPlaying() {
+		for x := 0; x < vSounds.numSounds; x++ {
+			sound = vSounds.variants[x].player
+			if sound.IsPlaying() {
+				continue
+			} else {
+				break
+			}
 		}
-		sound.SetVolume(0)
-		time.Sleep(time.Millisecond)
-		sound.Pause()
-		sound.Rewind()
-		sound.SetVolume(defaultVolume)
-		sound.Play()
 	}
+
+	sound.SetVolume(0)
+	sound.Pause()
+	sound.Rewind()
+	sound.SetVolume(defaultVolume)
+	sound.Play()
 }
 
 type soundData struct {
@@ -79,5 +86,8 @@ var sounds = [SND_MAX]soundData{
 	{
 		variated: true,
 		file:     "axe",
+	},
+	{
+		file: "tower-die.wav",
 	},
 }

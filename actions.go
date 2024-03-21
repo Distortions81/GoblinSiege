@@ -35,8 +35,6 @@ func addTower() {
 func towerShootArrow() {
 	curTime := time.Now()
 
-	var didShoot, didDie, didHurt int
-
 	for _, item := range board.playMap {
 		if item.dead {
 			continue
@@ -53,7 +51,10 @@ func towerShootArrow() {
 
 			//If enemy within range
 			if Distance(item.Pos, enemy.Pos) < 6 {
-				didShoot++
+				go func() {
+					time.Sleep(time.Millisecond * time.Duration(rand.Intn(200)))
+					playVariated(SND_ARROW_SHOOT)
+				}()
 
 				if rand.Intn(2) != 0 {
 					arrow := arrowData{tower: towerPos, target: enemy.Pos, missed: true, shot: curTime}
@@ -65,11 +66,14 @@ func towerShootArrow() {
 
 				dmgAmt := 5 + rand.Intn(20)
 				enemy.Health -= dmgAmt
-				didHurt++
+
 				if enemy.Health <= 0 {
 					board.enemyMap[enemy.Pos].dead = true
 					board.enemyMap[enemy.Pos].diedAt = time.Now()
-					didDie++
+					go func() {
+						time.Sleep(deathDelay + (time.Millisecond * time.Duration(rand.Intn(200))))
+						playSound(SND_GOBLIN_DIE)
+					}()
 
 					//For tweening
 					board.enemyMap[enemy.Pos].OldPos = board.enemyMap[enemy.Pos].Pos
@@ -78,21 +82,6 @@ func towerShootArrow() {
 			}
 
 		}
-	}
-
-	if didShoot > 0 {
-		go playVariated(SND_ARROW_SHOOT, didShoot)
-	}
-
-	if didDie > 0 {
-		go func() {
-			time.Sleep(deathDelay)
-			playSound(SND_GOBLIN_DIE)
-		}()
-	}
-
-	if didHurt > 0 {
-		//
 	}
 }
 
@@ -107,7 +96,6 @@ func spawnGoblins() {
 }
 
 func goblinAttack() {
-	var didHit int
 
 	var newitems []*objectData
 	//Detect defeat, defeat, do damage to towers, remove dead towers
@@ -133,8 +121,14 @@ func goblinAttack() {
 		//If a tower is in our way, do damage
 		if tower != nil && !tower.dead {
 			tower.Health -= 10 + rand.Intn(10)
-			didHit++
+			go func() {
+				time.Sleep(time.Millisecond * time.Duration(rand.Intn(100)))
+				playVariated(SND_AXE)
+			}()
 			if tower.Health <= 0 {
+				go func() {
+					playSound(SND_TOWER_DIE)
+				}()
 				tower.dead = true
 			}
 			continue
@@ -154,7 +148,4 @@ func goblinAttack() {
 		}
 	}
 
-	if didHit > 0 {
-		playVariated(SND_AXE, didHit)
-	}
 }
