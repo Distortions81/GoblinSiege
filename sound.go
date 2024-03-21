@@ -13,6 +13,9 @@ const (
 	SND_WIND
 	SND_AXE
 	SND_TOWER_DIE
+	SND_GAMEOVER
+	SND_TENSION
+	SND_GAMEWON
 	SND_MAX
 )
 
@@ -90,5 +93,17 @@ var sounds = [SND_MAX]soundData{
 	{
 		file: "tower-die.wav",
 		vol:  0.3,
+	},
+	{
+		file: "gameover.wav",
+		vol:  1.0,
+	},
+	{
+		file: "tension.wav",
+		vol:  0.7,
+	},
+	{
+		file: "gamewon.wav",
+		vol:  0.7,
 	},
 }

@@ -73,6 +73,7 @@ func cpuTurn() {
 
 	if board.moveNum >= maxMoves {
 		board.gameover = GAME_VICTORY
+		playSound(SND_GAMEWON)
 		votes.RoundTime = time.Now()
 		votes.GameRunning = false
 	}

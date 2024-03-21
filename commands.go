@@ -83,6 +83,7 @@ func clearGameBoard() {
 	board.enemyMap = make(map[xyi]*objectData)
 	board.moveNum = 0
 	board.arrowsShot = make([]arrowData, 0)
+	board.wallDamaged = false
 
 	for p := 0; p < boardSizeY; p++ {
 		newPos := xyi{X: -1, Y: p}

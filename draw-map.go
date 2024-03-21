@@ -60,7 +60,8 @@ type gameBoardData struct {
 	enemyMap map[xyi]*objectData
 	lock     sync.Mutex
 
-	arrowsShot []arrowData
+	arrowsShot  []arrowData
+	wallDamaged bool
 
 	gameover int
 	bgCache  *ebiten.Image

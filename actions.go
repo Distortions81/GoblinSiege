@@ -88,6 +88,12 @@ func towerShootArrow() {
 				arrow := arrowData{tower: towerPos, target: enemy.pos, missed: false, shot: curTime}
 				board.arrowsShot = append(board.arrowsShot, arrow)
 
+				//Wall damaged, play a sound to alert players
+				if !board.wallDamaged {
+					board.wallDamaged = true
+					playSound(SND_TENSION)
+				}
+
 				dmgAmt := 5 + rand.Intn(15)
 				enemy.health -= dmgAmt
 
@@ -175,6 +181,7 @@ func goblinAttack() {
 		board.enemyMap[item.pos] = newitems[i]
 		if item.pos.X < -2 {
 			board.gameover = GAME_DEFEAT
+			playSound(SND_GAMEOVER)
 			votes.RoundTime = time.Now()
 			votes.GameRunning = false
 		}
