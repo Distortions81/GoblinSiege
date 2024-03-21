@@ -88,7 +88,7 @@ func towerShootArrow() {
 func spawnGoblins() {
 	//Spawn goblins
 	if board.moveNum%2 == 0 {
-		rpos := xyi{X: boardSizeX + enemyBoardX, Y: 1 + rand.Intn(boardSizeY-1)}
+		rpos := xyi{X: boardSizeX + enemyBoardX, Y: 1 + rand.Intn(boardSizeY)}
 		if board.enemyMap[rpos] == nil {
 			board.enemyMap[rpos] = &objectData{Pos: rpos, sheetP: &obj_goblinBarb, Health: obj_goblinBarb.health, OldPos: xyi{X: rpos.X, Y: rpos.Y}, aniOffset: uint64(rand.Intn(obj_goblinBarb.frames))}
 		}
