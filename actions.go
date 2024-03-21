@@ -162,7 +162,7 @@ func goblinAttack() {
 				go playSound(SND_TOWER_DIE)
 				tower.dead = true
 			}
-			if item.worldObjType == OTYPE_VWALL {
+			if tower.worldObjType == OTYPE_VWALL {
 				//Wall damaged, play a sound to alert players
 				if !board.wallDamaged {
 					board.wallDamaged = true
