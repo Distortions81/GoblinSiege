@@ -2,9 +2,6 @@ package main
 
 import (
 	"flag"
-	"os"
-	"os/signal"
-	"syscall"
 	"time"
 )
 
@@ -26,9 +23,6 @@ func main() {
 	board.playMap = make(map[xyi]*objectData)
 	board.enemyMap = make(map[xyi]*objectData)
 	votes.Users = make(map[int64]*userMsgData)
-
-	//Wait here for process signals
-	signalHandle := make(chan os.Signal, 1)
 
 	loadEmbed()
 
@@ -56,9 +50,6 @@ func main() {
 
 	//Start ebiten
 	startEbiten()
-
-	signal.Notify(signalHandle, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
-	<-signalHandle
 
 	//Shutdown server and save
 	ServerRunning = false
