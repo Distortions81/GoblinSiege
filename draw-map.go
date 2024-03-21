@@ -29,9 +29,11 @@ type objectData struct {
 	diedAt time.Time
 
 	aniOffset uint64 //Animation offset so animations are synced
-	attacking bool   //Goblin is attacking
-	building  int    //Tower building step
-	upgrade   int    //TODO tower upgrades
+
+	attacking    bool //Goblin is attacking
+	lastAttacked time.Time
+	building     int //Tower building step
+	upgrade      int //TODO tower upgrades
 
 	//Item spritesheet data
 	sheetP *spriteSheetData
@@ -124,8 +126,15 @@ func drawGameBoard(screen *ebiten.Image) {
 		if item == nil {
 			continue
 		}
-		if item.dead && item.worldObjType == OTYPE_VWALL {
+		if item.worldObjType == OTYPE_VWALL {
+
 			op := &ebiten.DrawImageOptions{}
+			if time.Since(item.lastAttacked) < time.Millisecond*250 {
+				op.ColorScale.Scale(1, 0, 0, 1)
+			} else if !item.dead {
+				continue
+			}
+
 			op.GeoM.Translate(float64(((item.pos.X+offX)*mag)-item.sheetP.frameSize.X), float64(((item.pos.Y+offY)*mag)-item.sheetP.frameSize.Y))
 			screen.DrawImage(item.sheetP.img, op)
 		}
@@ -244,6 +253,9 @@ func drawGameBoard(screen *ebiten.Image) {
 			if item.worldObjType == OTYPE_TOWER {
 				//Draw tower
 				op := &ebiten.DrawImageOptions{}
+				if time.Since(item.lastAttacked) < time.Millisecond*250 {
+					op.ColorScale.Scale(1, 0, 0, 1)
+				}
 				op.GeoM.Translate(float64(((item.pos.X+offX)*mag)-item.sheetP.frameSize.X), float64(((item.pos.Y+offY)*mag)-item.sheetP.frameSize.Y))
 				if item.dead {
 					//Broken tower

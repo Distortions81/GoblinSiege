@@ -153,6 +153,7 @@ func goblinAttack() {
 		if tower != nil && !tower.dead && tower.building >= 2 {
 			tower.health -= 10 + rand.Intn(10)
 			item.attacking = true
+			tower.lastAttacked = time.Now()
 
 			go func() {
 				time.Sleep(time.Millisecond*100 + time.Duration(rand.Intn(100)))
