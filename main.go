@@ -13,15 +13,14 @@ var (
 	cpuMoveTime    time.Duration = time.Second * 2
 	maxMoves                     = 100
 
-	skipTwitch *bool
-	fastMode   *bool
-	noTowers   *bool
+	skipTwitch, fastMode, noTowers, smartMove *bool
 )
 
 func main() {
 	skipTwitch = flag.Bool("skip", false, "don't connect to twitch")
 	fastMode = flag.Bool("fast", false, "fast mode")
 	noTowers = flag.Bool("notower", false, "don't spawn towers")
+	smartMove = flag.Bool("smartmove", false, "Use intelligent moves to simulate a coordinated audiance.")
 	flag.Parse()
 
 	board.playMap = make(map[xyi]*objectData)

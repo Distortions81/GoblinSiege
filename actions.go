@@ -40,16 +40,58 @@ func addTower() {
 		}
 	} else {
 
-		log.Println("Not enough votes, picking random.")
-		tpos := xyi{X: rand.Intn(boardSizeX-1) + 1, Y: rand.Intn(boardSizeY-1) + 1}
-		if board.enemyMap[tpos] == nil && board.playMap[tpos] == nil {
-			board.playMap[tpos] = &objectData{
-				pos:          tpos,
-				sheetP:       &obj_tower1,
-				health:       obj_tower1.health,
-				aniOffset:    uint64(rand.Intn(obj_tower1.frames)),
-				building:     0,
-				worldObjType: OTYPE_TOWER}
+		if *smartMove {
+			for x := 0; x < boardSizeX; x++ {
+				for y := 0; y < boardSizeY; y++ {
+					enemy := board.enemyMap[xyi{X: x, Y: y}]
+					if enemy == nil {
+						continue
+					}
+
+					tpos := xyi{X: 0, Y: y}
+					if x-7 > 0 {
+						var found bool
+						for xx := 0; xx < boardSizeX; xx++ {
+							checkT := board.playMap[xyi{X: xx, Y: y}]
+							if checkT != nil && !checkT.dead {
+								found = true
+								break
+							}
+						}
+						if !found {
+							tpos = xyi{X: x - 7, Y: y}
+						} else {
+							continue
+						}
+
+					}
+
+					tower := board.playMap[tpos]
+					checkForEnemy := board.enemyMap[tpos]
+					if tower == nil && checkForEnemy == nil {
+						board.playMap[tpos] = &objectData{
+							pos:          tpos,
+							sheetP:       &obj_tower1,
+							health:       obj_tower1.health,
+							aniOffset:    uint64(rand.Intn(obj_tower1.frames)),
+							building:     0,
+							worldObjType: OTYPE_TOWER}
+						return
+					}
+				}
+			}
+		} else {
+			log.Println("Not enough votes, picking random.")
+			tpos := xyi{X: rand.Intn(boardSizeX-1) + 1, Y: rand.Intn(boardSizeY-1) + 1}
+			if board.enemyMap[tpos] == nil && board.playMap[tpos] == nil {
+				board.playMap[tpos] = &objectData{
+					pos:          tpos,
+					sheetP:       &obj_tower1,
+					health:       obj_tower1.health,
+					aniOffset:    uint64(rand.Intn(obj_tower1.frames)),
+					building:     0,
+					worldObjType: OTYPE_TOWER}
+			}
 		}
 	}
 
