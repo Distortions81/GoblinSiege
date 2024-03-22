@@ -77,8 +77,8 @@ func handleModCommands(msg twitch.PrivateMessage, command string) bool {
 func clearGameBoard() {
 	qlog("Clearing game board...")
 
-	board.playMap = make(map[xyi]*objectData)
-	board.enemyMap = make(map[xyi]*objectData)
+	board.towerMap = make(map[xyi]*objectData)
+	board.goblinMap = make(map[xyi]*objectData)
 	board.moveNum = 0
 	useFreeze = false
 	freezeFrame.Clear()
@@ -88,7 +88,7 @@ func clearGameBoard() {
 
 	for p := 0; p < boardSizeY; p++ {
 		newPos := xyi{X: -1, Y: p}
-		board.playMap[newPos] = &objectData{
+		board.towerMap[newPos] = &objectData{
 			pos:          newPos,
 			health:       100,
 			sheetP:       &obj_wall,

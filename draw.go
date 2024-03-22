@@ -86,7 +86,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 
 	if *debugMode {
-		buf := fmt.Sprintf("%v arrows, %v towers, %v enemy", len(board.arrowsShot), len(board.playMap), len(board.enemyMap))
+		buf := fmt.Sprintf("%v arrows, %v towers, %v enemy", len(board.arrowsShot), len(board.towerMap), len(board.goblinMap))
 		text.Draw(screen, buf, monoFont, 10, 24, ColorBlack)
 	}
 }

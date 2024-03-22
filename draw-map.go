@@ -56,9 +56,9 @@ type arrowData struct {
 }
 
 type gameBoardData struct {
-	moveNum  int
-	playMap  map[xyi]*objectData
-	enemyMap map[xyi]*objectData
+	moveNum   int
+	towerMap  map[xyi]*objectData
+	goblinMap map[xyi]*objectData
 
 	arrowsShot  []arrowData
 	wallDmgTime time.Time
@@ -116,7 +116,7 @@ func drawGameBoard(screen *ebiten.Image) {
 
 	//Draw wall covering
 	for y := 0; y <= boardSizeY; y++ {
-		item := board.playMap[xyi{X: -1, Y: y}]
+		item := board.towerMap[xyi{X: -1, Y: y}]
 		if item == nil {
 			continue
 		}
@@ -191,7 +191,7 @@ func drawGameBoard(screen *ebiten.Image) {
 	}
 
 	//Draw goblin
-	for _, item := range board.enemyMap {
+	for _, item := range board.goblinMap {
 
 		//Tween animation
 		since := startTime.Sub(votes.CpuTime)
@@ -257,7 +257,7 @@ func drawGameBoard(screen *ebiten.Image) {
 	//Draw towers
 	for x := -1; x <= boardSizeX; x++ {
 		for y := 0; y <= boardSizeY; y++ {
-			item := board.playMap[xyi{X: x, Y: y}]
+			item := board.towerMap[xyi{X: x, Y: y}]
 			if item == nil {
 				continue
 			}
