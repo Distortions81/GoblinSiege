@@ -12,16 +12,45 @@ import (
 
 var frameCount uint64
 var aniCount uint64
+var freezeFrame *ebiten.Image
+var useFreeze bool
 
 func (g *Game) Draw(screen *ebiten.Image) {
 
 	frameCount++
-	//Draw actual game board
-	drawGameBoard(screen)
 
-	//Don't bother to draw info on screen if there isn't an active game
+	// If there isn't a game running, don't render game board
+	// Render to an image and fade out at game end
 	if board.gameover != GAME_RUNNING {
+		if !useFreeze {
+			//Draw actual game board
+			drawGameBoard(freezeFrame)
+			useFreeze = true
+		}
+		screen.DrawImage(bgimg, nil)
+
+		op := &ebiten.DrawImageOptions{}
+		shotAgo := time.Since(votes.RoundTime)
+		pa := 1.0 - float32(shotAgo.Seconds()/gameOverFadeSec)
+		if pa > 0 {
+			op.ColorScale.ScaleAlpha(pa)
+			screen.DrawImage(freezeFrame, op)
+		}
+
+		//Handle game ending conditions
+		//TODO: End game credits and countdown timer
+		if board.gameover == GAME_DEFEAT {
+			vector.DrawFilledRect(screen, 0, float32(defaultWindowHeight)-40, float32(defaultWindowWidth), 100, ColorSmoke, true)
+			buf := fmt.Sprintf("GAME OVER: The audience was defeated! Enemy won on move %v!", board.moveNum)
+			text.Draw(screen, buf, monoFont, 10, defaultWindowHeight-15, color.White)
+		} else if board.gameover == GAME_VICTORY {
+			vector.DrawFilledRect(screen, 0, float32(defaultWindowHeight)-40, float32(defaultWindowWidth), 100, ColorSmoke, true)
+			buf := fmt.Sprintf("GAME OVER: The audience has won! Survived %v moves!", board.moveNum)
+			text.Draw(screen, buf, monoFont, 10, defaultWindowHeight-15, color.White)
+		}
 		return
+	} else {
+		drawGameBoard(screen)
 	}
 
 	vector.DrawFilledRect(screen, 0, float32(defaultWindowHeight)-40, float32(defaultWindowWidth), 100, ColorSmoke, true)

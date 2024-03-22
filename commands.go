@@ -82,6 +82,9 @@ func clearGameBoard() {
 	board.playMap = make(map[xyi]*objectData)
 	board.enemyMap = make(map[xyi]*objectData)
 	board.moveNum = 0
+	useFreeze = false
+	freezeFrame.Clear()
+
 	board.arrowsShot = make([]arrowData, 0)
 	board.wallDmgTime = time.Now()
 

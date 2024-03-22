@@ -297,18 +297,6 @@ func drawGameBoard(screen *ebiten.Image) {
 		}
 	}
 
-	//Handle game ending conditions
-	//TODO: End game credits and countdown timer
-	if board.gameover == GAME_DEFEAT {
-		vector.DrawFilledRect(screen, 0, float32(defaultWindowHeight)-40, float32(defaultWindowWidth), 100, ColorSmoke, true)
-		buf := fmt.Sprintf("Game over: The audience was defeated on move %v!", board.moveNum)
-		text.Draw(screen, buf, monoFont, 10, defaultWindowHeight-15, color.White)
-	} else if board.gameover == GAME_VICTORY {
-		vector.DrawFilledRect(screen, 0, float32(defaultWindowHeight)-40, float32(defaultWindowWidth), 100, ColorSmoke, true)
-		buf := fmt.Sprintf("Game over: The audience has won, survived %v move!", board.moveNum)
-		text.Draw(screen, buf, monoFont, 10, defaultWindowHeight-15, color.White)
-	}
-
 	//Show the current move number in the corner
 	buf := fmt.Sprintf("Move: %v/%v!", board.moveNum, maxMoves)
 	text.Draw(screen, buf, monoFont, defaultWindowWidth-210, 25, color.Black)

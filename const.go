@@ -23,9 +23,10 @@ const (
 	boardPixelsX = ((boardSizeX) * mag)
 	boardPixelsY = ((boardSizeY) * mag)
 
-	defaultVolume = 0.5
-	arrowFadeSec  = 120
-	bodyFadeSec   = 120
-	arrowSpeed    = 30
-	flashSpeed    = time.Millisecond * 125
+	defaultVolume   = 0.5
+	arrowFadeSec    = 120
+	gameOverFadeSec = 3
+	bodyFadeSec     = 120
+	arrowSpeed      = 30
+	flashSpeed      = time.Millisecond * 125
 )

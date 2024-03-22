@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"time"
+
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 var (
@@ -25,6 +27,8 @@ func main() {
 	board.playMap = make(map[xyi]*objectData)
 	board.enemyMap = make(map[xyi]*objectData)
 	votes.Users = make(map[int64]*userMsgData)
+
+	freezeFrame = ebiten.NewImage(defaultWindowWidth, defaultWindowHeight)
 
 	//Load fonts, sprites and sounds
 	loadEmbed()
