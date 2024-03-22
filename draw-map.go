@@ -27,12 +27,12 @@ type objectData struct {
 	dead   bool
 	diedAt time.Time
 
-	aniOffset uint64 //Animation offset so animations are synced
+	aniOffset uint64
 
-	attacking    bool //Goblin is attacking
+	attacking    bool
 	lastAttacked time.Time
-	building     int //Tower building step
-	upgrade      int //TODO tower upgrades
+	building     int
+	upgrade      int
 
 	//Item spritesheet data
 	sheetP *spriteSheetData

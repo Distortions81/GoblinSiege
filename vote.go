@@ -77,7 +77,6 @@ func handleVoteMsg(msg twitch.PrivateMessage, command string) {
 }
 
 // Currently averages votes
-// TODO: add option to use most popular coord
 func processVotes() {
 
 	var tX, tY, count uint64

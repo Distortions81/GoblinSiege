@@ -66,7 +66,6 @@ func main() {
 }
 
 // Used for action animations
-// TODO move this to the ebiten update handler
 func aniTimer() {
 	for {
 		aniCount++

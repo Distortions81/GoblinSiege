@@ -10,14 +10,13 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
-var frameCount uint64
-var aniCount uint64
-var freezeFrame *ebiten.Image
-var useFreeze bool
+var (
+	aniCount    uint64
+	freezeFrame *ebiten.Image
+	useFreeze   bool
+)
 
 func (g *Game) Draw(screen *ebiten.Image) {
-
-	frameCount++
 
 	// If there isn't a game running, don't render game board
 	// Render to an image and fade out at game end
@@ -38,7 +37,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		}
 
 		//Handle game ending conditions
-		//TODO: End game credits and countdown timer
 		if board.gameover == GAME_DEFEAT {
 			vector.DrawFilledRect(screen, 0, float32(defaultWindowHeight)-40, float32(defaultWindowWidth), 100, ColorSmoke, true)
 			buf := fmt.Sprintf("GAME OVER: The audience was defeated! Enemy won on move %v!", board.moveNum)
