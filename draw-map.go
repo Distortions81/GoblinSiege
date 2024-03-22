@@ -129,8 +129,8 @@ func drawGameBoard(screen *ebiten.Image) {
 		if item.worldObjType == OTYPE_VWALL {
 
 			op := &ebiten.DrawImageOptions{}
-			if time.Since(item.lastAttacked) < time.Millisecond*250 {
-				op.ColorScale.Scale(1, 0, 0, 1)
+			if time.Since(item.lastAttacked) < flashSpeed {
+				op.ColorScale.Scale(2, 0.5, 0.5, 1)
 			} else if !item.dead {
 				continue
 			}
@@ -148,9 +148,8 @@ func drawGameBoard(screen *ebiten.Image) {
 		//Tween animation, make sprite face direction of travel
 		since := startTime.Sub(arrow.shot)
 		distance := Distance(arrow.tower, arrow.target)
-		const ratio = 30
-		remaining := (distance * float64(cpuMoveTime.Nanoseconds()/ratio)) - float64(since.Nanoseconds())
-		normal := (float64(remaining)/(distance*float64(cpuMoveTime.Nanoseconds()/ratio)) - 1.0)
+		remaining := (distance * float64(cpuMoveTime.Nanoseconds()/arrowSpeed)) - float64(since.Nanoseconds())
+		normal := (float64(remaining)/(distance*float64(cpuMoveTime.Nanoseconds()/arrowSpeed)) - 1.0)
 
 		//Extrapolation limits
 		if normal < -1 {
@@ -183,7 +182,18 @@ func drawGameBoard(screen *ebiten.Image) {
 		op.GeoM.Translate(((sX+float64(offX))*float64(mag))-float64(obj_arrow.frameSize.X)-16,
 			((sY+float64(offY))*float64(mag))-float64(obj_arrow.frameSize.Y)-16)
 
+		var pa float32
+		shotAgo := time.Since(arrow.shot)
+		pa = 1.0 - float32(shotAgo.Seconds()/arrowFadeSec)
+		if pa < 0 {
+			//Delete it
+			board.arrowsShot = append(board.arrowsShot[:x], board.arrowsShot[x+1:]...)
+			continue
+		}
+
+		op.ColorScale.ScaleAlpha(pa)
 		screen.DrawImage(obj_arrow.img, op)
+
 	}
 
 	//Draw goblin
@@ -221,7 +231,15 @@ func drawGameBoard(screen *ebiten.Image) {
 			if time.Since(item.diedAt) > (deathDelay) {
 				deadAni = 1
 			}
+			var pa float32
+			deadFor := time.Since(item.diedAt).Seconds()
+			pa = 1.0 - float32(deadFor/bodyFadeSec)
+			if pa < 0 {
+				continue
+			}
+			op.ColorScale.ScaleAlpha(pa)
 			screen.DrawImage(item.sheetP.anims[ANI_DIE].img[deadAni], op)
+
 		} else if item.attacking {
 			//Goblin attacking tower
 			attackFrame := time.Since(votes.CpuTime) / attackDelay
@@ -253,8 +271,8 @@ func drawGameBoard(screen *ebiten.Image) {
 			if item.worldObjType == OTYPE_TOWER {
 				//Draw tower
 				op := &ebiten.DrawImageOptions{}
-				if time.Since(item.lastAttacked) < time.Millisecond*250 {
-					op.ColorScale.Scale(1, 0, 0, 1)
+				if time.Since(item.lastAttacked) < flashSpeed {
+					op.ColorScale.Scale(2, 0.5, 0.5, 1)
 				}
 				op.GeoM.Translate(float64(((item.pos.X+offX)*mag)-item.sheetP.frameSize.X), float64(((item.pos.Y+offY)*mag)-item.sheetP.frameSize.Y))
 				if item.dead {

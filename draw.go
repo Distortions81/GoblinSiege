@@ -14,6 +14,7 @@ var frameCount uint64
 var aniCount uint64
 
 func (g *Game) Draw(screen *ebiten.Image) {
+
 	frameCount++
 	//Draw actual game board
 	drawGameBoard(screen)
@@ -57,4 +58,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		}
 	}
 
+	buf := fmt.Sprintf("%v arrows, %v towers, %v enemy", len(board.arrowsShot), len(board.playMap), len(board.enemyMap))
+	text.Draw(screen, buf, monoFont, 10, 24, ColorBlack)
 }
