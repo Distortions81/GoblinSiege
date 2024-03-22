@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"image/color"
-	"sync"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -60,7 +59,6 @@ type gameBoardData struct {
 	moveNum  int
 	playMap  map[xyi]*objectData
 	enemyMap map[xyi]*objectData
-	lock     sync.Mutex
 
 	arrowsShot  []arrowData
 	wallDmgTime time.Time
@@ -115,10 +113,6 @@ func drawGameBoard(screen *ebiten.Image) {
 	if votes.VoteState == VOTE_PLAYERS {
 		screen.DrawImage(board.bgCache, nil)
 	}
-
-	//Draw board
-	board.lock.Lock()
-	defer board.lock.Unlock()
 
 	//Draw wall covering
 	for y := 0; y <= boardSizeY; y++ {

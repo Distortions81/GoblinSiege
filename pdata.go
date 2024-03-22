@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"log"
 	"os"
-	"sync"
 	"time"
 
 	"github.com/hako/durafmt"
@@ -14,7 +13,6 @@ import (
 var players playersListData
 
 type playersListData struct {
-	lock  sync.Mutex
 	dirty bool
 	idmap map[int64]*playerData
 }
@@ -27,20 +25,17 @@ type playerData struct {
 func playersAutosave() {
 	for ServerRunning {
 
-		players.lock.Lock()
 		if players.dirty {
 			players.dirty = false
-			writePlayers() //This unlocks after serialize
+			writePlayers()
 		} else {
-			//No write to do, unlock
-			players.lock.Unlock()
+			//No write to do
 		}
 
 		time.Sleep(time.Second * 30)
 	}
 }
 
-// This unlocks playersLock after serialize
 func writePlayers() {
 
 	qlog("Saving players...")
@@ -57,7 +52,6 @@ func writePlayers() {
 		return
 	}
 
-	players.lock.Unlock()
 	qlog("serialize players took: %v", durafmt.Parse(time.Since(startTime)).LimitFirstN(2))
 
 	_, err := os.Create(tempPath)
@@ -96,10 +90,6 @@ func readPlayers() {
 		file, err := os.ReadFile(playersFile)
 
 		if file != nil && err == nil {
-
-			//Only lock after file is read
-			players.lock.Lock()
-			defer players.lock.Unlock()
 
 			err := json.Unmarshal([]byte(file), &players.idmap)
 			if len(players.idmap) == 0 {

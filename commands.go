@@ -64,9 +64,8 @@ func handleModCommands(msg twitch.PrivateMessage, command string) bool {
 					sayLog("Command %v%v has nil func.", userSettings.CmdPrefix, item.Name)
 					continue
 				}
-				votes.Lock.Lock()
+
 				item.Handle()
-				votes.Lock.Unlock()
 				return true
 			}
 		}
@@ -77,7 +76,6 @@ func handleModCommands(msg twitch.PrivateMessage, command string) bool {
 
 func clearGameBoard() {
 	qlog("Clearing game board...")
-	board.lock.Lock()
 
 	board.playMap = make(map[xyi]*objectData)
 	board.enemyMap = make(map[xyi]*objectData)
@@ -99,7 +97,6 @@ func clearGameBoard() {
 		}
 	}
 
-	board.lock.Unlock()
 }
 
 func clearVotes() {
@@ -135,7 +132,6 @@ func startVote() {
 	votes.VoteState = VOTE_PLAYERS
 }
 
-// Locks and unlocks board
 func endVote() {
 
 	processVotes()
@@ -143,9 +139,7 @@ func endVote() {
 	if votes.VoteState == VOTE_PLAYERS {
 		qlog("Ending vote...")
 
-		board.lock.Lock()
 		addTower()
-		board.lock.Unlock()
 
 		votes.VoteState = VOTE_PLAYERS_DONE
 		votes.StartTime = time.Now()

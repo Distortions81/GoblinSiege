@@ -62,7 +62,6 @@ func main() {
 	//Shutdown server and save
 	ServerRunning = false
 
-	players.lock.Lock()
 	writePlayers()
 }
 
