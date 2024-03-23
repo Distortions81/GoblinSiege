@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"image/color"
+	"sync/atomic"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -11,12 +12,15 @@ import (
 )
 
 var (
-	aniCount    uint64
+	aniCount    atomic.Uint64
 	freezeFrame *ebiten.Image
 	useFreeze   bool
 )
 
 func (g *Game) Draw(screen *ebiten.Image) {
+
+	gameLock.Lock()
+	defer gameLock.Unlock()
 
 	// If there isn't a game running, don't render game board
 	// Render to an image and fade out at game end
@@ -86,7 +90,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 
 	if *debugMode {
-		buf := fmt.Sprintf("%v arrows, %v towers, %v enemy", len(board.arrowsShot), len(board.towerMap), len(board.goblinMap))
+		buf := fmt.Sprintf("%2.2f fps, %v arrows, %v towers, %v enemy", ebiten.ActualFPS(), len(board.arrowsShot), len(board.towerMap), len(board.goblinMap))
 		text.Draw(screen, buf, monoFont, 10, 24, ColorBlack)
 	}
 }

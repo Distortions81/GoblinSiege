@@ -46,7 +46,9 @@ func main() {
 
 	go handleMoves()
 
+	gameLock.Lock()
 	startGame()
+	gameLock.Unlock()
 
 	startEbiten() //Blocks until exit
 
@@ -57,7 +59,7 @@ func main() {
 // Used for action animations
 func aniTimer() {
 	for {
-		aniCount++
+		aniCount.Add(1)
 		time.Sleep(time.Second / 3)
 	}
 }

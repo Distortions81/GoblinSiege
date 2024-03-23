@@ -41,5 +41,5 @@ func healthColor(input float32) color.NRGBA {
 
 // Text progess dots
 func makeEllipsis() string {
-	return strings.Repeat(".", int(aniCount%4))
+	return strings.Repeat(".", int(aniCount.Load()%4))
 }

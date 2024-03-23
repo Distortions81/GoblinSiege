@@ -1,11 +1,16 @@
 package main
 
 import (
+	"sync"
 	"time"
 )
 
+var gameLock sync.Mutex
+
 func handleMoves() {
 	for ServerRunning {
+
+		gameLock.Lock()
 
 		//Fast mode for testing quickly, shorten rounds and skip some to get to the action
 		if *fastMode {
@@ -59,6 +64,8 @@ func handleMoves() {
 			sounds[SND_WIND].player.SetVolume(sounds[SND_WIND].vol)
 			sounds[SND_WIND].player.Play()
 		}
+
+		gameLock.Unlock()
 
 		time.Sleep(time.Millisecond * 10)
 	}
