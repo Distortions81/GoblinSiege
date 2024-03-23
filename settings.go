@@ -45,13 +45,13 @@ func readSettings() {
 				userSettings.CmdPrefix = "!"
 			}
 
-			writeSettings()
+			go writeSettings()
 			return
 		}
 	}
 
 	qlog("No settings found, attempting to create.")
-	writeSettings()
+	go writeSettings()
 	log.Fatal("Please add your UserName, BotName and AuthToken to the settings file.")
 }
 
