@@ -70,6 +70,8 @@ type gameBoardData struct {
 
 func drawGameBoard(screen *ebiten.Image) {
 
+	ani := aniCount.Load()
+
 	screen.DrawImage(bgimg, nil)
 
 	//Draw checkerboard if dirty
@@ -216,8 +218,14 @@ func drawGameBoard(screen *ebiten.Image) {
 			((sY+float64(offY))*float64(mag))-float64(obj_goblinBarb.frameSize.Y))
 
 		if item.pos.X > 31 {
+
 			//Swim animation for the water
-			screen.DrawImage(item.sheetP.anims[ANI_SWIM].img[int(float64(item.aniOffset)+sX*16)%4], op)
+			if normal == -1 {
+				//Idle bobbing
+				screen.DrawImage(item.sheetP.anims[ANI_SWIM].img[(item.aniOffset+ani)%4], op)
+			} else {
+				screen.DrawImage(item.sheetP.anims[ANI_SWIM].img[int(float64(item.aniOffset)+sX*16)%4], op)
+			}
 
 		} else if item.dead && time.Since(item.diedAt) > deathDelay {
 			//Goblin died
@@ -242,8 +250,13 @@ func drawGameBoard(screen *ebiten.Image) {
 			}
 			screen.DrawImage(item.sheetP.anims[ANI_ATTACK].img[attackFrame%4], op)
 		} else {
-			///Draw running
-			screen.DrawImage(item.sheetP.anims[ANI_RUN].img[int(float64(item.aniOffset)+(sX+offX)*16)%4], op)
+			//Draw idle
+			if normal == -1 {
+				screen.DrawImage(item.sheetP.anims[ANI_IDLE].img[(ani+item.aniOffset)%4], op)
+			} else {
+				///Draw running
+				screen.DrawImage(item.sheetP.anims[ANI_RUN].img[int(float64(item.aniOffset)+(sX+offX)*16)%4], op)
+			}
 		}
 
 		//Show health bar
@@ -271,13 +284,13 @@ func drawGameBoard(screen *ebiten.Image) {
 				op.GeoM.Translate(float64(((item.pos.X+offX)*mag)-item.sheetP.frameSize.X), float64(((item.pos.Y+offY)*mag)-item.sheetP.frameSize.Y))
 				if item.dead {
 					//Broken tower
-					screen.DrawImage(item.sheetP.anims[ANI_FADE].img[(aniCount.Load()+item.aniOffset)%3], op)
+					screen.DrawImage(item.sheetP.anims[ANI_FADE].img[(ani+item.aniOffset)%3], op)
 				} else {
 					//Draw tower being built, otherwise animate fully built one
 					if item.building < 2 {
 						screen.DrawImage(item.sheetP.anims[ANI_RUN].img[item.building%3], op)
 					} else {
-						screen.DrawImage(item.sheetP.anims[ANI_IDLE].img[(aniCount.Load()+item.aniOffset)%3], op)
+						screen.DrawImage(item.sheetP.anims[ANI_IDLE].img[(ani+item.aniOffset)%3], op)
 					}
 				}
 			}
