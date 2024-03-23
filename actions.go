@@ -38,9 +38,9 @@ func addTower() {
 		} else {
 			log.Println("COLLISION!")
 		}
-	} else {
-		var foundSmart bool
+	} else { //No votes
 
+		var foundSmart bool
 		if *smartMove && board.moveNum != 0 {
 			for x := 0; x < boardSizeX+enemyBoardX; x++ {
 				if foundSmart {
@@ -149,8 +149,8 @@ func towerShootArrow() {
 			enemy.health -= dmgAmt
 
 			if enemy.health <= 0 {
-				board.goblinMap[enemy.pos].dead = true
-				board.goblinMap[enemy.pos].diedAt = time.Now()
+				enemy.dead = true
+				enemy.diedAt = time.Now()
 
 				go func() {
 					time.Sleep(deathDelay + (time.Millisecond * time.Duration(rand.Intn(200))))
@@ -158,10 +158,9 @@ func towerShootArrow() {
 				}()
 
 				//For tweening
-				board.goblinMap[enemy.pos].prevPos = board.goblinMap[enemy.pos].pos
+				enemy.prevPos = enemy.pos
 			}
 			break
-
 		}
 	}
 }
@@ -222,6 +221,7 @@ func goblinAttack() {
 					playSound(SND_TENSION)
 				}
 			}
+			//Because we aren't moving forward, set prevpos to pos so we don't teleport back and re-tween
 			goblin.prevPos = goblin.pos
 			continue
 		}

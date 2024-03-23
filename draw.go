@@ -12,6 +12,7 @@ import (
 )
 
 var (
+	//Doesn't really need to be atomic, but this keeps it our of the -race logs
 	aniCount    atomic.Uint64
 	freezeFrame *ebiten.Image
 	useFreeze   bool
