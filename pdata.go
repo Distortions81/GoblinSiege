@@ -5,12 +5,14 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/hako/durafmt"
 )
 
 var players playersListData
+var pLock sync.Mutex
 
 type playersListData struct {
 	dirty bool
@@ -25,18 +27,20 @@ type playerData struct {
 func playersAutosave() {
 	for ServerRunning {
 
+		pLock.Lock()
 		if players.dirty {
 			players.dirty = false
 			writePlayers()
-		} else {
-			//No write to do
 		}
-
+		pLock.Unlock()
 		time.Sleep(time.Second * 30)
 	}
 }
 
 func writePlayers() {
+
+	pLock.Lock()
+	defer pLock.Unlock()
 
 	qlog("Saving players...")
 	startTime := time.Now()
@@ -80,6 +84,9 @@ func writePlayers() {
 
 // Load player scores
 func readPlayers() {
+
+	pLock.Lock()
+	defer pLock.Unlock()
 
 	qlog("Reading players.")
 

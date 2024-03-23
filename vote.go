@@ -94,11 +94,17 @@ func processVotes() {
 
 func setUserScore(id int64, score int) {
 
+	pLock.Lock()
+	defer pLock.Unlock()
+
 	players.idmap[id] = &playerData{Points: score}
 	players.dirty = true
 }
 
 func getUserScore(id int64) (score int, found bool) {
+
+	pLock.Lock()
+	defer pLock.Unlock()
 
 	if players.idmap[id] != nil {
 		return players.idmap[id].Points, true
