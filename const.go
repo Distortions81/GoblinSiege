@@ -3,6 +3,7 @@ package main
 import "time"
 
 const (
+	version             = "0.0.1"
 	defaultWindowWidth  = 1280
 	defaultWindowHeight = 720
 	deathDelay          = time.Millisecond * 300
