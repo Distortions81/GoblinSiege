@@ -91,7 +91,12 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 
 	if *debugMode {
-		buf := fmt.Sprintf("%2.2f fps, %v arrows, %v towers, %v enemy, v%v", version, ebiten.ActualFPS(), len(board.arrowsShot), len(board.towerMap), len(board.goblinMap))
+		buf := fmt.Sprintf("%2.2f fps, %v arrows, %v towers, %v enemy, v%v",
+			ebiten.ActualFPS(),
+			len(board.arrowsShot),
+			len(board.towerMap),
+			len(board.goblinMap),
+			version)
 		text.Draw(screen, buf, monoFont, 10, 24, ColorBlack)
 	}
 }
