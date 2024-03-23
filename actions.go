@@ -12,14 +12,14 @@ func addTower() {
 		return
 	}
 
-	//Increment build step
-	for _, item := range board.playMap {
+	//Tower constuction progresss
+	for _, item := range board.towerMap {
 		if item.building < 2 {
 			item.building++
 		}
 	}
 
-	//Get votes, or choose random point if no votes
+	//Get votes, or choose a point if no votes
 	if votes.VoteCount > 0 &&
 		votes.Result.X > 0 &&
 		votes.Result.Y > 0 &&
@@ -27,8 +27,8 @@ func addTower() {
 		votes.Result.Y <= boardSizeY {
 
 		tpos := votes.Result
-		if board.enemyMap[tpos] == nil && board.playMap[tpos] == nil {
-			board.playMap[tpos] = &objectData{
+		if board.goblinMap[tpos] == nil && board.towerMap[tpos] == nil {
+			board.towerMap[tpos] = &objectData{
 				pos:          tpos,
 				sheetP:       &obj_tower1,
 				health:       obj_tower1.health,
@@ -38,16 +38,16 @@ func addTower() {
 		} else {
 			log.Println("COLLISION!")
 		}
-	} else {
-		var foundSmart bool
+	} else { //No votes
 
+		var foundSmart bool
 		if *smartMove && board.moveNum != 0 {
 			for x := 0; x < boardSizeX+enemyBoardX; x++ {
 				if foundSmart {
 					break
 				}
 				for y := 0; y < boardSizeY; y++ {
-					enemy := board.enemyMap[xyi{X: x, Y: y}]
+					enemy := board.goblinMap[xyi{X: x, Y: y}]
 					if enemy == nil {
 						continue
 					}
@@ -56,7 +56,7 @@ func addTower() {
 					if x-5 > 0 && x <= boardSizeX {
 						var found bool
 						for xx := 0; xx < boardSizeX+enemyBoardX; xx++ {
-							checkT := board.playMap[xyi{X: xx, Y: y}]
+							checkT := board.towerMap[xyi{X: xx, Y: y}]
 							if checkT != nil && !checkT.dead {
 								found = true
 								break
@@ -70,10 +70,10 @@ func addTower() {
 
 					}
 
-					tower := board.playMap[tpos]
-					checkForEnemy := board.enemyMap[tpos]
+					tower := board.towerMap[tpos]
+					checkForEnemy := board.goblinMap[tpos]
 					if tower == nil && checkForEnemy == nil {
-						board.playMap[tpos] = &objectData{
+						board.towerMap[tpos] = &objectData{
 							pos:          tpos,
 							sheetP:       &obj_tower1,
 							health:       obj_tower1.health,
@@ -86,11 +86,12 @@ func addTower() {
 				}
 			}
 		}
+		//If smartMove isnt' enabled, or fails to find a point choose random
 		if !*smartMove || !foundSmart {
 			log.Println("Not enough votes, picking random.")
 			tpos := xyi{X: rand.Intn(boardSizeX-1) + 1, Y: rand.Intn(boardSizeY-1) + 1}
-			if board.enemyMap[tpos] == nil && board.playMap[tpos] == nil {
-				board.playMap[tpos] = &objectData{
+			if board.goblinMap[tpos] == nil && board.towerMap[tpos] == nil {
+				board.towerMap[tpos] = &objectData{
 					pos:          tpos,
 					sheetP:       &obj_tower1,
 					health:       obj_tower1.health,
@@ -106,63 +107,70 @@ func addTower() {
 func towerShootArrow() {
 	curTime := time.Now()
 
-	for _, item := range board.playMap {
+	//Cycle list of towers
+	for _, tower := range board.towerMap {
 		//If tower is dead or not fully built, skip.
-		if item.dead || item.building < 2 || item.worldObjType != OTYPE_TOWER {
+		if tower.dead || tower.building < 2 || tower.worldObjType != OTYPE_TOWER {
 			continue
 		}
 
 		//Shoot from tower top
-		towerPos := item.pos
+		towerPos := tower.pos
 		towerPos.Y -= 1
 
-		for _, enemy := range board.enemyMap {
+		//Look for targets
+		for _, enemy := range board.goblinMap {
 			if enemy.dead {
 				continue
 			}
 
-			//If enemy within range
-			if Distance(item.pos, enemy.pos) < 6 {
-				go func() {
-					time.Sleep(time.Millisecond * time.Duration(rand.Intn(200)))
-					playVariated(SND_ARROW_SHOOT)
-				}()
+			if Distance(tower.pos, enemy.pos) >= 6 {
+				continue
+			}
 
-				if rand.Intn(2) != 0 {
-					arrow := arrowData{tower: towerPos, target: enemy.pos, missed: true, shot: curTime}
-					board.arrowsShot = append(board.arrowsShot, arrow)
-					break
-				}
-				arrow := arrowData{tower: towerPos, target: enemy.pos, missed: false, shot: curTime}
+			go func() {
+				time.Sleep(time.Millisecond * time.Duration(rand.Intn(200)))
+				playVariated(SND_ARROW_SHOOT)
+			}()
+
+			//50-50 hit or miss
+			if rand.Intn(2) != 0 {
+				//Missed
+				arrow := arrowData{tower: towerPos, target: enemy.pos, missed: true, shot: curTime}
 				board.arrowsShot = append(board.arrowsShot, arrow)
-
-				dmgAmt := 5 + rand.Intn(15)
-				enemy.health -= dmgAmt
-
-				if enemy.health <= 0 {
-					board.enemyMap[enemy.pos].dead = true
-					board.enemyMap[enemy.pos].diedAt = time.Now()
-					go func() {
-						time.Sleep(deathDelay + (time.Millisecond * time.Duration(rand.Intn(200))))
-						playVariated(SND_GOBLIN_DIE)
-					}()
-
-					//For tweening
-					board.enemyMap[enemy.pos].prevPos = board.enemyMap[enemy.pos].pos
-				}
 				break
 			}
 
+			arrow := arrowData{tower: towerPos, target: enemy.pos, missed: false, shot: curTime}
+			board.arrowsShot = append(board.arrowsShot, arrow)
+
+			//RNG damage
+			dmgAmt := 5 + rand.Intn(15)
+			enemy.health -= dmgAmt
+
+			if enemy.health <= 0 {
+				enemy.dead = true
+				enemy.diedAt = time.Now()
+
+				go func() {
+					time.Sleep(deathDelay + (time.Millisecond * time.Duration(rand.Intn(200))))
+					playVariated(SND_GOBLIN_DIE)
+				}()
+
+				//For tweening
+				enemy.prevPos = enemy.pos
+			}
+			break
 		}
 	}
 }
 
 func spawnGoblins() {
-	//Spawn goblins
+	//Every other move
 	if board.moveNum%2 == 0 {
 		rpos := xyi{X: boardSizeX + enemyBoardX + 1, Y: 1 + rand.Intn(boardSizeY-1)}
-		if board.enemyMap[rpos] == nil {
-			board.enemyMap[rpos] = &objectData{
+		if board.goblinMap[rpos] == nil {
+			board.goblinMap[rpos] = &objectData{
 				pos:       rpos,
 				sheetP:    &obj_goblinBarb,
 				health:    obj_goblinBarb.health,
@@ -174,33 +182,28 @@ func spawnGoblins() {
 
 func goblinAttack() {
 
-	var newitems []*objectData
-	//Detect defeat, defeat, do damage to towers, remove dead towers
-	for _, item := range board.enemyMap {
-		if item.dead {
+	var moveList []*objectData
+	for _, goblin := range board.goblinMap {
+		if goblin.dead {
 			continue
 		}
 
-		//Detect game over
-		oldItem := item
-
 		//Setup next enemy position
-		nextPos := item.pos
-		oldItem.prevPos = oldItem.pos
+		nextPos := goblin.pos
 		nextPos.X -= 1
 
 		//Check towers and enemy positions before moving
-		tower := board.playMap[nextPos]
-		self := board.enemyMap[nextPos]
+		tower := board.towerMap[nextPos]
+		self := board.goblinMap[nextPos]
 		if self != nil && !self.dead {
 			continue
 		}
 
 		//If a tower is in our way, do damage
-		item.attacking = false
+		goblin.attacking = false
 		if tower != nil && !tower.dead && tower.building >= 2 {
 			tower.health -= 10 + rand.Intn(10)
-			item.attacking = true
+			goblin.attacking = true
 			tower.lastAttacked = time.Now()
 
 			go func() {
@@ -218,18 +221,21 @@ func goblinAttack() {
 					playSound(SND_TENSION)
 				}
 			}
+			//Because we aren't moving forward, set prevpos to pos so we don't teleport back and re-tween
+			goblin.prevPos = goblin.pos
 			continue
 		}
 
 		//Delete enemy, add to list
-		delete(board.enemyMap, item.pos)
-		oldItem.pos = nextPos
-		newitems = append(newitems, oldItem)
+		goblin.prevPos = goblin.pos
+		goblin.pos = nextPos
+		moveList = append(moveList, goblin)
+		delete(board.goblinMap, goblin.prevPos)
 	}
 
 	//Add enemy back to new position
-	for i, item := range newitems {
-		board.enemyMap[item.pos] = newitems[i]
+	for i, item := range moveList {
+		board.goblinMap[item.pos] = moveList[i]
 		if item.pos.X < -2 {
 			board.gameover = GAME_DEFEAT
 			playSound(SND_GAMEOVER)

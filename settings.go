@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"sync"
 )
 
 var userSettings settingsData
+var settingsLock sync.Mutex
 
 type settingsData struct {
 	UserName  string
@@ -15,6 +17,9 @@ type settingsData struct {
 }
 
 func readSettings() {
+
+	settingsLock.Lock()
+	defer settingsLock.Unlock()
 
 	_, err := os.Stat(authFile)
 	notfound := os.IsNotExist(err)
@@ -51,6 +56,9 @@ func readSettings() {
 }
 
 func writeSettings() {
+
+	settingsLock.Lock()
+	defer settingsLock.Unlock()
 
 	var err error
 	outbuf, err := json.MarshalIndent(userSettings, "", "    ")

@@ -3,7 +3,6 @@ package main
 import (
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/gempir/go-twitch-irc/v4"
@@ -40,7 +39,6 @@ type userMsgDictData struct {
 	VoteState VOTE_STATE
 	StartTime time.Time
 	CpuTime   time.Time
-	Lock      sync.Mutex
 	RoundTime time.Time
 	Result    xyi
 }
@@ -69,20 +67,16 @@ func handleVoteMsg(msg twitch.PrivateMessage, command string) {
 		}
 
 		userid := strToID(msg.User.ID)
-		votes.Lock.Lock()
 		if votes.Users[userid] == nil {
 			votes.VoteCount++
 		}
 		votes.Users[userid] = &userMsgData{sender: msg.User.DisplayName, pos: xyi{X: int(x), Y: int(y)}, time: time.Now()}
-
-		votes.Lock.Unlock()
 
 	}
 
 }
 
 // Currently averages votes
-// TODO: add option to use most popular coord
 func processVotes() {
 
 	var tX, tY, count uint64
@@ -100,8 +94,8 @@ func processVotes() {
 
 func setUserScore(id int64, score int) {
 
-	players.lock.Lock()
-	defer players.lock.Unlock()
+	pLock.Lock()
+	defer pLock.Unlock()
 
 	players.idmap[id] = &playerData{Points: score}
 	players.dirty = true
@@ -109,8 +103,8 @@ func setUserScore(id int64, score int) {
 
 func getUserScore(id int64) (score int, found bool) {
 
-	players.lock.Lock()
-	defer players.lock.Unlock()
+	pLock.Lock()
+	defer pLock.Unlock()
 
 	if players.idmap[id] != nil {
 		return players.idmap[id].Points, true

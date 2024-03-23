@@ -1,12 +1,16 @@
 package main
 
 import (
+	"sync"
 	"time"
 )
 
+var gameLock sync.Mutex
+
 func handleMoves() {
 	for ServerRunning {
-		votes.Lock.Lock()
+
+		gameLock.Lock()
 
 		//Fast mode for testing quickly, shorten rounds and skip some to get to the action
 		if *fastMode {
@@ -53,7 +57,6 @@ func handleMoves() {
 				startGame()
 			}
 		}
-		votes.Lock.Unlock()
 
 		//Background wind sound loop
 		if !sounds[SND_WIND].player.IsPlaying() {
@@ -62,12 +65,13 @@ func handleMoves() {
 			sounds[SND_WIND].player.Play()
 		}
 
+		gameLock.Unlock()
+
 		time.Sleep(time.Millisecond * 10)
 	}
 }
 
 func cpuTurn() {
-	board.lock.Lock()
 
 	board.moveNum++
 
@@ -81,6 +85,4 @@ func cpuTurn() {
 	towerShootArrow()
 	spawnGoblins()
 	goblinAttack()
-
-	board.lock.Unlock()
 }

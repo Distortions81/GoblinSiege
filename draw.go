@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"image/color"
+	"sync/atomic"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -10,14 +11,17 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
-var frameCount uint64
-var aniCount uint64
-var freezeFrame *ebiten.Image
-var useFreeze bool
+var (
+	//Doesn't really need to be atomic, but this keeps it our of the -race logs
+	aniCount    atomic.Uint64
+	freezeFrame *ebiten.Image
+	useFreeze   bool
+)
 
 func (g *Game) Draw(screen *ebiten.Image) {
 
-	frameCount++
+	gameLock.Lock()
+	defer gameLock.Unlock()
 
 	// If there isn't a game running, don't render game board
 	// Render to an image and fade out at game end
@@ -38,7 +42,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		}
 
 		//Handle game ending conditions
-		//TODO: End game credits and countdown timer
 		if board.gameover == GAME_DEFEAT {
 			vector.DrawFilledRect(screen, 0, float32(defaultWindowHeight)-40, float32(defaultWindowWidth), 100, ColorSmoke, true)
 			buf := fmt.Sprintf("GAME OVER: The audience was defeated! Enemy won on move %v!", board.moveNum)
@@ -88,7 +91,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 
 	if *debugMode {
-		buf := fmt.Sprintf("%v arrows, %v towers, %v enemy", len(board.arrowsShot), len(board.playMap), len(board.enemyMap))
+		buf := fmt.Sprintf("%2.2f fps, %v arrows, %v towers, %v enemy", ebiten.ActualFPS(), len(board.arrowsShot), len(board.towerMap), len(board.goblinMap))
 		text.Draw(screen, buf, monoFont, 10, 24, ColorBlack)
 	}
 }

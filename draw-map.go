@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"image/color"
-	"sync"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -28,12 +27,12 @@ type objectData struct {
 	dead   bool
 	diedAt time.Time
 
-	aniOffset uint64 //Animation offset so animations are synced
+	aniOffset uint64
 
-	attacking    bool //Goblin is attacking
+	attacking    bool
 	lastAttacked time.Time
-	building     int //Tower building step
-	upgrade      int //TODO tower upgrades
+	building     int
+	upgrade      int
 
 	//Item spritesheet data
 	sheetP *spriteSheetData
@@ -57,10 +56,9 @@ type arrowData struct {
 }
 
 type gameBoardData struct {
-	moveNum  int
-	playMap  map[xyi]*objectData
-	enemyMap map[xyi]*objectData
-	lock     sync.Mutex
+	moveNum   int
+	towerMap  map[xyi]*objectData
+	goblinMap map[xyi]*objectData
 
 	arrowsShot  []arrowData
 	wallDmgTime time.Time
@@ -116,13 +114,9 @@ func drawGameBoard(screen *ebiten.Image) {
 		screen.DrawImage(board.bgCache, nil)
 	}
 
-	//Draw board
-	board.lock.Lock()
-	defer board.lock.Unlock()
-
 	//Draw wall covering
 	for y := 0; y <= boardSizeY; y++ {
-		item := board.playMap[xyi{X: -1, Y: y}]
+		item := board.towerMap[xyi{X: -1, Y: y}]
 		if item == nil {
 			continue
 		}
@@ -197,7 +191,7 @@ func drawGameBoard(screen *ebiten.Image) {
 	}
 
 	//Draw goblin
-	for _, item := range board.enemyMap {
+	for _, item := range board.goblinMap {
 
 		//Tween animation
 		since := startTime.Sub(votes.CpuTime)
@@ -263,7 +257,7 @@ func drawGameBoard(screen *ebiten.Image) {
 	//Draw towers
 	for x := -1; x <= boardSizeX; x++ {
 		for y := 0; y <= boardSizeY; y++ {
-			item := board.playMap[xyi{X: x, Y: y}]
+			item := board.towerMap[xyi{X: x, Y: y}]
 			if item == nil {
 				continue
 			}
@@ -277,13 +271,13 @@ func drawGameBoard(screen *ebiten.Image) {
 				op.GeoM.Translate(float64(((item.pos.X+offX)*mag)-item.sheetP.frameSize.X), float64(((item.pos.Y+offY)*mag)-item.sheetP.frameSize.Y))
 				if item.dead {
 					//Broken tower
-					screen.DrawImage(item.sheetP.anims[ANI_FADE].img[(aniCount+item.aniOffset)%3], op)
+					screen.DrawImage(item.sheetP.anims[ANI_FADE].img[(aniCount.Load()+item.aniOffset)%3], op)
 				} else {
 					//Draw tower being built, otherwise animate fully built one
 					if item.building < 2 {
 						screen.DrawImage(item.sheetP.anims[ANI_RUN].img[item.building%3], op)
 					} else {
-						screen.DrawImage(item.sheetP.anims[ANI_IDLE].img[(aniCount+item.aniOffset)%3], op)
+						screen.DrawImage(item.sheetP.anims[ANI_IDLE].img[(aniCount.Load()+item.aniOffset)%3], op)
 					}
 				}
 			}

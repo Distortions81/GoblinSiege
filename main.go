@@ -24,53 +24,42 @@ func main() {
 	debugMode = flag.Bool("debug", false, "print debug info")
 	flag.Parse()
 
-	board.playMap = make(map[xyi]*objectData)
-	board.enemyMap = make(map[xyi]*objectData)
+	board.towerMap = make(map[xyi]*objectData)
+	board.goblinMap = make(map[xyi]*objectData)
 	votes.Users = make(map[int64]*userMsgData)
 
 	freezeFrame = ebiten.NewImage(defaultWindowWidth, defaultWindowHeight)
 
-	//Load fonts, sprites and sounds
-	loadEmbed()
+	loadAssets()
 
-	//Used for action animations
 	go aniTimer()
 
-	//Read player scores
 	readPlayers()
 
-	//Load settings
 	readSettings()
 
-	//Connect to twitch
 	if !*skipTwitch {
 		connectTwitch()
 	}
 
-	//Start autosave loop
 	go playersAutosave()
 
-	//Voting loop
 	go handleMoves()
 
-	//Start the game mode
+	gameLock.Lock()
 	startGame()
+	gameLock.Unlock()
 
-	//Start ebiten
-	startEbiten()
+	startEbiten() //Blocks until exit
 
-	//Shutdown server and save
 	ServerRunning = false
-
-	players.lock.Lock()
 	writePlayers()
 }
 
 // Used for action animations
-// TODO move this to the ebiten update handler
 func aniTimer() {
 	for {
-		aniCount++
+		aniCount.Add(1)
 		time.Sleep(time.Second / 3)
 	}
 }

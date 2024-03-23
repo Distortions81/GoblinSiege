@@ -19,7 +19,7 @@ var (
 	audioCon *audio.Context
 )
 
-func loadEmbed() {
+func loadAssets() {
 	var err error
 	bgimg, _, err = ebitenutil.NewImageFromFile("data/maps/main.png")
 	if err != nil {

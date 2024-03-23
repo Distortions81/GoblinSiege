@@ -12,9 +12,9 @@ import (
 )
 
 var players playersListData
+var pLock sync.Mutex
 
 type playersListData struct {
-	lock  sync.Mutex
 	dirty bool
 	idmap map[int64]*playerData
 }
@@ -27,21 +27,20 @@ type playerData struct {
 func playersAutosave() {
 	for ServerRunning {
 
-		players.lock.Lock()
+		pLock.Lock()
 		if players.dirty {
 			players.dirty = false
-			writePlayers() //This unlocks after serialize
-		} else {
-			//No write to do, unlock
-			players.lock.Unlock()
+			writePlayers()
 		}
-
+		pLock.Unlock()
 		time.Sleep(time.Second * 30)
 	}
 }
 
-// This unlocks playersLock after serialize
 func writePlayers() {
+
+	pLock.Lock()
+	defer pLock.Unlock()
 
 	qlog("Saving players...")
 	startTime := time.Now()
@@ -57,7 +56,6 @@ func writePlayers() {
 		return
 	}
 
-	players.lock.Unlock()
 	qlog("serialize players took: %v", durafmt.Parse(time.Since(startTime)).LimitFirstN(2))
 
 	_, err := os.Create(tempPath)
@@ -87,6 +85,9 @@ func writePlayers() {
 // Load player scores
 func readPlayers() {
 
+	pLock.Lock()
+	defer pLock.Unlock()
+
 	qlog("Reading players.")
 
 	_, err := os.Stat(playersFile)
@@ -96,10 +97,6 @@ func readPlayers() {
 		file, err := os.ReadFile(playersFile)
 
 		if file != nil && err == nil {
-
-			//Only lock after file is read
-			players.lock.Lock()
-			defer players.lock.Unlock()
 
 			err := json.Unmarshal([]byte(file), &players.idmap)
 			if len(players.idmap) == 0 {
