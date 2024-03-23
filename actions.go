@@ -108,14 +108,14 @@ func towerShootArrow() {
 	curTime := time.Now()
 
 	//Cycle list of towers
-	for _, item := range board.towerMap {
+	for _, tower := range board.towerMap {
 		//If tower is dead or not fully built, skip.
-		if item.dead || item.building < 2 || item.worldObjType != OTYPE_TOWER {
+		if tower.dead || tower.building < 2 || tower.worldObjType != OTYPE_TOWER {
 			continue
 		}
 
 		//Shoot from tower top
-		towerPos := item.pos
+		towerPos := tower.pos
 		towerPos.Y -= 1
 
 		//Look for targets
@@ -124,7 +124,7 @@ func towerShootArrow() {
 				continue
 			}
 
-			if Distance(item.pos, enemy.pos) >= 6 {
+			if Distance(tower.pos, enemy.pos) >= 6 {
 				continue
 			}
 
@@ -222,14 +222,15 @@ func goblinAttack() {
 					playSound(SND_TENSION)
 				}
 			}
+			goblin.prevPos = goblin.pos
 			continue
 		}
 
-		//Delete enemy, reinsert at new pos
-		delete(board.goblinMap, goblin.pos)
+		//Delete enemy, add to list
 		goblin.prevPos = goblin.pos
 		goblin.pos = nextPos
 		moveList = append(moveList, goblin)
+		delete(board.goblinMap, goblin.prevPos)
 	}
 
 	//Add enemy back to new position
