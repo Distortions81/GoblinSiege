@@ -20,8 +20,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	if gameMode == MODE_SPLASH {
 		screen.DrawImage(splash, nil)
-		for _, button := range splashButtons {
-			vector.DrawFilledRect(screen, button.pos.X, button.pos.Y, button.size.X, button.size.Y, ColorRedC, false)
+		if *debugMode {
+			for _, button := range splashButtons {
+				vector.DrawFilledRect(screen, button.pos.X, button.pos.Y, button.size.X, button.size.Y, ColorRedC, false)
+			}
 		}
 	} else if gameMode == MODE_PLAY_TWITCH ||
 		gameMode == MODE_PLAY_SINGLE {
