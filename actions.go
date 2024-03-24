@@ -194,8 +194,10 @@ func goblinAttack() {
 
 		//Check towers and enemy positions before moving
 		tower := board.towerMap[nextPos]
-		self := board.goblinMap[nextPos]
-		if self != nil && !self.dead {
+		enemy := board.goblinMap[nextPos]
+		if enemy != nil && !enemy.dead {
+			//Because we aren't moving forward, set prevpos to pos so we don't teleport back and re-tween
+			goblin.prevPos = goblin.pos
 			continue
 		}
 
