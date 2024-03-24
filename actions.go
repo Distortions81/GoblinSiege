@@ -156,7 +156,7 @@ func towerShootArrow() {
 		//Shoot from tower top
 		towerPos := tower.pos
 		towerPos.Y -= 1
-		for count := 0; count < tower.upgrade; count++ {
+		for count := 0; count < tower.upgrade+1; count++ {
 
 			//Look for targets
 			for _, enemy := range board.goblinMap {
