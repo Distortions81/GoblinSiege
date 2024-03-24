@@ -27,7 +27,7 @@ func (g *Game) Update() error {
 					my <= button.bottomRight.Y {
 
 					button.action()
-					log.Println("meep meep click go")
+					log.Printf("Click: %v", button.name)
 					break
 				}
 			}

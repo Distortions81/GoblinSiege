@@ -47,7 +47,10 @@ func init() {
 			X: float32(button.topLeft.X) + float32(button.size.X/2),
 			Y: float32(button.bottomRight.Y) - float32(button.size.Y/2),
 		}
-		buf := fmt.Sprintf("%v: size: %v,%v pos: %v,%v", button.name, button.size.X, button.size.Y, button.pos.X, button.pos.Y)
+		buf := fmt.Sprintf("%v: size: %v,%v pos: %v,%v",
+			splashButtons[b].name,
+			splashButtons[b].size.X, splashButtons[b].size.Y,
+			splashButtons[b].pos.X, splashButtons[b].pos.Y)
 		log.Println(buf)
 	}
 }
