@@ -73,6 +73,7 @@ type gameBoardData struct {
 
 	deadCache *ebiten.Image
 	fFrame    *ebiten.Image
+	useFreeze bool
 }
 
 func drawGameBoard(screen *ebiten.Image) {
@@ -156,21 +157,25 @@ func drawGameBoard(screen *ebiten.Image) {
 		op.GeoM.Translate(float64(-obj_arrow.frameSize.X)/2, float64(-obj_arrow.frameSize.Y)/2)
 		op.GeoM.Rotate(angle)
 		op.GeoM.Translate(float64(arrow.target.X+arrow.fuzz.X), float64(arrow.target.Y+arrow.fuzz.Y))
-		screen.DrawImage(obj_arrow.img, op)
+		board.deadCache.DrawImage(obj_arrow.img, op)
 	}
+	board.deadArrows = []arrowData{}
+
 	//Draw DEAD goblin
 	for _, item := range board.deadGoblins {
-
 		op := &ebiten.DrawImageOptions{}
 		//Horizontal mirroring for sprites that are marked mirror
 		op.GeoM.Scale(-1, 1)
 		op.GeoM.Translate(((float64(item.pos.X) + float64(offX)) * float64(mag)),
 			((float64(item.pos.Y)+float64(offY))*float64(mag))-float64(obj_goblinBarb.frameSize.Y))
 
-		if item.dead && time.Since(item.diedAt) > deathDelay {
-			screen.DrawImage(item.sheetP.anims[ANI_DIE].img[2], op)
-		}
+		board.deadCache.DrawImage(item.sheetP.anims[ANI_DIE].img[2], op)
 	}
+	board.deadGoblins = []*objectData{}
+
+	op := &ebiten.DrawImageOptions{}
+	//op.ColorScale.Scale(1, 0, 0, 1)
+	screen.DrawImage(board.deadCache, op)
 
 	//Draw goblin
 	for _, item := range board.goblinMap {

@@ -29,6 +29,9 @@ func main() {
 	votes.Users = make(map[int64]*userMsgData)
 
 	board.fFrame = ebiten.NewImage(defaultWindowWidth, defaultWindowHeight)
+	board.checkerCache = ebiten.NewImage(defaultWindowWidth, defaultWindowHeight)
+	board.deadCache = ebiten.NewImage(defaultWindowWidth, defaultWindowHeight)
+	board.checkerDirty = true
 
 	loadAssets()
 

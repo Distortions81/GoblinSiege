@@ -16,9 +16,6 @@ func startEbiten() {
 	ebiten.SetWindowSize(defaultWindowWidth, defaultWindowHeight)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetWindowTitle("goTwitchGame")
-	board.checkerCache = ebiten.NewImage(defaultWindowWidth, defaultWindowHeight)
-	board.deadCache = ebiten.NewImage(defaultWindowWidth, defaultWindowHeight)
-	board.checkerDirty = true
 
 	/* Start ebiten */
 	if err := ebiten.RunGameWithOptions(newGame(), nil); err != nil {

@@ -13,8 +13,7 @@ import (
 
 var (
 	//Doesn't really need to be atomic, but this keeps it our of the -race logs
-	aniCount  atomic.Uint64
-	useFreeze bool
+	aniCount atomic.Uint64
 )
 
 func (g *Game) Draw(screen *ebiten.Image) {
@@ -25,10 +24,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// If there isn't a game running, don't render game board
 	// Render to an image and fade out at game end
 	if board.gameover != GAME_RUNNING {
-		if !useFreeze {
+		if !board.useFreeze {
 			//Draw actual game board
 			drawGameBoard(board.fFrame)
-			useFreeze = true
+			board.useFreeze = true
 		}
 		screen.DrawImage(bgimg, nil)
 
