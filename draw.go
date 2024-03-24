@@ -20,6 +20,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	if gameState == GAME_SPLASH {
 		screen.DrawImage(splash, nil)
+		for _, button := range splashButtons {
+			vector.DrawFilledRect(screen, button.pos.X, button.pos.Y, button.size.X, button.size.Y, ColorRed, false)
+		}
 	} else if gameState == GAME_PLAY_TWITCH ||
 		gameState == GAME_PLAY_SINGLE {
 

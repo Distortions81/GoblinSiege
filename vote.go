@@ -24,6 +24,14 @@ type xyi struct {
 	X, Y int
 }
 
+type xyf32 struct {
+	X, Y float32
+}
+
+type xyf64 struct {
+	X, Y float64
+}
+
 type userMsgData struct {
 	sender string
 	pos    xyi
