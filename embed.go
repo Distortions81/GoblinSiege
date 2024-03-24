@@ -16,6 +16,7 @@ var (
 	//go:embed data
 	f        embed.FS
 	bgimg    *ebiten.Image
+	splash   *ebiten.Image
 	audioCon *audio.Context
 )
 
@@ -59,6 +60,11 @@ func getUpSheet(item *objectData) *spriteSheetData {
 func loadAssets() {
 	var err error
 	bgimg, _, err = ebitenutil.NewImageFromFile("data/maps/main.png")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	splash, _, err = ebitenutil.NewImageFromFile("data/sprites/splash.png")
 	if err != nil {
 		log.Fatal(err)
 	}

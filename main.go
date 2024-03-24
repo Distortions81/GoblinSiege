@@ -7,8 +7,17 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+const (
+	GAME_SPLASH = iota
+	GAME_PLAY_TWITCH
+	GAME_PLAY_SINGLE
+	GAME_SETTINGS
+	GAME_MAX
+)
+
 var (
-	ServerRunning  bool          = true
+	ServerRunning  bool = true
+	gameState      int
 	playerMoveTime time.Duration = time.Second * 10
 	cpuMoveTime    time.Duration = time.Second * 2
 	maxMoves                     = 100
@@ -48,10 +57,6 @@ func main() {
 	go playersAutosave()
 
 	go handleMoves()
-
-	gameLock.Lock()
-	startGame()
-	gameLock.Unlock()
 
 	startEbiten() //Blocks until exit
 
