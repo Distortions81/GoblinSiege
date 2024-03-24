@@ -14,6 +14,7 @@ const (
 
 	size         = 32
 	mag          = size
+	hMag         = mag / 2
 	boardSizeX   = 20
 	boardSizeY   = 20
 	enemyBoardX  = 15
@@ -28,7 +29,7 @@ const (
 	arrowFadeSec    = 120
 	gameOverFadeSec = 3
 	bodyFadeSec     = 120
-	arrowSpeed      = 1
+	arrowSpeed      = 420
 	flashSpeed      = time.Millisecond * 125
 	arrowHFuzz      = 16
 	HalfArrowHFuzz  = arrowHFuzz / 2

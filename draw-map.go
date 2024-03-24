@@ -175,9 +175,9 @@ func drawGameBoard(screen *ebiten.Image) {
 
 		//Draw arrow
 		op := &ebiten.DrawImageOptions{}
+		op.GeoM.Translate(float64(-obj_arrow.frameSize.X)/2, float64(-obj_arrow.frameSize.Y)/2)
 		op.GeoM.Rotate(angle)
-		op.GeoM.Translate(((sX+float64(offX))*float64(mag))-float64(obj_arrow.frameSize.X)-16,
-			((sY+float64(offY))*float64(mag))-float64(obj_arrow.frameSize.Y)-16)
+		op.GeoM.Translate(sX, sY)
 
 		var pa float32
 		shotAgo := time.Since(arrow.shot)
@@ -282,7 +282,8 @@ func drawGameBoard(screen *ebiten.Image) {
 				if time.Since(item.lastAttacked) < flashSpeed {
 					op.ColorScale.Scale(2, 0.5, 0.5, 1)
 				}
-				op.GeoM.Translate(float64(((item.pos.X+offX)*mag)-item.sheetP.frameSize.X), float64(((item.pos.Y+offY)*mag)-item.sheetP.frameSize.Y))
+				op.GeoM.Translate(float64(((item.pos.X+offX)*mag)-item.sheetP.frameSize.X),
+					float64(((item.pos.Y+offY)*mag)-item.sheetP.frameSize.Y))
 				if item.dead {
 					//Broken tower
 					screen.DrawImage(getUpSheet(item).anims[ANI_FADE].img[(ani+item.aniOffset)%3], op)
