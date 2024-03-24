@@ -44,6 +44,18 @@ func loadSheet(sheet *spriteSheetData) {
 	}
 }
 
+func getUpSheet(item *objectData) *spriteSheetData {
+	//If item is not upgraded, or upgrade not found return
+	//the item's standard sprite sheet
+	if item.upgrade == 0 ||
+		len(item.sheetP.upgrades) < (item.upgrade-1) {
+		return item.sheetP
+	} else {
+		//Otherwise return upgraded copy
+		return item.sheetP.upgrades[item.upgrade-1]
+	}
+}
+
 func loadAssets() {
 	var err error
 	bgimg, _, err = ebitenutil.NewImageFromFile("data/maps/main.png")

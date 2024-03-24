@@ -284,13 +284,13 @@ func drawGameBoard(screen *ebiten.Image) {
 				op.GeoM.Translate(float64(((item.pos.X+offX)*mag)-item.sheetP.frameSize.X), float64(((item.pos.Y+offY)*mag)-item.sheetP.frameSize.Y))
 				if item.dead {
 					//Broken tower
-					screen.DrawImage(item.sheetP.anims[ANI_FADE].img[(ani+item.aniOffset)%3], op)
+					screen.DrawImage(getUpSheet(item).anims[ANI_FADE].img[(ani+item.aniOffset)%3], op)
 				} else {
 					//Draw tower being built, otherwise animate fully built one
 					if item.building < 2 {
-						screen.DrawImage(item.sheetP.anims[ANI_RUN].img[item.building%3], op)
+						screen.DrawImage(getUpSheet(item).anims[ANI_RUN].img[item.building%3], op)
 					} else {
-						screen.DrawImage(item.sheetP.anims[ANI_IDLE].img[(ani+item.aniOffset)%3], op)
+						screen.DrawImage(getUpSheet(item).anims[ANI_IDLE].img[(ani+item.aniOffset)%3], op)
 					}
 				}
 			}
