@@ -50,7 +50,7 @@ const (
 type arrowData struct {
 	tower  xyi
 	target xyi
-	fuzz   int
+	fuzz   xyi
 
 	shot   time.Time
 	missed bool
@@ -156,8 +156,8 @@ func drawGameBoard(screen *ebiten.Image) {
 		}
 
 		//Tweened position
-		sX := (float64(arrow.tower.X) - ((float64(arrow.target.X) - float64(arrow.tower.X)) * normal))
-		sY := (float64(arrow.tower.Y) - ((float64(arrow.target.Y) - float64(arrow.tower.Y)) * normal))
+		sX := (float64(arrow.tower.X) - ((float64(arrow.target.X+arrow.fuzz.X) - float64(arrow.tower.X)) * normal))
+		sY := (float64(arrow.tower.Y) - ((float64(arrow.target.Y+arrow.fuzz.Y) - float64(arrow.tower.Y)) * normal))
 
 		//Hide arrows that didn't miss once at target
 		if sX == float64(arrow.target.X) && sY == float64(arrow.target.Y) {
@@ -170,7 +170,7 @@ func drawGameBoard(screen *ebiten.Image) {
 
 		//Tweening begin and ending points, convert to geom.Coord for the xy library
 		towerPos := geom.Coord{float64(arrow.tower.X), float64(arrow.tower.Y), 0}
-		targetPos := geom.Coord{float64(arrow.target.X), float64(arrow.target.Y), 0}
+		targetPos := geom.Coord{float64(arrow.target.X + arrow.fuzz.X), float64(arrow.target.Y + arrow.fuzz.Y), 0}
 		angle := xy.Angle(towerPos, targetPos)
 
 		//Draw arrow
