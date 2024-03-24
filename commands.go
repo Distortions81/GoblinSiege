@@ -79,11 +79,14 @@ func clearGameBoard() {
 
 	board.towerMap = make(map[xyi]*objectData)
 	board.goblinMap = make(map[xyi]*objectData)
+	board.deadGoblins = []*objectData{}
 	board.moveNum = 0
 	useFreeze = false
-	freezeFrame.Clear()
+	board.fFrame.Clear()
+	board.deadCache.Clear()
 
 	board.arrowsShot = make([]arrowData, 0)
+	board.deadArrows = make([]arrowData, 0)
 	board.wallDmgTime = time.Now()
 
 	for p := 0; p < boardSizeY; p++ {

@@ -57,16 +57,22 @@ type arrowData struct {
 }
 
 type gameBoardData struct {
-	moveNum   int
-	towerMap  map[xyi]*objectData
-	goblinMap map[xyi]*objectData
+	moveNum     int
+	towerMap    map[xyi]*objectData
+	goblinMap   map[xyi]*objectData
+	deadGoblins []*objectData
 
 	arrowsShot  []arrowData
+	deadArrows  []arrowData
 	wallDmgTime time.Time
 
 	gameover int
-	bgCache  *ebiten.Image
-	bgDirty  bool
+
+	checkerCache *ebiten.Image
+	checkerDirty bool
+
+	deadCache *ebiten.Image
+	fFrame    *ebiten.Image
 }
 
 func drawGameBoard(screen *ebiten.Image) {
@@ -74,47 +80,48 @@ func drawGameBoard(screen *ebiten.Image) {
 	ani := aniCount.Load()
 
 	screen.DrawImage(bgimg, nil)
+	startTime := time.Now()
 
 	//Draw checkerboard if dirty
-	if board.bgDirty {
-		board.bgCache.Clear()
+	if board.checkerDirty {
+		board.checkerCache.Clear()
 
 		for x := 0; x < boardSizeX; x++ {
 			for y := 0; y < boardSizeY; y++ {
 
 				if x >= boardSizeX {
 					if (x+y)%2 == 0 {
-						vector.DrawFilledRect(board.bgCache, float32(mag*x)+offPixX, float32(mag*y)+offPixY, size, size, ColorRedC, true)
+						vector.DrawFilledRect(board.checkerCache, float32(mag*x)+offPixX, float32(mag*y)+offPixY, size, size, ColorRedC, true)
 					}
 					continue
 				}
 
 				if (x+y)%2 == 0 {
-					vector.DrawFilledRect(board.bgCache, float32(mag*x)+offPixX, float32(mag*y)+offPixY, size, size, ColorGreenC, true)
+					vector.DrawFilledRect(board.checkerCache, float32(mag*x)+offPixX, float32(mag*y)+offPixY, size, size, ColorGreenC, true)
 				}
 
 				//Draw coords
 
 				if x == 0 {
 					buf := fmt.Sprintf("%2v", y+1)
-					text.Draw(board.bgCache, buf, monoFontSmall, offPixX-(mag/2), (mag*y)+offPixY+20, color.Black)
+					text.Draw(board.checkerCache, buf, monoFontSmall, offPixX-(mag/2), (mag*y)+offPixY+20, color.Black)
 				}
 				if y == 0 {
 					buf := fmt.Sprintf("%v", x+1)
-					text.Draw(board.bgCache, buf, monoFontSmall, (mag*x)+offPixX+8, (mag*y)+offPixY-2, color.Black)
+					text.Draw(board.checkerCache, buf, monoFontSmall, (mag*x)+offPixX+8, (mag*y)+offPixY-2, color.Black)
 				}
 
 				//XY Labels
-				text.Draw(board.bgCache, "X", monoFont, offPixX+(boardPixelsX/2), 20, color.Black)
-				text.Draw(board.bgCache, "Y", monoFont, offPixX-(mag), offPixY+(boardPixelsY/2), color.Black)
+				text.Draw(board.checkerCache, "X", monoFont, offPixX+(boardPixelsX/2), 20, color.Black)
+				text.Draw(board.checkerCache, "Y", monoFont, offPixX-(mag), offPixY+(boardPixelsY/2), color.Black)
 			}
 		}
 
-		board.bgDirty = false
+		board.checkerDirty = false
 	}
 	//Draw checkerboard cache if voting
 	if votes.VoteState == VOTE_PLAYERS {
-		screen.DrawImage(board.bgCache, nil)
+		screen.DrawImage(board.checkerCache, nil)
 	}
 
 	//Draw wall covering
@@ -136,50 +143,33 @@ func drawGameBoard(screen *ebiten.Image) {
 			screen.DrawImage(item.sheetP.img, op)
 		}
 	}
-	//Draw arrows
-	numArrows := len(board.arrowsShot) - 1
-	startTime := time.Now()
-	for x := numArrows; x >= 0; x-- {
-		arrow := board.arrowsShot[x]
 
-		//Tween animation, make sprite face direction of travel
-		since := startTime.Sub(arrow.shot)
-		distance := Distance(arrow.tower, arrow.target)
-		remaining := (distance * float64(cpuMoveTime.Nanoseconds()/arrowSpeed)) - float64(since.Nanoseconds())
-		normal := (float64(remaining)/(distance*float64(cpuMoveTime.Nanoseconds()/arrowSpeed)) - 1.0)
-
-		//Extrapolation limits
-		if normal < -1 {
-			normal = -1
-		} else if normal > 1 {
-			normal = 1
-		}
-
-		//Tweened position
-		sX := (float64(arrow.tower.X) - ((float64(arrow.target.X+arrow.fuzz.X) - float64(arrow.tower.X)) * normal))
-		sY := (float64(arrow.tower.Y) - ((float64(arrow.target.Y+arrow.fuzz.Y) - float64(arrow.tower.Y)) * normal))
-
-		//Hide arrows that didn't miss once at target
-		if sX == float64(arrow.target.X) && sY == float64(arrow.target.Y) {
-			if !arrow.missed {
-				//Delete it
-				board.arrowsShot = append(board.arrowsShot[:x], board.arrowsShot[x+1:]...)
-				continue
-			}
-		}
-
+	//Draw DEAD arrows
+	for _, arrow := range board.deadArrows {
 		//Tweening begin and ending points, convert to geom.Coord for the xy library
 		towerPos := geom.Coord{float64(arrow.tower.X), float64(arrow.tower.Y), 0}
 		targetPos := geom.Coord{float64(arrow.target.X + arrow.fuzz.X), float64(arrow.target.Y + arrow.fuzz.Y), 0}
 		angle := xy.Angle(towerPos, targetPos)
 
 		//Draw arrow
-		op := &ebiten.DrawImageOptions{}
+		op := &ebiten.DrawImageOptions{Filter: ebiten.FilterLinear}
 		op.GeoM.Translate(float64(-obj_arrow.frameSize.X)/2, float64(-obj_arrow.frameSize.Y)/2)
 		op.GeoM.Rotate(angle)
-		op.GeoM.Translate(sX, sY)
+		op.GeoM.Translate(float64(arrow.target.X+arrow.fuzz.X), float64(arrow.target.Y+arrow.fuzz.Y))
 		screen.DrawImage(obj_arrow.img, op)
+	}
+	//Draw DEAD goblin
+	for _, item := range board.deadGoblins {
 
+		op := &ebiten.DrawImageOptions{}
+		//Horizontal mirroring for sprites that are marked mirror
+		op.GeoM.Scale(-1, 1)
+		op.GeoM.Translate(((float64(item.pos.X) + float64(offX)) * float64(mag)),
+			((float64(item.pos.Y)+float64(offY))*float64(mag))-float64(obj_goblinBarb.frameSize.Y))
+
+		if item.dead && time.Since(item.diedAt) > deathDelay {
+			screen.DrawImage(item.sheetP.anims[ANI_DIE].img[2], op)
+		}
 	}
 
 	//Draw goblin
@@ -222,6 +212,8 @@ func drawGameBoard(screen *ebiten.Image) {
 			deadAni := 0
 			if time.Since(item.diedAt) > (deathDelay) {
 				deadAni = 1
+				board.deadGoblins = append(board.deadGoblins, item)
+				delete(board.goblinMap, item.pos)
 			}
 			screen.DrawImage(item.sheetP.anims[ANI_DIE].img[deadAni], op)
 
@@ -286,6 +278,52 @@ func drawGameBoard(screen *ebiten.Image) {
 				vector.DrawFilledRect(screen, float32(((item.pos.X+offX)*mag)-31), float32(((item.pos.Y+offY)*mag)-63)+1, (healthBar*float32(item.sheetP.frameSize.X) - 1), 2, healthColor(healthBar), false)
 			}
 		}
+	}
+
+	//Draw arrows
+	numArrows := len(board.arrowsShot) - 1
+	for x := numArrows; x >= 0; x-- {
+		arrow := board.arrowsShot[x]
+
+		//Tween animation, make sprite face direction of travel
+		since := startTime.Sub(arrow.shot)
+		distance := Distance(arrow.tower, arrow.target)
+		remaining := (distance * float64(cpuMoveTime.Nanoseconds()/arrowSpeed)) - float64(since.Nanoseconds())
+		normal := (float64(remaining)/(distance*float64(cpuMoveTime.Nanoseconds()/arrowSpeed)) - 1.0)
+
+		//Extrapolation limits
+		if normal < -1 {
+			normal = -1
+		} else if normal > 1 {
+			normal = 1
+		}
+
+		//Tweened position
+		sX := (float64(arrow.tower.X) - ((float64(arrow.target.X+arrow.fuzz.X) - float64(arrow.tower.X)) * normal))
+		sY := (float64(arrow.tower.Y) - ((float64(arrow.target.Y+arrow.fuzz.Y) - float64(arrow.tower.Y)) * normal))
+
+		//Hide arrows that didn't miss once at target
+		if sX == float64(arrow.target.X+arrow.fuzz.X) && sY == float64(arrow.target.Y+arrow.fuzz.Y) {
+			if arrow.missed {
+				board.deadArrows = append(board.deadArrows, arrow)
+			}
+			//Delete it
+			board.arrowsShot = append(board.arrowsShot[:x], board.arrowsShot[x+1:]...)
+			continue
+		}
+
+		//Tweening begin and ending points, convert to geom.Coord for the xy library
+		towerPos := geom.Coord{float64(arrow.tower.X), float64(arrow.tower.Y), 0}
+		targetPos := geom.Coord{float64(arrow.target.X + arrow.fuzz.X), float64(arrow.target.Y + arrow.fuzz.Y), 0}
+		angle := xy.Angle(towerPos, targetPos)
+
+		//Draw arrow
+		op := &ebiten.DrawImageOptions{Filter: ebiten.FilterLinear}
+		op.GeoM.Translate(float64(-obj_arrow.frameSize.X)/2, float64(-obj_arrow.frameSize.Y)/2)
+		op.GeoM.Rotate(angle)
+		op.GeoM.Translate(sX, sY)
+		screen.DrawImage(obj_arrow.img, op)
+
 	}
 
 	//Show the current move number in the corner

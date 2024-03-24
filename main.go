@@ -28,7 +28,7 @@ func main() {
 	board.goblinMap = make(map[xyi]*objectData)
 	votes.Users = make(map[int64]*userMsgData)
 
-	freezeFrame = ebiten.NewImage(defaultWindowWidth, defaultWindowHeight)
+	board.fFrame = ebiten.NewImage(defaultWindowWidth, defaultWindowHeight)
 
 	loadAssets()
 

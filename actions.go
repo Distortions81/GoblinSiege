@@ -174,7 +174,7 @@ func towerShootArrow() {
 				if rand.Intn(2) != 0 {
 					//Missed
 					arrow := arrowData{
-						tower:  xyi{X: ((tower.pos.X + offX - 1) * mag), Y: ((tower.pos.Y) * mag) + 12},
+						tower:  xyi{X: ((tower.pos.X + offX - 1) * mag) + 16, Y: ((tower.pos.Y - 1) * mag) + 8},
 						target: xyi{X: ((enemy.pos.X + offX - 1) * mag), Y: ((enemy.pos.Y) * mag) + 12},
 						missed: true, shot: curTime, fuzz: xyi{X: 8 - rand.Intn(16), Y: 8 - rand.Intn(16)}}
 					board.arrowsShot = append(board.arrowsShot, arrow)
@@ -182,7 +182,7 @@ func towerShootArrow() {
 				}
 
 				arrow := arrowData{
-					tower:  xyi{X: ((tower.pos.X + offX - 1) * mag), Y: ((tower.pos.Y) * mag) + 12},
+					tower:  xyi{X: ((tower.pos.X + offX - 1) * mag) + 16, Y: ((tower.pos.Y - 1) * mag) + 8},
 					target: xyi{X: ((enemy.pos.X + offX - 1) * mag), Y: ((enemy.pos.Y) * mag) + 12},
 					missed: false, shot: curTime}
 				board.arrowsShot = append(board.arrowsShot, arrow)
