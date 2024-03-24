@@ -6,6 +6,14 @@ import (
 	"time"
 )
 
+const (
+	TOWER_RED = iota
+	TOWER_GREEN
+	TOWER_BLUE
+	TOWER_PURPLE
+	TOWER_MAX
+)
+
 func addTower() {
 
 	if *noTowers {
@@ -27,7 +35,27 @@ func addTower() {
 		votes.Result.Y <= boardSizeY {
 
 		tpos := votes.Result
-		if board.goblinMap[tpos] == nil && board.towerMap[tpos] == nil {
+		//Handle placing tower on top of goblin
+		moved := false
+		if board.goblinMap[tpos] != nil {
+			for x := tpos.X; x <= boardSizeX+enemyBoardX; x++ {
+				newPos := xyi{X: x, Y: tpos.Y}
+				if board.goblinMap[newPos] != nil {
+					//Move to new pos
+					board.goblinMap[newPos] = board.goblinMap[tpos]
+					delete(board.goblinMap, tpos)
+					log.Println("Tower placed on top of goblin, moving goblin.")
+					moved = true
+					break
+				}
+			}
+			//Should never happen
+			if !moved {
+				log.Println("Unable to find new location for goblin! tower not placed!")
+				return
+			}
+		}
+		if board.towerMap[tpos] == nil {
 			board.towerMap[tpos] = &objectData{
 				pos:          tpos,
 				sheetP:       &obj_tower1,
@@ -36,7 +64,10 @@ func addTower() {
 				building:     0,
 				worldObjType: OTYPE_TOWER}
 		} else {
-			log.Println("COLLISION!")
+			//Tower upgrade
+			if board.towerMap[tpos].upgrade < TOWER_PURPLE {
+				board.towerMap[tpos].upgrade++
+			}
 		}
 	} else { //No votes
 

@@ -19,6 +19,31 @@ var (
 	audioCon *audio.Context
 )
 
+func loadSheet(sheet *spriteSheetData) {
+	tmp, _, err := ebitenutil.NewImageFromFile("data/sprites/" + sheet.file + ".png")
+	if err != nil {
+		log.Fatal(err)
+	}
+	sheet.img = tmp
+
+	log.Printf("Loaded spritesheet: %v", sheet.name)
+
+	if sheet.frames <= 0 {
+		sheet.frameSize.X = tmp.Bounds().Dx()
+		sheet.frameSize.Y = tmp.Bounds().Dy()
+		return
+	}
+	for a, ani := range sheet.anims {
+		if ani.name == "" {
+			continue
+		}
+		for x := 0; x < sheet.frames; x++ {
+			log.Printf("Sliced: %v frame %v\n", ani.name, x)
+			sheet.anims[a].img = append(sheet.anims[a].img, getAni(sheet, a, x))
+		}
+	}
+}
+
 func loadAssets() {
 	var err error
 	bgimg, _, err = ebitenutil.NewImageFromFile("data/maps/main.png")
@@ -26,27 +51,21 @@ func loadAssets() {
 		log.Fatal(err)
 	}
 
-	for s, sheet := range sheetPile {
-		tmp, _, err := ebitenutil.NewImageFromFile("data/sprites/" + sheet.file + ".png")
-		sheetPile[s].img = tmp
-
-		log.Printf("Loaded spritesheet: %v", sheet.name)
-
-		if err != nil {
-			log.Fatal(err)
+	for _, sheet := range sheetPile {
+		//Handle upgrades
+		for _, upgrade := range sheet.upgrades {
+			upgrade.name = upgrade.file
+			upgrade.health = sheet.health
+			upgrade.frameSize = sheet.frameSize
+			upgrade.frames = sheet.frames
+			upgrade.anims = sheet.anims
 		}
 
-		if sheet.frames <= 0 {
-			sheetPile[s].frameSize.X = tmp.Bounds().Dx()
-			sheetPile[s].frameSize.Y = tmp.Bounds().Dy()
-			continue
+		for _, gsheet := range sheet.upgrades {
+			loadSheet(gsheet)
 		}
-		for a, ani := range sheet.anims {
-			for x := 0; x < sheet.frames; x++ {
-				log.Printf("Sliced: %v frame %v\n", ani.name, x)
-				sheet.anims[a].img = append(sheet.anims[a].img, getAni(sheet, a, x))
-			}
-		}
+
+		loadSheet(sheet)
 	}
 
 	audioCon = audio.NewContext(44100)

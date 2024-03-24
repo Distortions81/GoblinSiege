@@ -14,6 +14,8 @@ type spriteSheetData struct {
 	frames    int
 	anims     [ANI_MAX]animationData
 	img       *ebiten.Image
+
+	upgrades []*spriteSheetData
 }
 
 type animationData struct {
@@ -101,6 +103,18 @@ var obj_tower1 = spriteSheetData{
 		{
 			name: "broken",
 			row:  2,
+		},
+	},
+
+	upgrades: []*spriteSheetData{
+		{
+			file: "tower-green",
+		},
+		{
+			file: "tower-blue",
+		},
+		{
+			file: "tower-purple",
 		},
 	},
 }
