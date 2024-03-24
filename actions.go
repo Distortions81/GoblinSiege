@@ -156,50 +156,52 @@ func towerShootArrow() {
 		//Shoot from tower top
 		towerPos := tower.pos
 		towerPos.Y -= 1
+		for count := 0; count < tower.upgrade; count++ {
 
-		//Look for targets
-		for _, enemy := range board.goblinMap {
-			if enemy.dead {
-				continue
-			}
+			//Look for targets
+			for _, enemy := range board.goblinMap {
+				if enemy.dead {
+					continue
+				}
 
-			if Distance(tower.pos, enemy.pos) >= 6 {
-				continue
-			}
-
-			go func() {
-				time.Sleep(time.Millisecond * time.Duration(rand.Intn(200)))
-				playVariated(SND_ARROW_SHOOT)
-			}()
-
-			//50-50 hit or miss
-			if rand.Intn(2) != 0 {
-				//Missed
-				arrow := arrowData{tower: towerPos, target: enemy.pos, missed: true, shot: curTime}
-				board.arrowsShot = append(board.arrowsShot, arrow)
-				break
-			}
-
-			arrow := arrowData{tower: towerPos, target: enemy.pos, missed: false, shot: curTime}
-			board.arrowsShot = append(board.arrowsShot, arrow)
-
-			//RNG damage
-			dmgAmt := 5 + rand.Intn(15)
-			enemy.health -= dmgAmt
-
-			if enemy.health <= 0 {
-				enemy.dead = true
-				enemy.diedAt = time.Now()
+				if Distance(tower.pos, enemy.pos) >= 6 {
+					continue
+				}
 
 				go func() {
-					time.Sleep(deathDelay + (time.Millisecond * time.Duration(rand.Intn(200))))
-					playVariated(SND_GOBLIN_DIE)
+					time.Sleep(time.Millisecond * time.Duration(rand.Intn(200)))
+					playVariated(SND_ARROW_SHOOT)
 				}()
 
-				//For tweening
-				enemy.prevPos = enemy.pos
+				//50-50 hit or miss
+				if rand.Intn(2) != 0 {
+					//Missed
+					arrow := arrowData{tower: towerPos, target: enemy.pos, missed: true, shot: curTime}
+					board.arrowsShot = append(board.arrowsShot, arrow)
+					break
+				}
+
+				arrow := arrowData{tower: towerPos, target: enemy.pos, missed: false, shot: curTime}
+				board.arrowsShot = append(board.arrowsShot, arrow)
+
+				//RNG damage
+				dmgAmt := 5 + rand.Intn(15)
+				enemy.health -= dmgAmt
+
+				if enemy.health <= 0 {
+					enemy.dead = true
+					enemy.diedAt = time.Now()
+
+					go func() {
+						time.Sleep(deathDelay + (time.Millisecond * time.Duration(rand.Intn(200))))
+						playVariated(SND_GOBLIN_DIE)
+					}()
+
+					//For tweening
+					enemy.prevPos = enemy.pos
+				}
+				break
 			}
-			break
 		}
 	}
 }
