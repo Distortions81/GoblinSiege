@@ -178,17 +178,6 @@ func drawGameBoard(screen *ebiten.Image) {
 		op.GeoM.Translate(float64(-obj_arrow.frameSize.X)/2, float64(-obj_arrow.frameSize.Y)/2)
 		op.GeoM.Rotate(angle)
 		op.GeoM.Translate(sX, sY)
-
-		var pa float32
-		shotAgo := time.Since(arrow.shot)
-		pa = 1.0 - float32(shotAgo.Seconds()/arrowFadeSec)
-		if pa < 0 {
-			//Delete it
-			board.arrowsShot = append(board.arrowsShot[:x], board.arrowsShot[x+1:]...)
-			continue
-		}
-
-		op.ColorScale.ScaleAlpha(pa)
 		screen.DrawImage(obj_arrow.img, op)
 
 	}
@@ -234,13 +223,6 @@ func drawGameBoard(screen *ebiten.Image) {
 			if time.Since(item.diedAt) > (deathDelay) {
 				deadAni = 1
 			}
-			var pa float32
-			deadFor := time.Since(item.diedAt).Seconds()
-			pa = 1.0 - float32(deadFor/bodyFadeSec)
-			if pa < 0 {
-				continue
-			}
-			op.ColorScale.ScaleAlpha(pa)
 			screen.DrawImage(item.sheetP.anims[ANI_DIE].img[deadAni], op)
 
 		} else if item.attacking {
