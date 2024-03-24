@@ -28,6 +28,8 @@ const (
 	arrowFadeSec    = 120
 	gameOverFadeSec = 3
 	bodyFadeSec     = 120
-	arrowSpeed      = 30
+	arrowSpeed      = 1
 	flashSpeed      = time.Millisecond * 125
+	arrowHFuzz      = 16
+	HalfArrowHFuzz  = arrowHFuzz / 2
 )

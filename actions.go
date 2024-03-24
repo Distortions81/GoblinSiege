@@ -176,12 +176,15 @@ func towerShootArrow() {
 				//50-50 hit or miss
 				if rand.Intn(2) != 0 {
 					//Missed
-					arrow := arrowData{tower: towerPos, target: enemy.pos, missed: true, shot: curTime}
+					frand := HalfArrowHFuzz - rand.Intn(arrowHFuzz)
+					arrow := arrowData{tower: xyi{X: towerPos.X * mag, Y: towerPos.Y * mag},
+						target: xyi{X: enemy.pos.X * mag, Y: enemy.pos.Y * mag},
+						missed: true, shot: curTime, fuzz: frand}
 					board.arrowsShot = append(board.arrowsShot, arrow)
 					break
 				}
 
-				arrow := arrowData{tower: towerPos, target: enemy.pos, missed: false, shot: curTime}
+				arrow := arrowData{tower: tower.pos, target: enemy.pos, missed: false, shot: curTime}
 				board.arrowsShot = append(board.arrowsShot, arrow)
 
 				//RNG damage

@@ -50,6 +50,7 @@ const (
 type arrowData struct {
 	tower  xyi
 	target xyi
+	fuzz   int
 
 	shot   time.Time
 	missed bool
