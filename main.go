@@ -8,16 +8,15 @@ import (
 )
 
 const (
-	GAME_SPLASH = iota
-	GAME_PLAY_TWITCH
-	GAME_PLAY_SINGLE
-	GAME_SETTINGS
-	GAME_MAX
+	MODE_SPLASH = iota
+	MODE_PLAY_TWITCH
+	MODE_PLAY_SINGLE
+	MODE_SETTINGS
 )
 
 var (
 	ServerRunning  bool = true
-	gameState      int
+	gameMode       int
 	playerMoveTime time.Duration = time.Second * 10
 	cpuMoveTime    time.Duration = time.Second * 2
 	maxMoves                     = 100

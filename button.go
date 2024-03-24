@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 )
 
 type buttonData struct {
@@ -52,13 +53,13 @@ func init() {
 }
 
 func actPlayGame() {
-
+	gameMode = MODE_PLAY_TWITCH
 }
 
 func actSettings() {
-
+	gameMode = MODE_SETTINGS
 }
 
 func actQuit() {
-
+	os.Exit(0)
 }

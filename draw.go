@@ -18,13 +18,13 @@ var (
 
 func (g *Game) Draw(screen *ebiten.Image) {
 
-	if gameState == GAME_SPLASH {
+	if gameMode == MODE_SPLASH {
 		screen.DrawImage(splash, nil)
 		for _, button := range splashButtons {
 			vector.DrawFilledRect(screen, button.pos.X, button.pos.Y, button.size.X, button.size.Y, ColorRedC, false)
 		}
-	} else if gameState == GAME_PLAY_TWITCH ||
-		gameState == GAME_PLAY_SINGLE {
+	} else if gameMode == MODE_PLAY_TWITCH ||
+		gameMode == MODE_PLAY_SINGLE {
 
 		gameLock.Lock()
 		defer gameLock.Unlock()

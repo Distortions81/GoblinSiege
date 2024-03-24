@@ -33,7 +33,3 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 	return defaultWindowWidth, defaultWindowHeight
 }
-
-func (g *Game) Update() error {
-	return nil
-}
