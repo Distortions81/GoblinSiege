@@ -18,20 +18,20 @@ type buttonData struct {
 var splashButtons = []buttonData{
 	{
 		name:        "Play Game",
-		topLeft:     xyi{X: 100, Y: 214},
-		bottomRight: xyi{X: 320, Y: 289},
+		topLeft:     xyi{X: 100, Y: 215},
+		bottomRight: xyi{X: 319, Y: 289},
 		action:      actPlayGame,
 	},
 	{
 		name:        "Settings",
-		topLeft:     xyi{X: 100, Y: 323},
-		bottomRight: xyi{X: 320, Y: 397},
+		topLeft:     xyi{X: 100, Y: 324},
+		bottomRight: xyi{X: 319, Y: 397},
 		action:      actPlayGame,
 	},
 	{
 		name:        "Quit",
 		topLeft:     xyi{X: 100, Y: 431},
-		bottomRight: xyi{X: 320, Y: 504},
+		bottomRight: xyi{X: 319, Y: 505},
 		action:      actQuit,
 	},
 }
