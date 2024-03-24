@@ -27,7 +27,7 @@ var splashButtons = []buttonData{
 		name:        "Settings",
 		topLeft:     xyi{X: 100, Y: 324},
 		bottomRight: xyi{X: 319, Y: 397},
-		action:      actPlayGame,
+		action:      actSettings,
 	},
 	{
 		name:        "Quit",
