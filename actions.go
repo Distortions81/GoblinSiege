@@ -27,6 +27,8 @@ func addTower() {
 		}
 	}
 
+	notUpgradable := false
+
 	//Get votes, or choose a point if no votes
 	if votes.VoteCount > 0 &&
 		votes.Result.X > 0 &&
@@ -67,59 +69,65 @@ func addTower() {
 			//Tower upgrade
 			if board.towerMap[tpos].upgrade < TOWER_PURPLE {
 				board.towerMap[tpos].upgrade++
+			} else {
+				notUpgradable = true
 			}
 		}
-	} else { //No votes
+		if !notUpgradable {
+			return
+		}
+	}
 
-		var foundSmart bool
-		if *smartMove && board.moveNum != 0 {
-			for x := 0; x < boardSizeX+enemyBoardX; x++ {
-				if foundSmart {
-					break
+	var foundSmart bool
+	if *smartMove && board.moveNum != 0 {
+		for x := 0; x < boardSizeX+enemyBoardX; x++ {
+			if foundSmart {
+				break
+			}
+			for y := 0; y < boardSizeY; y++ {
+				enemy := board.goblinMap[xyi{X: x, Y: y}]
+				if enemy == nil {
+					continue
 				}
-				for y := 0; y < boardSizeY; y++ {
-					enemy := board.goblinMap[xyi{X: x, Y: y}]
-					if enemy == nil {
+
+				tpos := xyi{X: 0, Y: y}
+				if x-5 > 0 && x <= boardSizeX {
+					var found bool
+					for xx := 0; xx < boardSizeX+enemyBoardX; xx++ {
+						checkT := board.towerMap[xyi{X: xx, Y: y}]
+						if checkT != nil && !checkT.dead {
+							found = true
+							break
+						}
+					}
+					if !found {
+						tpos = xyi{X: x - 5, Y: y}
+					} else {
 						continue
 					}
 
-					tpos := xyi{X: 0, Y: y}
-					if x-5 > 0 && x <= boardSizeX {
-						var found bool
-						for xx := 0; xx < boardSizeX+enemyBoardX; xx++ {
-							checkT := board.towerMap[xyi{X: xx, Y: y}]
-							if checkT != nil && !checkT.dead {
-								found = true
-								break
-							}
-						}
-						if !found {
-							tpos = xyi{X: x - 5, Y: y}
-						} else {
-							continue
-						}
+				}
 
-					}
-
-					tower := board.towerMap[tpos]
-					checkForEnemy := board.goblinMap[tpos]
-					if tower == nil && checkForEnemy == nil {
-						board.towerMap[tpos] = &objectData{
-							pos:          tpos,
-							sheetP:       &obj_tower1,
-							health:       obj_tower1.health,
-							aniOffset:    uint64(rand.Intn(obj_tower1.frames)),
-							building:     0,
-							worldObjType: OTYPE_TOWER}
-						foundSmart = true
-						break
-					}
+				tower := board.towerMap[tpos]
+				checkForEnemy := board.goblinMap[tpos]
+				if tower == nil && checkForEnemy == nil {
+					board.towerMap[tpos] = &objectData{
+						pos:          tpos,
+						sheetP:       &obj_tower1,
+						health:       obj_tower1.health,
+						aniOffset:    uint64(rand.Intn(obj_tower1.frames)),
+						building:     0,
+						worldObjType: OTYPE_TOWER}
+					foundSmart = true
+					break
 				}
 			}
 		}
-		//If smartMove isnt' enabled, or fails to find a point choose random
-		if !*smartMove || !foundSmart {
-			log.Println("Not enough votes, picking random.")
+	}
+	//If smartMove isnt' enabled, or fails to find a point choose random
+	if !*smartMove || !foundSmart {
+		log.Println("Not enough votes, picking random.")
+		for t := 0; t < 1000; t++ {
 			tpos := xyi{X: rand.Intn(boardSizeX-1) + 1, Y: rand.Intn(boardSizeY-1) + 1}
 			if board.goblinMap[tpos] == nil && board.towerMap[tpos] == nil {
 				board.towerMap[tpos] = &objectData{
@@ -129,10 +137,10 @@ func addTower() {
 					aniOffset:    uint64(rand.Intn(obj_tower1.frames)),
 					building:     0,
 					worldObjType: OTYPE_TOWER}
+				break
 			}
 		}
 	}
-
 }
 
 func towerShootArrow() {
