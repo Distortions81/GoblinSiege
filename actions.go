@@ -153,9 +153,6 @@ func towerShootArrow() {
 			continue
 		}
 
-		//Shoot from tower top
-		towerPos := tower.pos
-		towerPos.Y -= 1
 		for count := 0; count < tower.upgrade+1; count++ {
 
 			//Look for targets
@@ -176,12 +173,18 @@ func towerShootArrow() {
 				//50-50 hit or miss
 				if rand.Intn(2) != 0 {
 					//Missed
-					arrow := arrowData{tower: towerPos, target: enemy.pos, missed: true, shot: curTime}
+					arrow := arrowData{
+						tower:  xyi{X: ((tower.pos.X + offX - 1) * mag) + 16, Y: ((tower.pos.Y - 1) * mag) + 8},
+						target: xyi{X: ((enemy.pos.X + offX - 1) * mag), Y: ((enemy.pos.Y) * mag) + 12},
+						missed: true, shot: curTime, fuzz: xyi{X: 8 - rand.Intn(16), Y: 8 - rand.Intn(16)}}
 					board.arrowsShot = append(board.arrowsShot, arrow)
 					break
 				}
 
-				arrow := arrowData{tower: towerPos, target: enemy.pos, missed: false, shot: curTime}
+				arrow := arrowData{
+					tower:  xyi{X: ((tower.pos.X + offX - 1) * mag) + 16, Y: ((tower.pos.Y - 1) * mag) + 8},
+					target: xyi{X: ((enemy.pos.X + offX - 1) * mag), Y: ((enemy.pos.Y) * mag) + 12},
+					missed: false, shot: curTime}
 				board.arrowsShot = append(board.arrowsShot, arrow)
 
 				//RNG damage

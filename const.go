@@ -6,7 +6,7 @@ const (
 	version             = "0.0.1"
 	defaultWindowWidth  = 1280
 	defaultWindowHeight = 720
-	deathDelay          = time.Millisecond * 300
+	deathDelay          = time.Millisecond * 500
 	attackDelay         = time.Millisecond * 100
 
 	playersFile = "players.json"
@@ -14,6 +14,7 @@ const (
 
 	size         = 32
 	mag          = size
+	hMag         = mag / 2
 	boardSizeX   = 20
 	boardSizeY   = 20
 	enemyBoardX  = 15
@@ -25,9 +26,7 @@ const (
 	boardPixelsY = ((boardSizeY) * mag)
 
 	defaultVolume   = 0.5
-	arrowFadeSec    = 120
 	gameOverFadeSec = 3
-	bodyFadeSec     = 120
-	arrowSpeed      = 30
+	arrowSpeed      = 840
 	flashSpeed      = time.Millisecond * 125
 )

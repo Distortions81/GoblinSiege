@@ -13,9 +13,7 @@ import (
 
 var (
 	//Doesn't really need to be atomic, but this keeps it our of the -race logs
-	aniCount    atomic.Uint64
-	freezeFrame *ebiten.Image
-	useFreeze   bool
+	aniCount atomic.Uint64
 )
 
 func (g *Game) Draw(screen *ebiten.Image) {
@@ -26,10 +24,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// If there isn't a game running, don't render game board
 	// Render to an image and fade out at game end
 	if board.gameover != GAME_RUNNING {
-		if !useFreeze {
+		if !board.useFreeze {
 			//Draw actual game board
-			drawGameBoard(freezeFrame)
-			useFreeze = true
+			drawGameBoard(board.fFrame)
+			board.useFreeze = true
 		}
 		screen.DrawImage(bgimg, nil)
 
@@ -38,7 +36,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		pa := 1.0 - float32(shotAgo.Seconds()/gameOverFadeSec)
 		if pa > 0 {
 			op.ColorScale.ScaleAlpha(pa)
-			screen.DrawImage(freezeFrame, op)
+			screen.DrawImage(board.fFrame, op)
 		}
 
 		//Handle game ending conditions
@@ -91,9 +89,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 
 	if *debugMode {
-		buf := fmt.Sprintf("%2.2f fps, %v arrows, %v towers, %v enemy, v%v",
+		buf := fmt.Sprintf("%2.2f fps,%v towers, %v goblin, v%v, ",
 			ebiten.ActualFPS(),
-			len(board.arrowsShot),
 			len(board.towerMap),
 			len(board.goblinMap),
 			version)
