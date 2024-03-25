@@ -285,7 +285,6 @@ func goblinAttack() {
 		if item.pos.X < -2 {
 			board.gameover = GAME_DEFEAT
 			playSound(SND_GAMEOVER)
-			votes.RoundTime = time.Now()
 			votes.GameRunning = false
 		}
 	}

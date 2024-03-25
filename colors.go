@@ -18,6 +18,7 @@ var (
 	ColorWhiteSmoke = color.NRGBA{255, 255, 255, 64}
 
 	ColorBlack   = color.NRGBA{0, 0, 0, 255}
+	ColorWhite   = color.NRGBA{255, 255, 255, 255}
 	ColorRed     = color.NRGBA{203, 67, 53, 255}
 	ColorGreen   = color.NRGBA{40, 180, 99, 255}
 	ColorBlue    = color.NRGBA{41, 128, 185, 255}

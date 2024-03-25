@@ -102,6 +102,7 @@ func processVotes() {
 		votes.Result = xyi{X: int(tX / count), Y: int(tY / count)}
 	}
 	board.playerMoveNum++
+	votes.RoundTime = time.Now()
 }
 
 func setUserScore(id int64, score int) {
