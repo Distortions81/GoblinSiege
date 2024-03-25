@@ -60,7 +60,7 @@ func actPlayGame() {
 }
 
 func actSettings() {
-	gameMode = MODE_SETTINGS
+	gameMode = MODE_SPLASH
 }
 
 func actQuit() {
