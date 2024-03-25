@@ -7,8 +7,16 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+const (
+	MODE_SPLASH = iota
+	MODE_PLAY_TWITCH
+	MODE_PLAY_SINGLE
+	MODE_SETTINGS
+)
+
 var (
-	ServerRunning  bool          = true
+	ServerRunning  bool = true
+	gameMode       int
 	playerMoveTime time.Duration = time.Second * 10
 	cpuMoveTime    time.Duration = time.Second * 2
 	maxMoves                     = 100
@@ -17,7 +25,7 @@ var (
 )
 
 func main() {
-	skipTwitch = flag.Bool("skip", false, "don't connect to twitch")
+	skipTwitch = flag.Bool("skipTwitch", false, "don't connect to twitch")
 	fastMode = flag.Bool("fast", false, "fast mode")
 	noTowers = flag.Bool("notower", false, "don't spawn towers")
 	smartMove = flag.Bool("smartmove", false, "Use intelligent moves to simulate a coordinated audiance.")
@@ -48,10 +56,6 @@ func main() {
 	go playersAutosave()
 
 	go handleMoves()
-
-	gameLock.Lock()
-	startGame()
-	gameLock.Unlock()
 
 	startEbiten() //Blocks until exit
 
