@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -19,18 +20,30 @@ func (g *Game) Update() error {
 	//rmb := inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonRight)
 
 	if gameMode == MODE_SPLASH {
-		if lmb {
-			for _, button := range splashButtons {
-				if mx >= button.topLeft.X &&
-					mx <= button.bottomRight.X &&
-					my >= button.topLeft.Y &&
-					my <= button.bottomRight.Y {
 
-					button.action()
+		for b, button := range splashButtons {
+
+			if mx >= button.topLeft.X &&
+				mx <= button.bottomRight.X &&
+				my >= button.topLeft.Y &&
+				my <= button.bottomRight.Y {
+
+				if lmb {
 					log.Printf("Click: %v", button.name)
+					splashButtons[b].clicked = time.Now()
+					go func() {
+						time.Sleep(flashSpeed)
+						button.action()
+					}()
+					break
+				} else {
+					splashButtons[b].hover = true
 					break
 				}
+			} else {
+				splashButtons[b].hover = false
 			}
+
 		}
 	}
 

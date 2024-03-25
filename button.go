@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 )
 
 type buttonData struct {
@@ -11,9 +12,11 @@ type buttonData struct {
 	topLeft     xyi
 	bottomRight xyi
 
-	size   xyf32
-	pos    xyf32
-	action func()
+	size    xyf32
+	pos     xyf32
+	hover   bool
+	clicked time.Time
+	action  func()
 }
 
 var splashButtons = []buttonData{
