@@ -53,8 +53,10 @@ func handleMoves() {
 
 		//If a game isn't running, start a new one
 		if !votes.GameRunning {
-			if time.Since(votes.RoundTime) > time.Second*15 {
-				startGame()
+			if gameMode == MODE_PLAY_SINGLE || gameMode == MODE_PLAY_TWITCH {
+				if time.Since(votes.RoundTime) > time.Second*15 {
+					startGame()
+				}
 			}
 		}
 
