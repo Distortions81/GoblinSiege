@@ -33,25 +33,26 @@ type xyf64 struct {
 }
 
 type userMsgData struct {
-	sender string
-	pos    xyi
-	time   time.Time
+	sender     string
+	pos        xyi
+	playerMove int
+	time       time.Time
 }
 
 type userMsgDictData struct {
-	Users map[int64]*userMsgData
-
-	GameRunning bool
-
+	Users     map[int64]*userMsgData
 	VoteCount int
 	VoteState VOTE_STATE
-	StartTime time.Time
-	CpuTime   time.Time
-	RoundTime time.Time
-	Result    xyi
+
+	GameRunning bool
+	StartTime   time.Time
+	CpuTime     time.Time
+	RoundTime   time.Time
+	Result      xyi
 }
 
 var votes userMsgDictData
+var newVoteNotice []*userMsgData
 
 func handleVoteMsg(msg twitch.PrivateMessage, command string) {
 	msgLen := len(command)
@@ -78,10 +79,11 @@ func handleVoteMsg(msg twitch.PrivateMessage, command string) {
 		if votes.Users[userid] == nil {
 			votes.VoteCount++
 		}
-		votes.Users[userid] = &userMsgData{sender: msg.User.DisplayName, pos: xyi{X: int(x), Y: int(y)}, time: time.Now()}
+		userVote := &userMsgData{sender: msg.User.DisplayName, pos: xyi{X: int(x), Y: int(y)}, time: time.Now(), playerMove: board.playerMoveNum}
+		votes.Users[userid] = userVote
 
+		newVoteNotice = append(newVoteNotice, userVote)
 	}
-
 }
 
 // Currently averages votes
@@ -98,6 +100,7 @@ func processVotes() {
 		votes.VoteCount = int(count)
 		votes.Result = xyi{X: int(tX / count), Y: int(tY / count)}
 	}
+	board.playerMoveNum++
 }
 
 func setUserScore(id int64, score int) {

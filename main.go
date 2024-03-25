@@ -21,7 +21,7 @@ var (
 	cpuMoveTime    time.Duration = time.Second * 2
 	maxMoves                     = 100
 
-	skipTwitch, fastMode, noTowers, smartMove, debugMode *bool
+	skipTwitch, fastMode, noTowers, smartMove, debugMode, skipMenu *bool
 )
 
 func main() {
@@ -30,7 +30,12 @@ func main() {
 	noTowers = flag.Bool("notower", false, "don't spawn towers")
 	smartMove = flag.Bool("smartmove", false, "Use intelligent moves to simulate a coordinated audiance.")
 	debugMode = flag.Bool("debug", false, "print debug info")
+	skipMenu = flag.Bool("skipMenu", false, "Skips main menu")
 	flag.Parse()
+
+	if *skipMenu {
+		gameMode = MODE_PLAY_TWITCH
+	}
 
 	board.towerMap = make(map[xyi]*objectData)
 	board.goblinMap = make(map[xyi]*objectData)

@@ -81,6 +81,7 @@ func clearGameBoard() {
 	board.goblinMap = make(map[xyi]*objectData)
 	board.deadGoblins = []*objectData{}
 	board.moveNum = 0
+	board.playerMoveNum = 0
 	board.useFreeze = false
 	board.fFrame.Clear()
 	board.deadCache.Clear()

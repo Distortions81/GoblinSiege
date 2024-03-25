@@ -68,36 +68,47 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			drawGameBoard(screen)
 		}
 
-		vector.DrawFilledRect(screen, 0, float32(defaultWindowHeight)-40, float32(defaultWindowWidth), 100, ColorSmoke, true)
+		//Show recent votes
+		numV := len(newVoteNotice) - 1
+		lBuf := "Recent votes:\n"
+		for v := numV; v >= 0 && v > (numV-4); v-- {
+			voter := newVoteNotice[v]
+			if time.Since(voter.time) > time.Second*30 {
+				newVoteNotice = append(newVoteNotice[:v], newVoteNotice[v+1:]...)
+			} else {
+				buf := fmt.Sprintf("%v: %v,%v for move %v\n", voter.sender, voter.pos.X, voter.pos.Y, voter.playerMove)
+				lBuf = lBuf + buf
+			}
+		}
+		text.Draw(screen, lBuf, monoFontSmall, (boardSizeX+offX)*mag+50, 60, color.Black)
+
 		if votes.VoteState == VOTE_PLAYERS {
 			//Draw player vote
+			vector.DrawFilledRect(screen, 0, float32(defaultWindowHeight)-40, float32(defaultWindowWidth), 100, ColorRed, true)
 
 			till := float32(time.Until(votes.StartTime.Add(playerMoveTime)).Milliseconds()) / 1000.0
 			if till > 0 {
-				buf := fmt.Sprintf("Your turn!!! Vote: %vx,y -- Votes: %v -- %2.1fs remaining%v",
-					userSettings.CmdPrefix, votes.VoteCount,
-					till,
-					makeEllipsis())
+				buf := fmt.Sprintf("Your turn! -- Place or upgrade tower: %vx,y (%v votes)%v",
+					userSettings.CmdPrefix, votes.VoteCount, makeEllipsis())
 
-				text.Draw(screen, buf, monoFont, 10, defaultWindowHeight-15, color.White)
+				text.Draw(screen, buf, monoFont, 10, defaultWindowHeight-15, color.Black)
 			}
 
 		} else if votes.VoteState == VOTE_COMPUTER || votes.VoteState == VOTE_COMPUTER_DONE {
 			//Draw enemy turn and background voting
+			vector.DrawFilledRect(screen, 0, float32(defaultWindowHeight)-40, float32(defaultWindowWidth), 100, ColorSmoke, true)
 
 			till := float32(time.Until(votes.StartTime.Add(cpuMoveTime*3)).Milliseconds()) / 1000.0
 			if till > 0 {
-				buf := fmt.Sprintf("ENEMY'S TURN. Vote: %vx,y -- Votes: %v -- %2.1fs remaining%v",
-					userSettings.CmdPrefix, votes.VoteCount,
-					till,
-					makeEllipsis())
+				buf := fmt.Sprintf("Enemy's turn! -- Vote to place or upgrade tower: %vx,y (%v votes)%v",
+					userSettings.CmdPrefix, votes.VoteCount, makeEllipsis())
 
 				text.Draw(screen, buf, monoFont, 10, defaultWindowHeight-15, color.White)
 			}
 		} else {
 			//No game active
 			if !votes.GameRunning {
-				buf := fmt.Sprintf("No game active%v", makeEllipsis())
+				buf := "No game active."
 				text.Draw(screen, buf, monoFont, 10, defaultWindowHeight-15, color.White)
 			}
 		}

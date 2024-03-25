@@ -15,7 +15,7 @@ func startEbiten() {
 	/* Set up our window */
 	ebiten.SetWindowSize(defaultWindowWidth, defaultWindowHeight)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
-	ebiten.SetWindowTitle("goTwitchGame")
+	ebiten.SetWindowTitle("GoblinSiege")
 
 	/* Start ebiten */
 	if err := ebiten.RunGameWithOptions(newGame(), nil); err != nil {

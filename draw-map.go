@@ -57,10 +57,11 @@ type arrowData struct {
 }
 
 type gameBoardData struct {
-	moveNum     int
-	towerMap    map[xyi]*objectData
-	goblinMap   map[xyi]*objectData
-	deadGoblins []*objectData
+	moveNum       int
+	playerMoveNum int
+	towerMap      map[xyi]*objectData
+	goblinMap     map[xyi]*objectData
+	deadGoblins   []*objectData
 
 	arrowsShot  []arrowData
 	deadArrows  []arrowData
@@ -332,6 +333,6 @@ func drawGameBoard(screen *ebiten.Image) {
 	}
 
 	//Show the current move number in the corner
-	buf := fmt.Sprintf("Move: %v/%v!", board.moveNum, maxMoves)
-	text.Draw(screen, buf, monoFont, defaultWindowWidth-210, 25, color.Black)
+	buf := fmt.Sprintf("Player move: #%v", board.playerMoveNum)
+	text.Draw(screen, buf, monoFont, ((boardSizeX+offX)*mag)+10, 25, color.Black)
 }
