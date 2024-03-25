@@ -19,7 +19,6 @@ var (
 	gameMode       int
 	playerMoveTime time.Duration = time.Second * 10
 	cpuMoveTime    time.Duration = time.Second * 2
-	maxMoves                     = 100
 
 	skipTwitch, fastMode, noTowers, smartMove, debugMode, skipMenu *bool
 )

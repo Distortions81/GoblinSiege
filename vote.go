@@ -76,13 +76,14 @@ func handleVoteMsg(msg twitch.PrivateMessage, command string) {
 		}
 
 		userid := strToID(msg.User.ID)
-		if votes.Users[userid] == nil {
-			votes.VoteCount++
-		}
+
 		userVote := &userMsgData{sender: msg.User.DisplayName, pos: xyi{X: int(x), Y: int(y)}, time: time.Now(), playerMove: board.playerMoveNum}
 		votes.Users[userid] = userVote
 
-		newVoteNotice = append(newVoteNotice, userVote)
+		if votes.Users[userid] == nil {
+			votes.VoteCount++
+			newVoteNotice = append(newVoteNotice, userVote)
+		}
 	}
 }
 

@@ -334,5 +334,5 @@ func drawGameBoard(screen *ebiten.Image) {
 
 	//Show the current move number in the corner
 	buf := fmt.Sprintf("Player move: #%v", board.playerMoveNum)
-	text.Draw(screen, buf, monoFont, ((boardSizeX+offX)*mag)+10, 25, color.Black)
+	text.Draw(screen, buf, monoFont, ((boardSizeX+offX)*mag)+20, 25, color.Black)
 }

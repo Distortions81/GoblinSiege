@@ -80,7 +80,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 				lBuf = lBuf + buf
 			}
 		}
-		text.Draw(screen, lBuf, monoFontSmall, (boardSizeX+offX)*mag+50, 60, color.Black)
+		text.Draw(screen, lBuf, monoFontSmall, (boardSizeX+offX)*mag+20, 45, color.Black)
 
 		if votes.VoteState == VOTE_PLAYERS {
 			//Draw player vote
