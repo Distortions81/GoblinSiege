@@ -76,7 +76,7 @@ func main() {
 	board.fFrame = ebiten.NewImage(defaultWindowWidth, defaultWindowHeight)
 	board.checkerCache = ebiten.NewImage(defaultWindowWidth, defaultWindowHeight)
 	board.deadCache = ebiten.NewImage(defaultWindowWidth, defaultWindowHeight)
-	board.checkerDirty = true
+	predrawChecker()
 
 	setupButtons()
 

@@ -71,11 +71,43 @@ type gameBoardData struct {
 	gameover int
 
 	checkerCache *ebiten.Image
-	checkerDirty bool
 
 	deadCache *ebiten.Image
 	fFrame    *ebiten.Image
 	useFreeze bool
+}
+
+func predrawChecker() {
+	for x := 0; x < boardSizeX; x++ {
+		for y := 0; y < boardSizeY; y++ {
+
+			if x >= boardSizeX {
+				if (x+y)%2 == 0 {
+					vector.DrawFilledRect(board.checkerCache, float32(mag*x)+offPixX, float32(mag*y)+offPixY, size, size, ColorRedC, true)
+				}
+				continue
+			}
+
+			if (x+y)%2 == 0 {
+				vector.DrawFilledRect(board.checkerCache, float32(mag*x)+offPixX, float32(mag*y)+offPixY, size, size, ColorGreenC, true)
+			}
+
+			//Draw coords
+
+			if x == 0 {
+				buf := fmt.Sprintf("%2v", y+1)
+				text.Draw(board.checkerCache, buf, monoFontSmall, offPixX-(mag/2), (mag*y)+offPixY+20, color.Black)
+			}
+			if y == 0 {
+				buf := fmt.Sprintf("%v", x+1)
+				text.Draw(board.checkerCache, buf, monoFontSmall, (mag*x)+offPixX+8, (mag*y)+offPixY-2, color.Black)
+			}
+
+			//XY Labels
+			text.Draw(board.checkerCache, "X", monoFont, offPixX+(boardPixelsX/2), 20, color.Black)
+			text.Draw(board.checkerCache, "Y", monoFont, offPixX-(mag), offPixY+(boardPixelsY/2), color.Black)
+		}
+	}
 }
 
 func drawGameBoard(screen *ebiten.Image) {
@@ -85,43 +117,6 @@ func drawGameBoard(screen *ebiten.Image) {
 	screen.DrawImage(bgimg, nil)
 	startTime := time.Now()
 
-	//Draw checkerboard if dirty
-	if board.checkerDirty {
-		board.checkerCache.Clear()
-
-		for x := 0; x < boardSizeX; x++ {
-			for y := 0; y < boardSizeY; y++ {
-
-				if x >= boardSizeX {
-					if (x+y)%2 == 0 {
-						vector.DrawFilledRect(board.checkerCache, float32(mag*x)+offPixX, float32(mag*y)+offPixY, size, size, ColorRedC, true)
-					}
-					continue
-				}
-
-				if (x+y)%2 == 0 {
-					vector.DrawFilledRect(board.checkerCache, float32(mag*x)+offPixX, float32(mag*y)+offPixY, size, size, ColorGreenC, true)
-				}
-
-				//Draw coords
-
-				if x == 0 {
-					buf := fmt.Sprintf("%2v", y+1)
-					text.Draw(board.checkerCache, buf, monoFontSmall, offPixX-(mag/2), (mag*y)+offPixY+20, color.Black)
-				}
-				if y == 0 {
-					buf := fmt.Sprintf("%v", x+1)
-					text.Draw(board.checkerCache, buf, monoFontSmall, (mag*x)+offPixX+8, (mag*y)+offPixY-2, color.Black)
-				}
-
-				//XY Labels
-				text.Draw(board.checkerCache, "X", monoFont, offPixX+(boardPixelsX/2), 20, color.Black)
-				text.Draw(board.checkerCache, "Y", monoFont, offPixX-(mag), offPixY+(boardPixelsY/2), color.Black)
-			}
-		}
-
-		board.checkerDirty = false
-	}
 	//Draw checkerboard cache if voting
 	if votes.VoteState == VOTE_PLAYERS {
 		screen.DrawImage(board.checkerCache, nil)
