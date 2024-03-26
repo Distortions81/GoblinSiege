@@ -35,8 +35,8 @@ var (
 func main() {
 	skipTwitch = flag.Bool("skipTwitch", false, "don't connect to twitch")
 	fastMode = flag.Bool("fast", false, "fast mode")
-	noTowers = flag.Bool("notower", false, "don't spawn towers")
-	smartMove = flag.Bool("smartmove", false, "Use intelligent moves to simulate a coordinated audiance.")
+	noTowers = flag.Bool("noTower", false, "don't spawn towers")
+	smartMove = flag.Bool("smartMove", false, "Use intelligent moves to simulate a coordinated audiance.")
 	debugMode = flag.Bool("debug", false, "print debug info")
 	skipMenu = flag.Bool("skipMenu", false, "Skips main menu")
 	flag.Parse()
