@@ -27,7 +27,7 @@ func connectTwitch() {
 	qlog("Joining channel: %v", userSettings.UserName)
 	client.Join(userSettings.UserName)
 
-	qlog("Connecting to twitch...")
+	qlog("Connecting to twitch chat...")
 	go func() {
 		for x := 0; x < maxConsecutiveReconnects; x++ {
 			startTime := time.Now()
