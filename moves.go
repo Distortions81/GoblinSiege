@@ -19,13 +19,16 @@ func handleMoves() {
 		}
 
 		//Fast mode for testing quickly, shorten rounds and skip some to get to the action
-		if *fastMode {
+		if *vfastMode {
+			cpuMoveTime = time.Millisecond * 20
+			playerMoveTime = time.Nanosecond
+		} else if *fastMode {
 			if board.moveNum < 20 || (*noTowers && board.moveNum < 40) {
-				cpuMoveTime = time.Millisecond * 100
+				cpuMoveTime = time.Millisecond * 200
 				playerMoveTime = time.Nanosecond
 			} else {
-				cpuMoveTime = time.Millisecond * 2000
-				playerMoveTime = time.Millisecond * 1000
+				cpuMoveTime = time.Millisecond * 200
+				playerMoveTime = time.Nanosecond
 			}
 		}
 
@@ -60,7 +63,7 @@ func handleMoves() {
 		//If a game isn't running, start a new one
 		if !votes.GameRunning {
 			if gameMode.Load() == MODE_PLAY_SINGLE || gameMode.Load() == MODE_PLAY_TWITCH {
-				if time.Since(votes.RoundTime) > time.Second*15 {
+				if time.Since(votes.RoundTime) > time.Second*15 || *vfastMode {
 					startGame()
 				}
 			}
@@ -75,7 +78,7 @@ func handleMoves() {
 
 		gameLock.Unlock()
 
-		time.Sleep(time.Millisecond * 10)
+		time.Sleep(time.Millisecond)
 	}
 }
 
