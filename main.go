@@ -92,6 +92,7 @@ func main() {
 
 	ServerRunning = false
 	writePlayers()
+	time.Sleep(time.Second)
 }
 
 // Used for action animations
