@@ -88,9 +88,24 @@ func main() {
 
 	<-signalHandle
 
+	//End all loops
 	ServerRunning.Store(false)
+
+	//Stop all sounds
+	for _, item := range sounds {
+		if item.player != nil {
+			item.player.Pause()
+			item.player.Close()
+		}
+	}
+
+	//Write out player scores
 	writePlayers()
+
+	//Wait a moment for stuff to finish up
 	time.Sleep(time.Second)
+
+	//Bye!
 }
 
 // Used for action animations
