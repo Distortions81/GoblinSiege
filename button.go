@@ -40,7 +40,7 @@ var splashButtons = []buttonData{
 	},
 }
 
-func init() {
+func setupButtons() {
 	for b, button := range splashButtons {
 		splashButtons[b].size = xyf32{
 			X: float32(button.bottomRight.X - button.topLeft.X),

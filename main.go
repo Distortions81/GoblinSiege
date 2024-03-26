@@ -79,6 +79,8 @@ func main() {
 		gameMode = MODE_PLAY_TWITCH
 	}
 
+	setupButtons()
+
 	gameLoaded.Store(true)
 
 	// After starting loops, wait here for process signals
