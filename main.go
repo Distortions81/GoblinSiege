@@ -47,17 +47,18 @@ func main() {
 		log.Fatal(err)
 	}
 
-	go startEbiten()
+	go func() {
+		startEbiten()
+	}()
 
 	time.Sleep(time.Millisecond * 100)
 
 	loadAssets()
 
-	readPlayers()
-
 	readSettings()
 
 	if !*skipTwitch {
+		readPlayers()
 		connectTwitch()
 		go playersAutosave()
 	}
@@ -75,13 +76,13 @@ func main() {
 	board.deadCache = ebiten.NewImage(defaultWindowWidth, defaultWindowHeight)
 	board.checkerDirty = true
 
-	if *skipMenu {
-		gameMode = MODE_PLAY_TWITCH
-	}
-
 	setupButtons()
 
 	gameLoaded.Store(true)
+
+	if *skipMenu {
+		gameMode = MODE_PLAY_TWITCH
+	}
 
 	// After starting loops, wait here for process signals
 	signalHandle = make(chan os.Signal, 1)
