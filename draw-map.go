@@ -77,7 +77,7 @@ type gameBoardData struct {
 	useFreeze bool
 }
 
-func predrawChecker() {
+func preDrawCheckerboard() {
 	for x := 0; x < boardSizeX; x++ {
 		for y := 0; y < boardSizeY; y++ {
 
