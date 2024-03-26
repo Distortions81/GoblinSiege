@@ -104,7 +104,7 @@ func clearGameBoard() {
 }
 
 func clearVotes() {
-	qlog("Resetting votes...")
+	qlog("Clearing votes...")
 	votes.VoteCount = 0
 	votes.Result = xyi{}
 	votes.Users = make(map[int64]*userMsgData)
