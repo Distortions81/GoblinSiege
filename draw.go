@@ -18,13 +18,14 @@ var (
 
 func (g *Game) Draw(screen *ebiten.Image) {
 
-	if gameMode == MODE_SPLASH {
+	if gameMode.Load() == MODE_SPLASH {
 		screen.DrawImage(splash, nil)
 
 		if !gameLoaded.Load() {
 
 			vector.DrawFilledRect(screen, 0, defaultWindowHeight-30, defaultWindowWidth, 30, ColorRed, false)
 			text.Draw(screen, "Loading...", monoFont, 10, defaultWindowHeight-8, color.White)
+			return
 		}
 		for _, button := range splashButtons {
 			if time.Since(button.clicked) < flashSpeed {
@@ -34,8 +35,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			}
 		}
 
-	} else if gameMode == MODE_PLAY_TWITCH ||
-		gameMode == MODE_PLAY_SINGLE {
+	} else if gameMode.Load() == MODE_PLAY_TWITCH ||
+		gameMode.Load() == MODE_PLAY_SINGLE {
 
 		gameLock.Lock()
 		defer gameLock.Unlock()

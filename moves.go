@@ -8,13 +8,14 @@ import (
 var gameLock sync.Mutex
 
 func handleMoves() {
-	for ServerRunning {
+	for ServerRunning.Load() {
 
 		gameLock.Lock()
 
 		if !gameLoaded.Load() {
 			time.Sleep(time.Millisecond * 10)
-			return
+			gameLock.Unlock()
+			continue
 		}
 
 		//Fast mode for testing quickly, shorten rounds and skip some to get to the action
@@ -58,7 +59,7 @@ func handleMoves() {
 
 		//If a game isn't running, start a new one
 		if !votes.GameRunning {
-			if gameMode == MODE_PLAY_SINGLE || gameMode == MODE_PLAY_TWITCH {
+			if gameMode.Load() == MODE_PLAY_SINGLE || gameMode.Load() == MODE_PLAY_TWITCH {
 				if time.Since(votes.RoundTime) > time.Second*15 {
 					startGame()
 				}

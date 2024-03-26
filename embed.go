@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"strings"
-	"sync/atomic"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
@@ -15,11 +14,10 @@ import (
 
 var (
 	//go:embed data
-	f            embed.FS
-	bgimg        *ebiten.Image
-	splash       *ebiten.Image
-	audioCon     *audio.Context
-	assetsLoaded atomic.Bool
+	f        embed.FS
+	bgimg    *ebiten.Image
+	splash   *ebiten.Image
+	audioCon *audio.Context
 )
 
 func loadSheet(sheet *spriteSheetData) {
@@ -116,8 +114,6 @@ func loadAssets() {
 			}
 		}
 	}
-
-	assetsLoaded.Store(true)
 }
 
 func getFont(name string) []byte {

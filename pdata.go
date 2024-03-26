@@ -25,7 +25,7 @@ type playerData struct {
 }
 
 func playersAutosave() {
-	for ServerRunning {
+	for ServerRunning.Load() {
 
 		pLock.Lock()
 		if players.dirty {

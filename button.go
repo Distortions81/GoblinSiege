@@ -59,11 +59,11 @@ func setupButtons() {
 }
 
 func actPlayGame() {
-	gameMode = MODE_PLAY_TWITCH
+	gameMode.Store(MODE_PLAY_TWITCH)
 }
 
 func actSettings() {
-	gameMode = MODE_SPLASH
+	gameMode.Store(MODE_SPLASH)
 }
 
 func actQuit() {

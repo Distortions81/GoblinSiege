@@ -21,8 +21,8 @@ const (
 )
 
 var (
-	ServerRunning  bool = true
-	gameMode       int
+	ServerRunning  atomic.Bool
+	gameMode       atomic.Int32
 	playerMoveTime time.Duration = time.Second * 10
 	cpuMoveTime    time.Duration = time.Second * 2
 
@@ -41,17 +41,19 @@ func main() {
 	skipMenu = flag.Bool("skipMenu", false, "Skips main menu")
 	flag.Parse()
 
+	ServerRunning.Store(true)
+
+	// After starting loops, wait here for process signals
+	signalHandle = make(chan os.Signal, 1)
+	signal.Notify(signalHandle, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
+
 	var err error
 	splash, _, err = ebitenutil.NewImageFromFile("data/sprites/splash.png")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	go func() {
-		startEbiten()
-	}()
-
-	time.Sleep(time.Millisecond * 100)
+	go startEbiten()
 
 	loadAssets()
 
@@ -81,23 +83,19 @@ func main() {
 	gameLoaded.Store(true)
 
 	if *skipMenu {
-		gameMode = MODE_PLAY_TWITCH
+		gameMode.Store(MODE_PLAY_TWITCH)
 	}
 
-	// After starting loops, wait here for process signals
-	signalHandle = make(chan os.Signal, 1)
-
-	signal.Notify(signalHandle, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-signalHandle
 
-	ServerRunning = false
+	ServerRunning.Store(false)
 	writePlayers()
 	time.Sleep(time.Second)
 }
 
 // Used for action animations
 func aniTimer() {
-	for ServerRunning {
+	for ServerRunning.Load() {
 		aniCount.Add(1)
 		time.Sleep(time.Second / 3)
 	}

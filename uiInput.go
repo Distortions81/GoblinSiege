@@ -10,7 +10,7 @@ import (
 
 func (g *Game) Update() error {
 
-	if !assetsLoaded.Load() {
+	if !gameLoaded.Load() {
 		return nil
 	}
 
@@ -23,7 +23,7 @@ func (g *Game) Update() error {
 	//mmb := inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonMiddle)
 	//rmb := inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonRight)
 
-	if gameMode == MODE_SPLASH {
+	if gameMode.Load() == MODE_SPLASH {
 
 		for b, button := range splashButtons {
 
