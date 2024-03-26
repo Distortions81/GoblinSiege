@@ -21,6 +21,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	if gameMode == MODE_SPLASH {
 		screen.DrawImage(splash, nil)
 
+		if !gameLoaded.Load() {
+
+			vector.DrawFilledRect(screen, 0, defaultWindowHeight-30, defaultWindowWidth, 30, ColorRed, false)
+			text.Draw(screen, "Loading...", monoFont, 10, defaultWindowHeight-8, color.White)
+		}
 		for _, button := range splashButtons {
 			if time.Since(button.clicked) < flashSpeed {
 				vector.DrawFilledRect(screen, button.pos.X, button.pos.Y, button.size.X, button.size.Y, ColorRedC, false)

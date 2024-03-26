@@ -10,6 +10,10 @@ import (
 
 func (g *Game) Update() error {
 
+	if !assetsLoaded.Load() {
+		return nil
+	}
+
 	if !ebiten.IsFocused() {
 		return nil
 	}

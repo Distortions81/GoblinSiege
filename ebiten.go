@@ -1,6 +1,8 @@
 package main
 
 import (
+	"syscall"
+
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -21,6 +23,8 @@ func startEbiten() {
 	if err := ebiten.RunGameWithOptions(newGame(), nil); err != nil {
 		return
 	}
+
+	signalHandle <- syscall.SIGINT
 }
 
 func newGame() *Game {

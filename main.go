@@ -2,9 +2,15 @@ package main
 
 import (
 	"flag"
+	"log"
+	"os"
+	"os/signal"
+	"sync/atomic"
+	"syscall"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
 const (
@@ -21,6 +27,9 @@ var (
 	cpuMoveTime    time.Duration = time.Second * 2
 
 	skipTwitch, fastMode, noTowers, smartMove, debugMode, skipMenu *bool
+
+	gameLoaded   atomic.Bool
+	signalHandle chan os.Signal
 )
 
 func main() {
@@ -32,9 +41,30 @@ func main() {
 	skipMenu = flag.Bool("skipMenu", false, "Skips main menu")
 	flag.Parse()
 
-	if *skipMenu {
-		gameMode = MODE_PLAY_TWITCH
+	var err error
+	splash, _, err = ebitenutil.NewImageFromFile("data/sprites/splash.png")
+	if err != nil {
+		log.Fatal(err)
 	}
+
+	go startEbiten()
+
+	time.Sleep(time.Millisecond * 100)
+
+	loadAssets()
+
+	readPlayers()
+
+	readSettings()
+
+	if !*skipTwitch {
+		connectTwitch()
+		go playersAutosave()
+	}
+
+	go handleMoves()
+
+	go aniTimer()
 
 	board.towerMap = make(map[xyi]*objectData)
 	board.goblinMap = make(map[xyi]*objectData)
@@ -45,23 +75,17 @@ func main() {
 	board.deadCache = ebiten.NewImage(defaultWindowWidth, defaultWindowHeight)
 	board.checkerDirty = true
 
-	loadAssets()
-
-	go aniTimer()
-
-	readPlayers()
-
-	readSettings()
-
-	if !*skipTwitch {
-		connectTwitch()
+	if *skipMenu {
+		gameMode = MODE_PLAY_TWITCH
 	}
 
-	go playersAutosave()
+	gameLoaded.Store(true)
 
-	go handleMoves()
+	// After starting loops, wait here for process signals
+	signalHandle = make(chan os.Signal, 1)
 
-	startEbiten() //Blocks until exit
+	signal.Notify(signalHandle, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
+	<-signalHandle
 
 	ServerRunning = false
 	writePlayers()
@@ -69,7 +93,7 @@ func main() {
 
 // Used for action animations
 func aniTimer() {
-	for {
+	for ServerRunning {
 		aniCount.Add(1)
 		time.Sleep(time.Second / 3)
 	}
