@@ -88,7 +88,7 @@ var sounds = [SND_MAX]soundData{
 	{
 		variated: true,
 		file:     "axe",
-		vol:      0.4,
+		vol:      0.3,
 	},
 	{
 		file: "tower-die.wav",
@@ -100,10 +100,10 @@ var sounds = [SND_MAX]soundData{
 	},
 	{
 		file: "tension.wav",
-		vol:  0.7,
+		vol:  0.5,
 	},
 	{
 		file: "gamewon.wav",
-		vol:  0.7,
+		vol:  0.5,
 	},
 }
