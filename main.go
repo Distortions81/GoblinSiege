@@ -26,7 +26,7 @@ var (
 	playerMoveTime time.Duration = time.Second * 10
 	cpuMoveTime    time.Duration = time.Second * 2
 
-	skipTwitch, fastMode, noTowers, smartMove, debugMode, skipMenu *bool
+	skipTwitch, vfastMode, fastMode, noTowers, smartMove, debugMode, skipMenu *bool
 
 	gameLoaded   atomic.Bool
 	signalHandle chan os.Signal
@@ -35,6 +35,7 @@ var (
 func main() {
 	skipTwitch = flag.Bool("skipTwitch", false, "don't connect to twitch")
 	fastMode = flag.Bool("fast", false, "fast mode")
+	vfastMode = flag.Bool("vfast", false, "very fast mode")
 	noTowers = flag.Bool("noTower", false, "don't spawn towers")
 	smartMove = flag.Bool("smartMove", false, "Use intelligent moves to simulate a coordinated audiance.")
 	debugMode = flag.Bool("debug", false, "print debug info")

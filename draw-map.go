@@ -118,7 +118,7 @@ func drawGameBoard(screen *ebiten.Image) {
 	startTime := time.Now()
 
 	//Draw checkerboard cache if voting
-	if votes.VoteState == VOTE_PLAYERS {
+	if votes.VoteState == VOTE_PLAYERS && !*fastMode && !*vfastMode && !*noTowers {
 		screen.DrawImage(board.checkerCache, nil)
 	}
 

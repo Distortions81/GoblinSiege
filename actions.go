@@ -84,7 +84,7 @@ func addTower() {
 			if foundSmart {
 				break
 			}
-			for y := 0; y < boardSizeY; y++ {
+			for y := 1; y < boardSizeY; y++ {
 				enemy := board.goblinMap[xyi{X: x, Y: y}]
 				if enemy == nil {
 					continue
@@ -110,7 +110,7 @@ func addTower() {
 
 				tower := board.towerMap[tpos]
 				checkForEnemy := board.goblinMap[tpos]
-				if tower == nil && checkForEnemy == nil {
+				if (tower == nil || (tower != nil && tower.dead)) && checkForEnemy == nil {
 					board.towerMap[tpos] = &objectData{
 						pos:          tpos,
 						sheetP:       &obj_tower1,
@@ -170,8 +170,7 @@ func towerShootArrow() {
 					playVariated(SND_ARROW_SHOOT)
 				}()
 
-				//50-50 hit or miss
-				if rand.Intn(2) != 0 {
+				if rand.Intn(100) > 45 {
 					//Missed
 					arrow := arrowData{
 						tower:  xyi{X: ((tower.pos.X + offX - 1) * mag) + 16, Y: ((tower.pos.Y - 1) * mag) + 8},
@@ -188,7 +187,7 @@ func towerShootArrow() {
 				board.arrowsShot = append(board.arrowsShot, arrow)
 
 				//RNG damage
-				dmgAmt := 5 + rand.Intn(15)
+				dmgAmt := 5 + rand.Intn(11)
 				enemy.health -= dmgAmt
 
 				if enemy.health <= 0 {
@@ -211,7 +210,7 @@ func towerShootArrow() {
 
 func spawnGoblins() {
 	//Every other move
-	if board.moveNum%2 == 0 {
+	if board.moveNum > rand.Intn(60) {
 		rpos := xyi{X: boardSizeX + enemyBoardX + 1, Y: 1 + rand.Intn(boardSizeY-1)}
 		if board.goblinMap[rpos] == nil {
 			board.goblinMap[rpos] = &objectData{
@@ -248,7 +247,7 @@ func goblinAttack() {
 		//If a tower is in our way, do damage
 		goblin.attacking = false
 		if tower != nil && !tower.dead && tower.building >= 2 {
-			tower.health -= 10 + rand.Intn(10)
+			tower.health -= 5 + rand.Intn(11)
 			goblin.attacking = true
 			tower.lastAttacked = time.Now()
 
