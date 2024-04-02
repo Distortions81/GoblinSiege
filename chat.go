@@ -12,7 +12,7 @@ func handleChat(msg twitch.PrivateMessage) {
 	defer gameLock.Unlock()
 
 	//Ignore messages that are not for us
-	if msg.Channel != userSettings.UserName {
+	if strings.EqualFold(msg.Channel, userSettings.UserName) {
 		return
 	}
 

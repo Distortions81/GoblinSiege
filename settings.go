@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"strings"
 	"sync"
 )
 
@@ -45,6 +46,8 @@ func readSettings() {
 				userSettings.CmdPrefix = "!"
 			}
 
+			//Channel names are lowercase
+			userSettings.UserName = strings.ToLower(userSettings.UserName)
 			go writeSettings()
 			return
 		}

@@ -110,16 +110,18 @@ func addTower() {
 
 				tower := board.towerMap[tpos]
 				checkForEnemy := board.goblinMap[tpos]
-				if (tower == nil || (tower != nil && tower.dead)) && checkForEnemy == nil {
-					board.towerMap[tpos] = &objectData{
-						pos:          tpos,
-						sheetP:       &obj_tower1,
-						health:       obj_tower1.health,
-						aniOffset:    uint64(rand.Intn(obj_tower1.frames)),
-						building:     0,
-						worldObjType: OTYPE_TOWER}
-					foundSmart = true
-					break
+				if checkForEnemy == nil {
+					if (tower != nil && tower.dead) || tower == nil {
+						board.towerMap[tpos] = &objectData{
+							pos:          tpos,
+							sheetP:       &obj_tower1,
+							health:       obj_tower1.health,
+							aniOffset:    uint64(rand.Intn(obj_tower1.frames)),
+							building:     0,
+							worldObjType: OTYPE_TOWER}
+						foundSmart = true
+						break
+					}
 				}
 			}
 		}
