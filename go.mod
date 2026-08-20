@@ -6,7 +6,7 @@ require (
 	github.com/gempir/go-twitch-irc/v4 v4.0.0
 	github.com/hajimehoshi/ebiten/v2 v2.6.6
 	github.com/hako/durafmt v0.0.0-20210608085754-5c1018a4e16b
-	github.com/twpayne/go-geom v1.5.4
+	github.com/twpayne/go-geom v1.6.1
 	golang.org/x/image v0.12.0
 )
 
