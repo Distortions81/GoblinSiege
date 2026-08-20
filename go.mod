@@ -1,6 +1,7 @@
 module GoblinSiege
 
-go 1.22.0
+go 1.26.6
+toolchain go1.26.6
 
 require (
 	github.com/gempir/go-twitch-irc/v4 v4.0.0
